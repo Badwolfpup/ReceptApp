@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 
 namespace ReceptApp.Pages
 {
@@ -128,7 +131,7 @@ namespace ReceptApp.Pages
                 _hasDeletedIngredient = true;
                 AllLists.Ingredienslista.Remove(ValdIngrediens);
 
-                //SaveLoad.SaveIngrediens("Ingrediens", _main.KlassMedListor.Ingredienslista);
+                SaveLoad.SaveIngrediens("Ingrediens", AllLists.Ingredienslista);
             }
         }
 
@@ -141,6 +144,54 @@ namespace ReceptApp.Pages
             {
                 ValdIngrediens = (Ingrediens)listview.SelectedItem;
             }
+        }
+
+        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            if (t != null)
+            {
+                t.Focus();
+                t.SelectAll();
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            if (t != null)
+            {
+                t.Focus();
+                t.SelectAll();
+                e.Handled = true;
+            }
+        }
+
+        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Multiselect = false;
+            if (open.ShowDialog() == true)
+            {
+                string filgenväg = open.FileName;
+                if (System.IO.Path.GetExtension(filgenväg) == ".jpg" || System.IO.Path.GetExtension(filgenväg) == ".jpeg" || System.IO.Path.GetExtension(filgenväg) == ".png")
+                {
+                    BitmapImage img = new BitmapImage();
+                    img.BeginInit();
+                    img.UriSource = new Uri(filgenväg);
+                    img.EndInit();
+                    AllLists.TempBild = img;
+                    //_main.KlassMedListor.ValdIngrediens.Bild.BeginInit();
+                    //_main.KlassMedListor.ValdIngrediens.Bild.UriSource = new Uri(filgenväg);
+                    BildRuta.Source = AllLists.TempBild;
+                }
+            }
+        }
+
+        private void NyKalori_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, @"^\d+$");
         }
     }
 }

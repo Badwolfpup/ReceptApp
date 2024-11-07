@@ -7,7 +7,15 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="704"
       Title="IngredientPage">
-
+    <Page.Resources>
+        <!--<Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="FontFamily" Value="Roboto"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            <EventSetter Event="GotKeyboardFocus" Handler="TextBox_GotKeyboardFocus"></EventSetter>
+            <EventSetter Event="PreviewMouseDown" Handler="TextBox_PreviewMouseDown"></EventSetter>
+        </Style>-->
+    </Page.Resources>
     <Grid x:Name="Tab1Grid" Background="#FFFDFDFD">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"></ColumnDefinition>
@@ -39,14 +47,15 @@
             </ScrollViewer>
         </StackPanel>
 
-        <!--<Grid Grid.Column="1">
+        
+        <Grid Grid.Column="1">
             <Grid.Resources>
                 <Style TargetType="TextBox">
                     <Setter Property="Margin" Value="4"></Setter>
                     <Setter Property="FontSize" Value="16"></Setter>
                     <Setter Property="FontFamily" Value="Roboto"></Setter>
                     <EventSetter Event="GotKeyboardFocus" Handler="TextBox_GotKeyboardFocus"></EventSetter>
-                    <EventSetter Event="PreviewMouseDown" Handler="TextBox_MouseDown"></EventSetter>
+                    <EventSetter Event="PreviewMouseDown" Handler="TextBox_PreviewMouseDown"></EventSetter>
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
@@ -67,7 +76,7 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Image x:Name="BildRuta" Source="{Binding KlassMedListor.ValdIngrediens.Bild}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
+            <Image x:Name="BildRuta" Source="{Binding ValdIngrediens.Bild}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
                Width="200" Height="200" MinHeight="40" MinWidth="40" MouseDown="Image_MouseDown"></Image>
 
             <Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
@@ -76,7 +85,7 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Namn: " Grid.Column="0"></TextBlock>
-                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding KlassMedListor.ValdIngrediens.Namn}" HorizontalAlignment="Stretch"></TextBox>
+                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding ValdIngrediens.Namn}" HorizontalAlignment="Stretch"></TextBox>
             </Grid>
             <TextBlock Text="Kalorier: " Grid.Column="0" Grid.Row="3"></TextBlock>
             <TextBlock Text="Kolhydrater: " Grid.Column="0" Grid.Row="4"></TextBlock>
@@ -84,27 +93,27 @@
             <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="6"></TextBlock>
             <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="7"></TextBlock>
 
-            <TextBox Name="NyKalori" Text="{Binding KlassMedListor.ValdIngrediens.Kalori}"  Grid.Column="1" Grid.Row="3" TextChanged="TextBox_TextChanged"></TextBox>
-            <TextBox Name="NyKolhydrat" Text="{Binding KlassMedListor.ValdIngrediens.Kolhydrat}" Grid.Column="1" Grid.Row="4" TextChanged="TextBox_TextChanged"></TextBox>
-            <TextBox Name="NySocker" Text="{Binding KlassMedListor.ValdIngrediens.Socker}" Grid.Column="1" Grid.Row="5" TextChanged="TextBox_TextChanged"></TextBox>
-            <TextBox Name="NyFett" Text="{Binding KlassMedListor.ValdIngrediens.Fett}" Grid.Column="1" Grid.Row="6" TextChanged="TextBox_TextChanged"></TextBox>
-            <TextBox Name="NyProtein" Text="{Binding KlassMedListor.ValdIngrediens.Protein}" Grid.Column="1" Grid.Row="7" TextChanged="TextBox_TextChanged"></TextBox>
+            <TextBox Name="NyKalori" Text="{Binding ValdIngrediens.Kalori}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyKolhydrat" Text="{Binding ValdIngrediens.Kolhydrat}" Grid.Column="1" Grid.Row="4" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NySocker" Text="{Binding ValdIngrediens.Socker}" Grid.Column="1" Grid.Row="5" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyFett" Text="{Binding ValdIngrediens.Fett}" Grid.Column="1" Grid.Row="6" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyProtein" Text="{Binding ValdIngrediens.Protein}" Grid.Column="1" Grid.Row="7" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
             <Button x:Name="ButtonLäggTillIngrediens" Content="{Binding VMIngrediens.LäggTillKnapp}" Grid.Column="0" Grid.Row="8" Margin="3" Height="25" Command="{Binding IngrediensLäggTill}"></Button>
             <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Column="1" Grid.Row="8" Margin="3" Height="25" Visibility="Collapsed" Command="{Binding IngrediensCancelLäggTill}"></Button>
 
             <UniformGrid Columns="2" Rows="4" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" >
                 <CheckBox Margin="0,0,0,0" x:Name="CheckBoxGramPerDL" Content="Gram per dl" VerticalContentAlignment="Center" VerticalAlignment="Center"></CheckBox>
-                <TextBox x:Name="TextBoxGramPerDL" Width="30" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" Text="{Binding KlassMedListor.ValdIngrediens.GramPerDl}" IsEnabled="{Binding ElementName=CheckBoxGramPerDL, Path=IsChecked}" ></TextBox>
+                <TextBox x:Name="TextBoxGramPerDL" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding KlassMedListor.ValdIngrediens.GramPerDl}" IsEnabled="{Binding ElementName=CheckBoxGramPerDL, Path=IsChecked}" ></TextBox>
 
                 <CheckBox x:Name="CheckBoxGramLiten" Content="Gram liten" VerticalContentAlignment="Center" VerticalAlignment="Center"></CheckBox>
-                <TextBox x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" Text="{Binding KlassMedListor.ValdIngrediens.Liten}" IsEnabled="{Binding ElementName=CheckBoxGramLiten, Path=IsChecked}" ></TextBox>
+                <TextBox x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding KlassMedListor.ValdIngrediens.Liten}" IsEnabled="{Binding ElementName=CheckBoxGramLiten, Path=IsChecked}" ></TextBox>
 
                 <CheckBox x:Name="CheckBoxGramMedel" Content="Gram medel" VerticalContentAlignment="Center" VerticalAlignment="Center"></CheckBox>
-                <TextBox x:Name="TextBoxGramMedel" Width="30" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" Text="{Binding KlassMedListor.ValdIngrediens.Medel}" IsEnabled="{Binding ElementName=CheckBoxGramMedel, Path=IsChecked}" ></TextBox>
+                <TextBox x:Name="TextBoxGramMedel" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding KlassMedListor.ValdIngrediens.Medel}" IsEnabled="{Binding ElementName=CheckBoxGramMedel, Path=IsChecked}" ></TextBox>
 
                 <CheckBox x:Name="CheckBoxGramStor" Content="Gram stor" VerticalContentAlignment="Center" VerticalAlignment="Center"></CheckBox>
-                <TextBox x:Name="TextBoxGramStor" Width="30" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" Text="{Binding KlassMedListor.ValdIngrediens.Stor}" IsEnabled="{Binding ElementName=CheckBoxGramStor, Path=IsChecked}" ></TextBox>
+                <TextBox x:Name="TextBoxGramStor" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding KlassMedListor.ValdIngrediens.Stor}" IsEnabled="{Binding ElementName=CheckBoxGramStor, Path=IsChecked}" ></TextBox>
             </UniformGrid>
-        </Grid>-->
+        </Grid>
     </Grid>
 </Page>
