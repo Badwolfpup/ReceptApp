@@ -214,6 +214,11 @@ namespace ReceptApp
             Namn = namn;
         }
 
+        public Ingrediens()
+        {
+            
+        }
+
         private void LäggTillViktmått()
         {
             if (Viktmått[0] > 0) GramPerDl = Viktmått[0]; else GramPerDl = 0;

@@ -61,5 +61,49 @@ namespace ReceptApp
         {
             ContentFrame.Navigate(addRecipePage);
         }
+
+        private void OnPasteExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            var currentPage = ContentFrame.Content as Page;
+            string pageTypeName = "";
+            if (currentPage != null) pageTypeName = currentPage.GetType().Name;
+
+
+            if (pageTypeName == "IngredientPage")
+            {
+                if (Clipboard.ContainsImage())
+                {
+                    BitmapImage bitmapImage = new BitmapImage();
+
+                    BitmapSource imageSource = Clipboard.GetImage();
+                    if (imageSource != null)
+                    {
+                        using (MemoryStream memoryStream = new MemoryStream())
+                        {
+                            // Encode BitmapSource to memory stream
+                            BitmapEncoder encoder = new PngBitmapEncoder(); // Change encoder type if needed
+                            encoder.Frames.Add(BitmapFrame.Create(imageSource));
+                            encoder.Save(memoryStream);
+
+                            // Set memory stream position to beginning
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            bitmapImage.BeginInit();
+                            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmapImage.StreamSource = memoryStream;
+                            bitmapImage.EndInit();
+                            AllLists.TempBild = bitmapImage;
+                            //AllLists.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + @"\Bilder\" + NyNamn.Text;
+                            ingredientPage.BildRuta.Source = AllLists.TempBild;
+                            ingredientPage.BildRuta.Visibility = Visibility.Visible;
+                            ingredientPage.BindadBild.Visibility = Visibility.Collapsed;
+                            AllLists.HasAddedImage = true;
+                            AllLists.HasExtension = false;
+                        }
+                    }
+
+                }
+            }
+
+        }
     }
 }

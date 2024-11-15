@@ -17,6 +17,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace ReceptApp.Pages
 {
@@ -33,12 +35,13 @@ namespace ReceptApp.Pages
 
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
-
+        private bool _nyingrediens;
         private string _filtertext;
+        private string _fileextension;
         private int _listviewselectedindex;
         private int _selectedindex;
         private bool _hasDeletedIngredient;
-        private Ingrediens _valdingrediens;
+        private string _addKnapp = "Lägg till";
         private Ingrediens _tempvaldingrediens;
 
         public string FilterText
@@ -50,6 +53,18 @@ namespace ReceptApp.Pages
                 {
                     _filtertext = value;
                     OnPropertyChanged(nameof(FilterText));
+                }
+            }
+        }
+        public string AddKnapp
+        {
+            get => _addKnapp;
+            set
+            {
+                if (_addKnapp != value)
+                {
+                    _addKnapp = value;
+                    OnPropertyChanged(nameof(AddKnapp));
                 }
             }
         }
@@ -65,18 +80,7 @@ namespace ReceptApp.Pages
                 }
             }
         }
-        public Ingrediens ValdIngrediens
-        {
-            get { return _valdingrediens; }
-            set
-            {
-                if (_valdingrediens != value)
-                {
-                    _valdingrediens = value;
-                    OnPropertyChanged(nameof(ValdIngrediens));
-                }
-            }
-        }
+
         public Ingrediens TempValdIngrediens
         {
             get { return _tempvaldingrediens; }
@@ -94,7 +98,7 @@ namespace ReceptApp.Pages
         
         public IngredientPage(ListClass allLists)
         {
-            InitializeComponent();           
+            InitializeComponent();
             AllLists = allLists;
             DataContext = this;
             InitializeValues();
@@ -104,7 +108,6 @@ namespace ReceptApp.Pages
         {
             _listviewselectedindex = 0;
             _filtertext = string.Empty;
-            ValdIngrediens = AllLists.Ingredienslista[0];
         }
 
         private void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
@@ -125,12 +128,14 @@ namespace ReceptApp.Pages
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (ValdIngrediens != null)
+            if (AllLists.ValdIngrediens != null)
             {
                 _selectedindex = ScrollIngrediens.SelectedIndex;
                 _hasDeletedIngredient = true;
-                AllLists.Ingredienslista.Remove(ValdIngrediens);
-
+                //string filepath = AppDomain.CurrentDomain.BaseDirectory + @"\Bilder\" + AllLists.ValdIngrediens.Namn;
+                //if (File.Exists(filepath)) File.Delete(filepath);
+                AllLists.Ingredienslista.Remove(AllLists.ValdIngrediens);
+                
                 SaveLoad.SaveIngrediens("Ingrediens", AllLists.Ingredienslista);
             }
         }
@@ -142,7 +147,7 @@ namespace ReceptApp.Pages
             var listview = sender as ListView;
             if (listview != null)
             {
-                ValdIngrediens = (Ingrediens)listview.SelectedItem;
+                AllLists.ValdIngrediens = (Ingrediens)listview.SelectedItem;
             }
         }
 
@@ -170,28 +175,121 @@ namespace ReceptApp.Pages
 
         private void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            OpenFileDialog open = new OpenFileDialog();
+            OpenFileDialog open = new OpenFileDialog()
+            {
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"Bilder\"
+            };
             open.Multiselect = false;
             if (open.ShowDialog() == true)
             {
                 string filgenväg = open.FileName;
+                _fileextension = System.IO.Path.GetExtension(filgenväg);
                 if (System.IO.Path.GetExtension(filgenväg) == ".jpg" || System.IO.Path.GetExtension(filgenväg) == ".jpeg" || System.IO.Path.GetExtension(filgenväg) == ".png")
                 {
+                    
                     BitmapImage img = new BitmapImage();
                     img.BeginInit();
                     img.UriSource = new Uri(filgenväg);
                     img.EndInit();
+                    
                     AllLists.TempBild = img;
-                    //_main.KlassMedListor.ValdIngrediens.Bild.BeginInit();
-                    //_main.KlassMedListor.ValdIngrediens.Bild.UriSource = new Uri(filgenväg);
                     BildRuta.Source = AllLists.TempBild;
+                    BildRuta.Visibility = Visibility.Visible;
+                    BindadBild.Visibility = Visibility.Collapsed;
+                    
+                    AllLists.HasAddedImage = true;
+                    AllLists.HasExtension = true;
                 }
             }
         }
 
+
         private void NyKalori_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !Regex.IsMatch(e.Text, @"^\d+$");
+        }
+
+        private void LäggTillIngrediens_Click(object sender, RoutedEventArgs e)
+        {
+            if (_nyingrediens)
+            {
+                if (string.IsNullOrWhiteSpace(NyNamn.Text) || string.IsNullOrWhiteSpace(NyKalori.Text)
+                    || string.IsNullOrWhiteSpace(NyFett.Text) || string.IsNullOrWhiteSpace(NyKolhydrat.Text)
+                    || string.IsNullOrWhiteSpace(NyProtein.Text) || string.IsNullOrWhiteSpace(NySocker.Text)) { MessageBox.Show("Du måste fylla i alla fält"); return; }
+                string bildnamn = !AllLists.HasExtension ? @"\Bilder\" + NyNamn.Text + ".png" : @"\Bilder\" + NyNamn.Text + _fileextension;
+                AllLists.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + bildnamn;
+                AllLists.Ingredienslista.Add(AllLists.ValdIngrediens);
+                //SaveLoad.AddIngrediensToDB(_main.KlassMedListor.Ingredienslista[_main.KlassMedListor.Ingredienslista.Count - 1]);
+                AllLists.Ingredienslista = new ObservableCollection<Ingrediens>(AllLists.Ingredienslista.OrderBy(item => item.Namn));
+                _nyingrediens = false;
+                ScrollIngrediens.SelectedItem = AllLists.ValdIngrediens;
+                AddKnapp = "Lägg till";
+                ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
+                ScrollIngrediens.IsEnabled = true;
+                FilterTextbox.IsEnabled = true;
+                KollCheckBoxIsChecked();
+                if (AllLists.HasAddedImage) SaveLoad.KopieraBild(AllLists.TempBild, NyNamn.Text, _fileextension, AllLists.HasExtension);
+                
+                
+                AllLists.HasAddedImage = false;
+                SaveLoad.SaveIngrediens("Ingrediens", AllLists.Ingredienslista);
+                BildRuta.Source = null;
+                BildRuta.Visibility = Visibility.Collapsed;
+                BindadBild.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                TempValdIngrediens = AllLists.ValdIngrediens;
+                AddKnapp = "OK";
+                ButtonCancelTillIngrediens.Visibility = Visibility.Visible;
+                AllLists.ValdIngrediens = new Ingrediens();
+                ScrollIngrediens.IsEnabled = false;
+                FilterTextbox.IsEnabled = false;
+                KollCheckBoxIsChecked();
+                _nyingrediens = true;
+                AllLists.ValdIngrediens.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
+            }
+        }
+        
+
+        public void KollCheckBoxIsChecked()
+        {
+            if (AllLists.ValdIngrediens.GramPerDl > 0) CheckBoxGramPerDL.IsChecked = true; else CheckBoxGramPerDL.IsChecked = false;
+            if (AllLists.ValdIngrediens.Liten > 0) CheckBoxGramLiten.IsChecked = true; else CheckBoxGramLiten.IsChecked = false;
+            if (AllLists.ValdIngrediens.Medel > 0) CheckBoxGramMedel.IsChecked = true; else CheckBoxGramMedel.IsChecked = false;
+            if (AllLists.ValdIngrediens.Stor > 0) CheckBoxGramStor.IsChecked = true; else CheckBoxGramMedel.IsChecked = false;
+        }
+
+        private void CancelTillIngrediens_Click(object sender, RoutedEventArgs e)
+        {
+            AllLists.ValdIngrediens = TempValdIngrediens;
+            AddKnapp = "Lägg till";
+            //ButtonLäggTillIngrediens.Content = "Lägg till";
+            ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
+            ScrollIngrediens.IsEnabled = true;
+            FilterTextbox.IsEnabled = true;
+            KollCheckBoxIsChecked();
+            _nyingrediens = false;
+            AllLists.HasAddedImage = false;
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            foreach (var control in Tab1Grid2.Children)
+            {
+                if (control is TextBox textBox)
+                {
+                    textBox.TextChanged += TextBox_TextChanged;
+                }
+            }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                SaveLoad.SaveIngrediens("Ingrediens", AllLists.Ingredienslista);
+            }
         }
     }
 }

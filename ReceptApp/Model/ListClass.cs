@@ -21,7 +21,7 @@ namespace ReceptApp
         #endregion
         private MainWindow _main;
         private ObservableCollection<Ingrediens>? _ingredienslista;
-
+        private Ingrediens _valdingrediens;
         private Recept _nyttrecept;
         private ObservableCollection<Recept>? _receptlista;
         private Recept _valtrecept;
@@ -50,7 +50,18 @@ namespace ReceptApp
                 }
             }
         }
-
+        public Ingrediens ValdIngrediens
+        {
+            get { return _valdingrediens; }
+            set
+            {
+                if (_valdingrediens != value)
+                {
+                    _valdingrediens = value;
+                    OnPropertyChanged(nameof(ValdIngrediens));
+                }
+            }
+        }
 
         private int _antalportioner;
 
@@ -90,27 +101,24 @@ namespace ReceptApp
                 }
             }
         }
-
+        public bool HasAddedImage { get; set; }
+        public bool HasExtension { get; set; } 
         public BitmapImage TempBild { get; set; } = new BitmapImage();
         public ListClass()
         {
            
-            //Ingredienslista = SaveLoad.LoadIngrediensFromDB();
+            Ingredienslista = SaveLoad.LoadIngrediens("Ingrediens");
             //ReceptLista = SaveLoad.LoadReceptFromDB();
             
             Antalportioner = 4;
-            if (Ingredienslista == null) { Ingredienslista = new ObservableCollection<Ingrediens>() {new Ingrediens("test1"), new Ingrediens("test2") }; }
-            //if (Ingredienslista.Count > 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
+            if (Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
             
             //if (ReceptLista.Count > 0) ValtRecept = ReceptLista[0];
         }
 
         private void AddImageSource()
         {
-            //ValdIngrediens.Bild = "pack://application:,,,/Kaloriräknare;component/Bilder/dummybild.png";
-            //ValdIngrediens.Bild.BeginInit();
-            //ValdIngrediens.Bild.UriSource = new Uri("pack://application:,,,/Kaloriräknare;component/Bilder/dummybild.png");
-            //ValdIngrediens.Bild.EndInit();
+            ValdIngrediens.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
         }
     }
 }

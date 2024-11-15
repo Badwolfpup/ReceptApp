@@ -7,7 +7,9 @@
         xmlns:local="clr-namespace:ReceptApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="704">
- 
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Paste" Executed="OnPasteExecuted"/>
+    </Window.CommandBindings>
     <Grid x:Name="Maingrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>

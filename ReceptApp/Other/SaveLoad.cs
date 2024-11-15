@@ -14,7 +14,7 @@ namespace ReceptApp
 {
     public static class SaveLoad
     {
-        private static string _folderpath = AppDomain.CurrentDomain.BaseDirectory + @"\Bilder";
+        private static string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
         private static string _filename;
         //private static string connectionString = "Server=(local);Database=master;Integrated Security=True;";
 
@@ -45,7 +45,7 @@ namespace ReceptApp
                     return ingrediens;
                 }
             }
-            return null;
+            return new ObservableCollection<Ingrediens>();
         }
 
         public static ObservableCollection<Recept> LoadRecept(string filename)
@@ -67,8 +67,10 @@ namespace ReceptApp
 
 
 
-        public static void KopieraBild(BitmapImage img, string filnamn)
+        public static void KopieraBild(BitmapImage img, string filnamn, string fileextension, bool hasExtension)
         {
+            if (!hasExtension) fileextension = ".png";
+            filnamn += fileextension;
             if (img != null && !string.IsNullOrEmpty(filnamn))
             {
                 // Create a new BitmapEncoder
@@ -80,7 +82,9 @@ namespace ReceptApp
                     // Encode the BitmapImage and write the encoded data to the MemoryStream
                     encoder.Frames.Add(BitmapFrame.Create(img));
                     encoder.Save(memoryStream);
-                    string filePath = Path.Combine(_folderpath, filnamn);
+                    string bildfolder = _folderpath + @"\Bilder\";
+                    if (!Directory.Exists(bildfolder)) Directory.CreateDirectory(bildfolder);
+                    string filePath = Path.Combine(bildfolder, filnamn);
                     if (!Directory.Exists(_folderpath)) { Directory.CreateDirectory(_folderpath); }
                     // Write the encoded data from the MemoryStream to the file
                     File.WriteAllBytes(filePath, memoryStream.ToArray());
