@@ -64,43 +64,46 @@ namespace ReceptApp
 
         private void OnPasteExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var currentPage = ContentFrame.Content as Page;
-            string pageTypeName = "";
-            if (currentPage != null) pageTypeName = currentPage.GetType().Name;
-
-
-            if (pageTypeName == "IngredientPage")
+            if (ingredientPage.Nyingrediens)
             {
-                if (Clipboard.ContainsImage())
+                var currentPage = ContentFrame.Content as Page;
+                string pageTypeName = "";
+                if (currentPage != null) pageTypeName = currentPage.GetType().Name;
+
+
+                if (pageTypeName == "IngredientPage")
                 {
-                    BitmapImage bitmapImage = new BitmapImage();
-
-                    BitmapSource imageSource = Clipboard.GetImage();
-                    if (imageSource != null)
+                    if (Clipboard.ContainsImage())
                     {
-                        using (MemoryStream memoryStream = new MemoryStream())
+                        BitmapImage bitmapImage = new BitmapImage();
+
+                        BitmapSource imageSource = Clipboard.GetImage();
+                        if (imageSource != null)
                         {
-                            // Encode BitmapSource to memory stream
-                            BitmapEncoder encoder = new PngBitmapEncoder(); // Change encoder type if needed
-                            encoder.Frames.Add(BitmapFrame.Create(imageSource));
-                            encoder.Save(memoryStream);
+                            using (MemoryStream memoryStream = new MemoryStream())
+                            {
+                                // Encode BitmapSource to memory stream
+                                BitmapEncoder encoder = new PngBitmapEncoder(); // Change encoder type if needed
+                                encoder.Frames.Add(BitmapFrame.Create(imageSource));
+                                encoder.Save(memoryStream);
 
-                            // Set memory stream position to beginning
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            bitmapImage.BeginInit();
-                            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmapImage.StreamSource = memoryStream;
-                            bitmapImage.EndInit();
-                            AllLists.TempBild = bitmapImage;
-                            //AllLists.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + @"\Bilder\" + NyNamn.Text;
-                            ingredientPage.BildRuta.Source = AllLists.TempBild;
-                            ingredientPage.BildRuta.Visibility = Visibility.Visible;
-                            ingredientPage.BindadBild.Visibility = Visibility.Collapsed;
-                            AllLists.HasAddedImage = true;
-                            AllLists.HasExtension = false;
+                                // Set memory stream position to beginning
+                                memoryStream.Seek(0, SeekOrigin.Begin);
+                                bitmapImage.BeginInit();
+                                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmapImage.StreamSource = memoryStream;
+                                bitmapImage.EndInit();
+                                AllLists.TempBild = bitmapImage;
+                                //AllLists.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + @"\Bilder\" + NyNamn.Text;
+                                ingredientPage.BildRuta.Source = AllLists.TempBild;
+                                ingredientPage.BildRuta.Visibility = Visibility.Visible;
+                                ingredientPage.BindadBild.Visibility = Visibility.Collapsed;
+                                AllLists.HasAddedImage = true;
+                                AllLists.HasExtension = false;
+                            }
                         }
-                    }
 
+                    }
                 }
             }
 

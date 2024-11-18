@@ -27,14 +27,14 @@ namespace ReceptApp
         private int _kolhydrat;
         private int _socker;
         private int _fett;
-        private int[] _viktmått;
+        //private int[] _viktmått;
         private int _gramperdl;
         private int _liten;
         private int _medel;
         private int _stor;
         private string _bild;
 
-        public int ID { get; set; }
+        //public int ID { get; set; } för DB
 
         
         public string Namn
@@ -49,7 +49,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Kalori
         {
             get { return _kalori; }
@@ -62,7 +61,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Protein
         {
             get { return _protein; }
@@ -75,7 +73,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Kolhydrat
         {
             get { return _kolhydrat; }
@@ -88,7 +85,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Socker
         {
             get { return _socker; }
@@ -101,7 +97,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Fett
         {
             get { return _fett; }
@@ -114,20 +109,18 @@ namespace ReceptApp
                 }
             }
         }
-
-        public int[] Viktmått
-        {
-            get { return _viktmått; }
-            set
-            {
-                if (_viktmått != value)
-                {
-                    _viktmått = value;
-                    OnPropertyChanged(nameof(Viktmått));
-                }
-            }
-        }
-
+        //public int[] Viktmått
+        //{
+        //    get { return _viktmått; }
+        //    set
+        //    {
+        //        if (_viktmått != value)
+        //        {
+        //            _viktmått = value;
+        //            OnPropertyChanged(nameof(Viktmått));
+        //        }
+        //    }
+        //}
         public int GramPerDl
         {
             get { return _gramperdl; }
@@ -140,7 +133,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Liten
         {
             get { return _liten; }
@@ -153,7 +145,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public int Medel
         {
             get { return _medel; }
@@ -167,7 +158,6 @@ namespace ReceptApp
 
             }
         }
-
         public int Stor
         {
             get { return _stor; }
@@ -180,7 +170,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public string Bild
         {
             get { return _bild; }
@@ -196,18 +185,18 @@ namespace ReceptApp
         #endregion
 
 
-        public Ingrediens(string namn, int kalori, int protein, int kolhydrat, int socker, int fett, int[] viktmått)
-        {
-            Namn = namn;
-            Kalori = kalori;
-            Protein = protein;
-            Kolhydrat = kolhydrat;
-            Socker = socker;
-            Fett = fett;
-            Viktmått = viktmått;
-            LäggTillViktmått();
+        //public Ingrediens(string namn, int kalori, int protein, int kolhydrat, int socker, int fett, int[] viktmått)
+        //{
+        //    Namn = namn;
+        //    Kalori = kalori;
+        //    Protein = protein;
+        //    Kolhydrat = kolhydrat;
+        //    Socker = socker;
+        //    Fett = fett;
+        //    Viktmått = viktmått;
+        //    LäggTillViktmått();
            
-        }
+        //}
 
         public Ingrediens(string namn)
         {
@@ -219,12 +208,12 @@ namespace ReceptApp
             
         }
 
-        private void LäggTillViktmått()
-        {
-            if (Viktmått[0] > 0) GramPerDl = Viktmått[0]; else GramPerDl = 0;
-            if (Viktmått[1] > 0) Liten = Viktmått[1]; else Liten = 0;
-            if (Viktmått[2] > 0) Medel = Viktmått[2]; else Medel = 0;
-            if (Viktmått[3] > 0) Stor = Viktmått[3]; else Stor = 0;
-        }
+        //private void LäggTillViktmått()
+        //{
+        //    if (Viktmått[0] > 0) GramPerDl = Viktmått[0]; else GramPerDl = 0;
+        //    if (Viktmått[1] > 0) Liten = Viktmått[1]; else Liten = 0;
+        //    if (Viktmått[2] > 0) Medel = Viktmått[2]; else Medel = 0;
+        //    if (Viktmått[3] > 0) Stor = Viktmått[3]; else Stor = 0;
+        //}
     }
 }

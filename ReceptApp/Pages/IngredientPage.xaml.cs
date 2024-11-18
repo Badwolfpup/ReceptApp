@@ -35,7 +35,7 @@ namespace ReceptApp.Pages
 
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
-        private bool _nyingrediens;
+        
         private string _filtertext;
         private string _fileextension;
         private int _listviewselectedindex;
@@ -80,7 +80,6 @@ namespace ReceptApp.Pages
                 }
             }
         }
-
         public Ingrediens TempValdIngrediens
         {
             get { return _tempvaldingrediens; }
@@ -93,7 +92,7 @@ namespace ReceptApp.Pages
                 }
             }
         }
-
+        public bool Nyingrediens { get; set; }
         public ListClass AllLists { get; }
         
         public IngredientPage(ListClass allLists)
@@ -175,30 +174,33 @@ namespace ReceptApp.Pages
 
         private void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            OpenFileDialog open = new OpenFileDialog()
+            if (Nyingrediens)
             {
-                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"Bilder\"
-            };
-            open.Multiselect = false;
-            if (open.ShowDialog() == true)
-            {
-                string filgenväg = open.FileName;
-                _fileextension = System.IO.Path.GetExtension(filgenväg);
-                if (System.IO.Path.GetExtension(filgenväg) == ".jpg" || System.IO.Path.GetExtension(filgenväg) == ".jpeg" || System.IO.Path.GetExtension(filgenväg) == ".png")
+                OpenFileDialog open = new OpenFileDialog()
                 {
-                    
-                    BitmapImage img = new BitmapImage();
-                    img.BeginInit();
-                    img.UriSource = new Uri(filgenväg);
-                    img.EndInit();
-                    
-                    AllLists.TempBild = img;
-                    BildRuta.Source = AllLists.TempBild;
-                    BildRuta.Visibility = Visibility.Visible;
-                    BindadBild.Visibility = Visibility.Collapsed;
-                    
-                    AllLists.HasAddedImage = true;
-                    AllLists.HasExtension = true;
+                    InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + @"Bilder\"
+                };
+                open.Multiselect = false;
+                if (open.ShowDialog() == true)
+                {
+                    string filgenväg = open.FileName;
+                    _fileextension = System.IO.Path.GetExtension(filgenväg);
+                    if (System.IO.Path.GetExtension(filgenväg) == ".jpg" || System.IO.Path.GetExtension(filgenväg) == ".jpeg" || System.IO.Path.GetExtension(filgenväg) == ".png")
+                    {
+
+                        BitmapImage img = new BitmapImage();
+                        img.BeginInit();
+                        img.UriSource = new Uri(filgenväg);
+                        img.EndInit();
+
+                        AllLists.TempBild = img;
+                        BildRuta.Source = AllLists.TempBild;
+                        BildRuta.Visibility = Visibility.Visible;
+                        BindadBild.Visibility = Visibility.Collapsed;
+
+                        AllLists.HasAddedImage = true;
+                        AllLists.HasExtension = true;
+                    }
                 }
             }
         }
@@ -211,7 +213,7 @@ namespace ReceptApp.Pages
 
         private void LäggTillIngrediens_Click(object sender, RoutedEventArgs e)
         {
-            if (_nyingrediens)
+            if (Nyingrediens)
             {
                 if (string.IsNullOrWhiteSpace(NyNamn.Text) || string.IsNullOrWhiteSpace(NyKalori.Text)
                     || string.IsNullOrWhiteSpace(NyFett.Text) || string.IsNullOrWhiteSpace(NyKolhydrat.Text)
@@ -221,7 +223,7 @@ namespace ReceptApp.Pages
                 AllLists.Ingredienslista.Add(AllLists.ValdIngrediens);
                 //SaveLoad.AddIngrediensToDB(_main.KlassMedListor.Ingredienslista[_main.KlassMedListor.Ingredienslista.Count - 1]);
                 AllLists.Ingredienslista = new ObservableCollection<Ingrediens>(AllLists.Ingredienslista.OrderBy(item => item.Namn));
-                _nyingrediens = false;
+                Nyingrediens = false;
                 ScrollIngrediens.SelectedItem = AllLists.ValdIngrediens;
                 AddKnapp = "Lägg till";
                 ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
@@ -246,7 +248,7 @@ namespace ReceptApp.Pages
                 ScrollIngrediens.IsEnabled = false;
                 FilterTextbox.IsEnabled = false;
                 KollCheckBoxIsChecked();
-                _nyingrediens = true;
+                Nyingrediens = true;
                 AllLists.ValdIngrediens.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
             }
         }
@@ -269,7 +271,7 @@ namespace ReceptApp.Pages
             ScrollIngrediens.IsEnabled = true;
             FilterTextbox.IsEnabled = true;
             KollCheckBoxIsChecked();
-            _nyingrediens = false;
+            Nyingrediens = false;
             AllLists.HasAddedImage = false;
         }
 

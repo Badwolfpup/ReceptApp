@@ -52,16 +52,16 @@ namespace ReceptApp
             switch(Mått)
             {
                 case "g": return Mängd / 100.0;                   
-                case "dl": return Ingrediens.Viktmått[0] * Mängd / 100.0;
-                case "msk": return Ingrediens.Viktmått[0] / 100.0 * 15 * Mängd;
-                case "tsk": return Ingrediens.Viktmått[0] / 100.0 * 5 * Mängd;
-                case "krm": return Ingrediens.Viktmått[0] / 100.0 * 1 * Mängd;
-                case "liten": return Ingrediens.Viktmått[1] / 100.0 * Mängd;
-                case "små": return Ingrediens.Viktmått[1] / 100.0 * Mängd;
-                case "medelstor": return Ingrediens.Viktmått[2] / 100.0 * Mängd;
-                case "medelstora": return Ingrediens.Viktmått[2] / 100.0 * Mängd;
-                case "stor": return Ingrediens.Viktmått[3] / 100.0 * Mängd;
-                case "stora": return Ingrediens.Viktmått[3] / 100.0 * Mängd;
+                case "dl": return Ingrediens.GramPerDl * Mängd / 100.0;
+                case "msk": return Ingrediens.GramPerDl / 100.0 * 15 * Mängd;
+                case "tsk": return Ingrediens.GramPerDl / 100.0 * 5 * Mängd;
+                case "krm": return Ingrediens.GramPerDl / 100.0 * 1 * Mängd;
+                case "liten": return Ingrediens.Liten / 100.0 * Mängd;
+                case "små": return Ingrediens.Liten / 100.0 * Mängd;
+                case "medelstor": return Ingrediens.Medel / 100.0 * Mängd;
+                case "medelstora": return Ingrediens.Medel / 100.0 * Mängd;
+                case "stor": return Ingrediens.Stor / 100.0 * Mängd;
+                case "stora": return Ingrediens.Stor / 100.0 * Mängd;
                 default: return 0;
             }
         }

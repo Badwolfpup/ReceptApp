@@ -19,12 +19,14 @@ namespace ReceptApp
 
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
+        #region Properties
         private MainWindow _main;
         private ObservableCollection<Ingrediens>? _ingredienslista;
         private Ingrediens _valdingrediens;
         private Recept _nyttrecept;
         private ObservableCollection<Recept>? _receptlista;
         private Recept _valtrecept;
+        private int _antalportioner;
         public Recept ValtRecept
         {
             get { return _valtrecept; } 
@@ -37,7 +39,6 @@ namespace ReceptApp
                 }
             }
         }
-
         public ObservableCollection<Ingrediens> Ingredienslista
         {
             get { return _ingredienslista; }
@@ -61,10 +62,7 @@ namespace ReceptApp
                     OnPropertyChanged(nameof(ValdIngrediens));
                 }
             }
-        }
-
-        private int _antalportioner;
-
+        }      
         public int Antalportioner
         {
             get { return _antalportioner; }
@@ -101,6 +99,8 @@ namespace ReceptApp
                 }
             }
         }
+        #endregion
+
         public bool HasAddedImage { get; set; }
         public bool HasExtension { get; set; } 
         public BitmapImage TempBild { get; set; } = new BitmapImage();

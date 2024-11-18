@@ -1,1 +1,7 @@
-﻿Fixa så att man kan byta/lägga till bilder efte ratt man har lagt till en ingrediens
+﻿Att göra:
+Börja med nytt recept
+
+
+
+Fixat
+Fixa så att man kan byta/lägga till bilder efte ratt man har lagt till en ingrediens - kan bara lägga till vid ny ingrediens. Måste ta bort och lägga till ny om byta bild.
