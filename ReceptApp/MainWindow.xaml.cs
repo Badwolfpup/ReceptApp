@@ -33,7 +33,7 @@ namespace ReceptApp
         #endregion
 
         IngredientPage ingredientPage;
-        RecipePage recippage;
+        RecipePage recipepage;
         AddRecipePage addRecipePage;
         ListClass AllLists;
 
@@ -42,7 +42,7 @@ namespace ReceptApp
             InitializeComponent();
             AllLists = new ListClass();
             ingredientPage = new IngredientPage(AllLists);
-            recippage = new RecipePage(AllLists);
+            recipepage = new RecipePage(AllLists);
             addRecipePage = new AddRecipePage(AllLists);
             ContentFrame.Navigate(ingredientPage);
         }
@@ -54,7 +54,7 @@ namespace ReceptApp
 
         private void Button_Click_Recipe(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(recippage);
+            ContentFrame.Navigate(recipepage);
         }
 
         private void Button_Click_AddRecipe(object sender, RoutedEventArgs e)

@@ -9,6 +9,131 @@
       Title="AddRecipePage">
 
     <Grid Background="#FFFDFBFB">
-        <TextBlock>add</TextBlock>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"></ColumnDefinition>
+            <ColumnDefinition Width="5*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0">
+            <TextBox Height="25" x:Name="FilterTextboxNyttRecept" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_FilterText_Changed"/>
+            <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
+                <ListView x:Name="ScrollIngrediensNyttRecept" ItemsSource="{Binding Ingredienslista}" SelectionMode="Single" SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </StackPanel>
+
+
+        <!--<Grid Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <TextBox x:Name="TextBoxNyReceptNamn" Grid.Row="0" Height="25" Text="Receptets namn" ></TextBox>
+            <TextBlock Grid.Row="1" Text="{Binding ElementName=ScrollIngrediensNyttRecept, Path=SelectedItem.Namn}" Margin="0,10,0,0"></TextBlock>
+
+            <Grid Margin="0,10,0,0" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"></ColumnDefinition>
+                    <ColumnDefinition Width="90"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <ComboBox Name="ComboBoxMått" SelectedIndex="0" Grid.Column="0">
+
+                    <ComboBoxItem Content="Gram"></ComboBoxItem>
+                    <ComboBoxItem Content="Deciliter"></ComboBoxItem>
+                    <ComboBoxItem Content="Matsked"></ComboBoxItem>
+                    <ComboBoxItem Content="Tesked"></ComboBoxItem>
+                    <ComboBoxItem Content="Kryddmått"></ComboBoxItem>
+                    <ComboBoxItem Content="Antal liten"></ComboBoxItem>
+                    <ComboBoxItem Content="Antal medel"></ComboBoxItem>
+                    <ComboBoxItem Content="Antal stor"></ComboBoxItem>
+                </ComboBox>
+                <TextBox x:Name="TextBoxMått" Width="50" Grid.Column="1" TextChanged="TextBox_TextChanged_1"></TextBox>
+            </Grid>
+            <Button Grid.Row="3" Height="25"  Content="Lägg till ingrediens" Margin="0,10,0,0" Command="{Binding ReceptIngLäggTillIngrediens}" ></Button>
+            <ScrollViewer Grid.Row="4" Margin="0,5,0,0" >
+                <ListView x:Name="ScrollTillagdaIngredienser" ItemsSource="{Binding AllLists.Nyttrecept.ReceptIngredienser}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <EventSetter Event="MouseRightButtonDown" Handler="ListViewItem_MouseRightButtonDown"></EventSetter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel HorizontalAlignment="Stretch" >
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Radera" Command="{Binding ReceptIngTaBortTillagdIngrediens}"></MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock FontFamily="Roboto" FontSize="16">
+                                            <Run Text="{Binding Mängd}"></Run>                                          
+                                            <Run Text="{Binding Mått}"></Run>
+                                            <Run Text="{Binding Ingrediens.Namn}"></Run>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+            <Grid Grid.Row="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Grid.Row="0" Text="Näringsvärde per portion"></TextBlock>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                    <TextBlock  Text="Antal portioner:" VerticalAlignment="Center"></TextBlock>
+                    <ComboBox  Width="40" Height="25" Margin="10,0,0,0" SelectedValue="{Binding AllLists.Nyttrecept.Antalportioner}" SelectedValuePath="Content" SelectionChanged="ComboBox_SelectionChanged">
+
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                        <ComboBoxItem>4</ComboBoxItem>
+                        <ComboBoxItem>5</ComboBoxItem>
+                        <ComboBoxItem>6</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Kalorier"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="Kolhydrater"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Varav socker"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
+
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding AllLists.Nyttrecept.PortionKalori}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding AllLists.Nyttrecept.PortionKolhydrat}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding AllLists.Nyttrecept.PortionSocker}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding AllLists.Nyttrecept.PortionFett}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding AllLists.Nyttrecept.PortionProtein}"></TextBlock>
+
+            </Grid>
+            <Button Content="Lägg till recept" Grid.Row="6" Command="{Binding ReceptIngLäggTillRecept}"></Button>
+        </Grid>-->
+
     </Grid>
+
 </Page>
