@@ -22,10 +22,10 @@
             <ColumnDefinition Width="5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0">
-            <TextBox x:Name="FilterTextbox" Height="25" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_FilterText_Changed"/>
+            <TextBox x:Name="FilterTextbox" Height="25" Text="{Binding IngredientFilterText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_FilterText_Changed"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
-                <ListView x:Name="ScrollIngrediens" ItemsSource="{Binding AllLists.Ingredienslista}" SelectionChanged="IngredientList_SelectionChanged"
-                      SelectionMode="Single" SelectedItem="{Binding AllLists.ValdIngrediens}">
+                <ListView x:Name="ScrollIngrediens" ItemsSource="{Binding Ingredienslista}" SelectionChanged="IngredientList_SelectionChanged"
+                      SelectionMode="Single" SelectedItem="{Binding ValdIngrediens}">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel HorizontalAlignment="Stretch">
@@ -76,7 +76,7 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Image x:Name="BindadBild" Source="{Binding AllLists.ValdIngrediens.Bild}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
+            <Image x:Name="BindadBild" Source="{Binding ValdIngrediens.Bild}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
                Width="200" Height="200" MinHeight="40" MinWidth="40" MouseDown="Image_MouseDown"></Image>
             <Image x:Name="BildRuta" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
    Width="200" Height="200" MinHeight="40" MinWidth="40" MouseDown="Image_MouseDown" Visibility="Collapsed"></Image>
@@ -86,7 +86,7 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Namn: " Grid.Column="0"></TextBlock>
-                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding AllLists.ValdIngrediens.Namn}" HorizontalAlignment="Stretch"></TextBox>
+                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding ValdIngrediens.Namn}" HorizontalAlignment="Stretch"></TextBox>
             </Grid>
             <TextBlock Text="Kalorier: " Grid.Column="0" Grid.Row="3"></TextBlock>
             <TextBlock Text="Kolhydrater: " Grid.Column="0" Grid.Row="4"></TextBlock>
@@ -94,11 +94,11 @@
             <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="6"></TextBlock>
             <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="7"></TextBlock>
 
-            <TextBox Name="NyKalori" Text="{Binding AllLists.ValdIngrediens.Kalori}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NyKolhydrat" Text="{Binding AllLists.ValdIngrediens.Kolhydrat}" Grid.Column="1" Grid.Row="4" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NySocker" Text="{Binding AllLists.ValdIngrediens.Socker}" Grid.Column="1" Grid.Row="5" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NyFett" Text="{Binding AllLists.ValdIngrediens.Fett}" Grid.Column="1" Grid.Row="6" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NyProtein" Text="{Binding AllLists.ValdIngrediens.Protein}" Grid.Column="1" Grid.Row="7" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyKalori" Text="{Binding ValdIngrediens.Kalori}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyKolhydrat" Text="{Binding ValdIngrediens.Kolhydrat}" Grid.Column="1" Grid.Row="4" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NySocker" Text="{Binding ValdIngrediens.Socker}" Grid.Column="1" Grid.Row="5" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyFett" Text="{Binding ValdIngrediens.Fett}" Grid.Column="1" Grid.Row="6" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyProtein" Text="{Binding ValdIngrediens.Protein}" Grid.Column="1" Grid.Row="7" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
             <Button x:Name="ButtonLäggTillIngrediens" Content="{Binding AddKnapp}" Grid.Column="0" Grid.Row="8" Margin="3" Padding="3" Height="25" Click="LäggTillIngrediens_Click"></Button>
             <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Column="1" Grid.Row="8" Margin="3" Height="25" Visibility="Collapsed" Click="CancelTillIngrediens_Click"></Button>
 

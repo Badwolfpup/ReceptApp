@@ -25,73 +25,14 @@ namespace ReceptApp.Pages
     /// <summary>
     /// Interaction logic for IngredientPage.xaml
     /// </summary>
-    public partial class IngredientPage : Page, INotifyPropertyChanged
+    public partial class IngredientPage : Page
     {
-        #region InotifyPropertyChanged
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        #endregion
-        
-        private string _filtertext;
         private string _fileextension;
-        private int _listviewselectedindex;
         private int _selectedindex;
-        private bool _hasDeletedIngredient;
-        private string _addKnapp = "Lägg till";
-        private Ingrediens _tempvaldingrediens;
+        private bool _hasDeletedIngredient;      
+        private Ingrediens _tempValdIngrediens { get; set; }
 
-        public string FilterText
-        {
-            get => _filtertext;
-            set
-            {
-                if (_filtertext != value)
-                {
-                    _filtertext = value;
-                    OnPropertyChanged(nameof(FilterText));
-                }
-            }
-        }
-        public string AddKnapp
-        {
-            get => _addKnapp;
-            set
-            {
-                if (_addKnapp != value)
-                {
-                    _addKnapp = value;
-                    OnPropertyChanged(nameof(AddKnapp));
-                }
-            }
-        }
-        public int ListviewSelectedIndex
-        {
-            get => _listviewselectedindex;
-            set
-            {
-                if (_listviewselectedindex != value)
-                {
-                    _listviewselectedindex = value;
-                    OnPropertyChanged(nameof(ListviewSelectedIndex));
-                }
-            }
-        }
-        public Ingrediens TempValdIngrediens
-        {
-            get { return _tempvaldingrediens; }
-            set
-            {
-                if (_tempvaldingrediens != value)
-                {
-                    _tempvaldingrediens = value;
-                    OnPropertyChanged(nameof(TempValdIngrediens));
-                }
-            }
-        }
         public bool Nyingrediens { get; set; }
         public ListClass AllLists { get; }
         
@@ -99,15 +40,9 @@ namespace ReceptApp.Pages
         {
             InitializeComponent();
             AllLists = allLists;
-            DataContext = this;
-            InitializeValues();
+            DataContext = AllLists;
         }
 
-        private void InitializeValues()
-        {
-            _listviewselectedindex = 0;
-            _filtertext = string.Empty;
-        }
 
         private void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
         {
@@ -120,7 +55,7 @@ namespace ReceptApp.Pages
         {
             if (obj is Ingrediens ingrediens)
             {
-                return ingrediens.Namn.Contains(FilterText, StringComparison.OrdinalIgnoreCase);
+                return ingrediens.Namn.Contains(AllLists.IngredientFilterText, StringComparison.OrdinalIgnoreCase);
             }
             return false;
         }
@@ -225,7 +160,7 @@ namespace ReceptApp.Pages
                 AllLists.Ingredienslista = new ObservableCollection<Ingrediens>(AllLists.Ingredienslista.OrderBy(item => item.Namn));
                 Nyingrediens = false;
                 ScrollIngrediens.SelectedItem = AllLists.ValdIngrediens;
-                AddKnapp = "Lägg till";
+                AllLists.AddKnapp = "Lägg till";
                 ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
                 ScrollIngrediens.IsEnabled = true;
                 FilterTextbox.IsEnabled = true;
@@ -241,8 +176,8 @@ namespace ReceptApp.Pages
             }
             else
             {
-                TempValdIngrediens = AllLists.ValdIngrediens;
-                AddKnapp = "OK";
+                _tempValdIngrediens = AllLists.ValdIngrediens;
+                AllLists.AddKnapp = "OK";
                 ButtonCancelTillIngrediens.Visibility = Visibility.Visible;
                 AllLists.ValdIngrediens = new Ingrediens();
                 ScrollIngrediens.IsEnabled = false;
@@ -264,8 +199,8 @@ namespace ReceptApp.Pages
 
         private void CancelTillIngrediens_Click(object sender, RoutedEventArgs e)
         {
-            AllLists.ValdIngrediens = TempValdIngrediens;
-            AddKnapp = "Lägg till";
+            AllLists.ValdIngrediens = _tempValdIngrediens;
+            AllLists.AddKnapp = "Lägg till";
             //ButtonLäggTillIngrediens.Content = "Lägg till";
             ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
             ScrollIngrediens.IsEnabled = true;

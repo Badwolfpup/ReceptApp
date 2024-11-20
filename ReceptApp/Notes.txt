@@ -1,7 +1,7 @@
 ﻿Att göra:
-Ändra så att alla properties som bindas ligger i ListClass (AllLists) och ändra sedan datacontext till AllLists (och ta bort alla referenser till AllLIsts i XAML)
-
+Fixa new NyttRecept och antalportioner så man kan har något att lägga till bindings i (?)
 
 
 Fixat
 Fixa så att man kan byta/lägga till bilder efte ratt man har lagt till en ingrediens - kan bara lägga till vid ny ingrediens. Måste ta bort och lägga till ny om byta bild.
+Ändra så att alla properties som bindas ligger i ListClass (AllLists) och ändra sedan datacontext till AllLists (och ta bort alla referenser till AllLIsts i XAML)

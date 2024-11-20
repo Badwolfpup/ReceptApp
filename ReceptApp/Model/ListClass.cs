@@ -20,13 +20,67 @@ namespace ReceptApp
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
         #region Properties
-        private MainWindow _main;
+
         private ObservableCollection<Ingrediens>? _ingredienslista;
         private Ingrediens _valdingrediens;
         private Recept _nyttrecept;
         private ObservableCollection<Recept>? _receptlista;
         private Recept _valtrecept;
         private int _antalportioner;
+        private string _addKnapp = "Lägg till";
+        private string _ingredientfiltertext = string.Empty;
+        private string _addrecipefiltertext = string.Empty;
+        private string _recipefiltertext = string.Empty;
+
+        public string IngredientFilterText
+        {
+            get => _ingredientfiltertext;
+            set
+            {
+                if (_ingredientfiltertext != value)
+                {
+                    _ingredientfiltertext = value;
+                    OnPropertyChanged(nameof(IngredientFilterText));
+                }
+            }
+        }
+        public string AddRecipeFilterText
+        {
+            get => _addrecipefiltertext;
+            set
+            {
+                if (_addrecipefiltertext != value)
+                {
+                    _addrecipefiltertext = value;
+                    OnPropertyChanged(nameof(AddRecipeFilterText));
+                }
+            }
+        }        
+        public string RecipeFilterText
+        {
+            get => _recipefiltertext;
+            set
+            {
+                if (_recipefiltertext != value)
+                {
+                    _recipefiltertext = value;
+                    OnPropertyChanged(nameof(RecipeFilterText));
+                }
+            }
+        }
+        public string AddKnapp
+        {
+            get => _addKnapp;
+            set
+            {
+                if (_addKnapp != value)
+                {
+                    _addKnapp = value;
+                    OnPropertyChanged(nameof(AddKnapp));
+                }
+            }
+        }
+
         public Recept ValtRecept
         {
             get { return _valtrecept; } 
