@@ -35,11 +35,6 @@ namespace ReceptApp.Pages
 
         public ListClass AllLists { get; }
 
-        //public AddRecipePage()
-        //{
-        //    InitializeComponent();
-        //    DataContext = this;
-        //}
 
         public AddRecipePage(ListClass allLists)
         {
@@ -128,7 +123,28 @@ namespace ReceptApp.Pages
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ComboBox box = sender as ComboBox;
+            if (box == null) return;
+            AllLists.Nyttrecept.Antalportioner = int.Parse((string)box.SelectedItem);
             AllLists.Nyttrecept.BeräknaVärden();
+        }
+
+        private void Läggtillrecept_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(TextBoxNyReceptNamn.Text))
+            {
+                AllLists.ReceptLista.Add(AllLists.Nyttrecept);
+                AllLists.ValtRecept = AllLists.Nyttrecept;
+                AllLists.Nyttrecept = new Recept(4);
+                
+                //SaveLoad.SaveRecept("Recept", _main.KlassMedListor.ReceptLista);
+            }
+            else MessageBox.Show("Du behöver ange ett namn på receptet");
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            AllLists.Nyttrecept = new Recept(4);
         }
     }
 }

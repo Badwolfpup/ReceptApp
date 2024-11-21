@@ -37,17 +37,18 @@
                 <RowDefinition Height="4*"></RowDefinition>
                 <RowDefinition Height="30"></RowDefinition>
             </Grid.RowDefinitions>
-
-            <TextBox x:Name="TextBoxNyReceptNamn" Grid.Row="0" Height="25" Text="Receptets namn" ></TextBox>
-            <TextBlock Grid.Row="1" Text="{Binding ElementName=ScrollIngrediensNyttRecept, Path=SelectedItem.Namn}" Margin="0,10,0,0"></TextBlock>
+            <TextBlock Text="Receptets namn" Grid.Row="0"></TextBlock>
+            <TextBox x:Name="TextBoxNyReceptNamn" Text="{Binding AllLists.NyttRecept.Namn}" Grid.Row="1" Height="25"  ></TextBox>
 
             <Grid Margin="0,10,0,0" Grid.Row="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"></ColumnDefinition>
-                    <ColumnDefinition Width="90"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <ComboBox Name="ComboBoxMått" SelectedIndex="0" Grid.Column="0">
+                <TextBlock Grid.Column="0" Text="{Binding ElementName=ScrollIngrediensNyttRecept, Path=SelectedItem.Namn}" Margin="0,10,0,0"></TextBlock>
+
+                <ComboBox Name="ComboBoxMått" SelectedIndex="0" Grid.Column="1">
 
                     <ComboBoxItem Content="Gram"></ComboBoxItem>
                     <ComboBoxItem Content="Deciliter"></ComboBoxItem>
@@ -58,7 +59,7 @@
                     <ComboBoxItem Content="Antal medel"></ComboBoxItem>
                     <ComboBoxItem Content="Antal stor"></ComboBoxItem>
                 </ComboBox>
-                <TextBox x:Name="TextBoxMått" Width="50" Grid.Column="1" PreviewTextInput="TextBoxMått_PreviewTextInput"></TextBox>
+                <TextBox x:Name="TextBoxMått" Width="50" Grid.Column="2" PreviewTextInput="TextBoxMått_PreviewTextInput"></TextBox>
             </Grid>
             <Button Grid.Row="3" Height="25"  Content="Lägg till ingrediens" Margin="0,10,0,0" Click="AddIngredient_Click" ></Button>
             <ScrollViewer Grid.Row="4" Margin="0,5,0,0" >
@@ -106,7 +107,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Grid.Row="0" Text="Näringsvärde per portion"></TextBlock>
 
-                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                <StackPanel  Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
                     <TextBlock  Text="Antal portioner:" VerticalAlignment="Center"></TextBlock>
                     <ComboBox  Width="40" Height="25" Margin="10,0,0,0" SelectedValue="{Binding Nyttrecept.Antalportioner}" SelectedValuePath="Content" SelectionChanged="ComboBox_SelectionChanged">
 
@@ -131,7 +132,16 @@
                 <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Nyttrecept.PortionProtein}"></TextBlock>
 
             </Grid>
-            <Button Content="Lägg till recept" Grid.Row="6" Command="{Binding ReceptIngLäggTillRecept}"></Button>
+            <Grid Grid.Row="6" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Margin="0 0 5 0" Content="Lägg till recept"  Click="Läggtillrecept_Click"></Button>
+                <Button Margin="5 0 0 0" Content="Cancel" Grid.Column="1" Click="Cancel_Click"></Button>
+
+            </Grid>
+
         </Grid>
 
     </Grid>

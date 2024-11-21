@@ -26,7 +26,7 @@ namespace ReceptApp
         private Recept _nyttrecept;
         private ObservableCollection<Recept>? _receptlista;
         private Recept _valtrecept;
-        private int _antalportioner;
+        private int _antalportioner = 4;
         private string _addKnapp = "Lägg till";
         private string _ingredientfiltertext = string.Empty;
         private string _addrecipefiltertext = string.Empty;
@@ -166,7 +166,7 @@ namespace ReceptApp
             
             Antalportioner = 4;
             if (Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
-            
+            Nyttrecept = new Recept(Antalportioner);
             //if (ReceptLista.Count > 0) ValtRecept = ReceptLista[0];
         }
 
