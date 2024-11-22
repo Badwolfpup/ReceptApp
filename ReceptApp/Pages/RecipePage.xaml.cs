@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,5 +32,15 @@ namespace ReceptApp.Pages
         }
 
         public ListClass AllLists { get; }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Recept r = ScrollRecept.SelectedItem as Recept;
+            if (r != null)
+            {
+                AllLists.ReceptLista.Remove(r);
+                SaveLoad.SaveRecept("Recept", AllLists.ReceptLista);
+            }
+        }
     }
 }

@@ -8,7 +8,109 @@
       d:DesignHeight="600" d:DesignWidth="704"
       Title="RecipePage">
 
+
     <Grid Background="#FFFBF9F9">
-        <TextBlock>recipy</TextBlock>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0" >
+            <TextBox Height="25" x:Name="FilterTextboxRecept" TextChanged="FilterTextboxRecept_TextChanged"/>
+            <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
+                <ListView x:Name="ScrollRecept" ItemsSource="{Binding ReceptLista}" SelectionMode="Single" SelectedItem="{Binding ValtRecept}" SelectedIndex="0">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel HorizontalAlignment="Stretch">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Radera" Click="MenuItem_Click"></MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </StackPanel>
+        <Grid Grid.Column="2" Margin="5,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding ValtRecept.Namn}" Grid.Row="0"></TextBlock>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,5,0,0">
+                    <TextBlock  Text="Antal portioner:" VerticalAlignment="Center"></TextBlock>
+                    <ComboBox  Width="40" Height="25" Margin="10,0,0,0" SelectedValue="{Binding ValtRecept.Antalportioner}" 
+                        SelectedValuePath="Content"  >
+
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                        <ComboBoxItem>4</ComboBoxItem>
+                        <ComboBoxItem>5</ComboBoxItem>
+                        <ComboBoxItem>6</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                <ScrollViewer Grid.Row="2" Margin="0,5,0,0">
+                    <ListView ItemsSource="{Binding ValtRecept.ReceptIngredienser}">
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontFamily="Roboto" FontSize="16">
+                            <Run Text="{Binding Mängd}"></Run>                                          
+                            <Run Text="{Binding Mått}"></Run>
+                            <Run Text="{Binding Ingrediens.Namn}"></Run>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Grid.Row="1" Text="Näringsvärde per portion"></TextBlock>
+
+
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Kalorier"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="Kolhydrater"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Varav socker" Margin="0,0,5,0"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
+
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ValtRecept.PortionKalori}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ValtRecept.PortionKolhydrat}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionSocker}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionFett}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding ValtRecept.PortionProtein}"></TextBlock>
+
+            </Grid>
+        </Grid>
     </Grid>
 </Page>

@@ -60,7 +60,7 @@ namespace ReceptApp
                     return recept;
                 }
             }
-            return null;
+            return new ObservableCollection<Recept>();
         }
 
 

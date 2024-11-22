@@ -23,6 +23,7 @@ namespace ReceptApp
 
         private ObservableCollection<Ingrediens>? _ingredienslista;
         private Ingrediens _valdingrediens;
+        private Ingrediens _valdLäggTillIRecptIngrediens;
         private Recept _nyttrecept;
         private ObservableCollection<Recept>? _receptlista;
         private Recept _valtrecept;
@@ -81,7 +82,7 @@ namespace ReceptApp
             }
         }
 
-        public Recept ValtRecept
+        public Recept ValtRecept //För receptlistan
         {
             get { return _valtrecept; } 
             set 
@@ -105,6 +106,20 @@ namespace ReceptApp
                 }
             }
         }
+
+        public Ingrediens ValdLäggTillIRecptIngrediens
+        {
+            get => _valdLäggTillIRecptIngrediens;
+            set
+            {
+                if (_valdLäggTillIRecptIngrediens != value)
+                {
+                    _valdLäggTillIRecptIngrediens = value;
+                    OnPropertyChanged(nameof(ValdLäggTillIRecptIngrediens));
+                }
+            }
+        }
+
         public Ingrediens ValdIngrediens
         {
             get { return _valdingrediens; }
@@ -129,7 +144,7 @@ namespace ReceptApp
                 }
             }
         }
-        public Recept Nyttrecept
+        public Recept Nyttrecept //För lägg till recept
         {
             get { return _nyttrecept; }
             set
@@ -163,11 +178,11 @@ namespace ReceptApp
            
             Ingredienslista = SaveLoad.LoadIngrediens("Ingrediens");
             //ReceptLista = SaveLoad.LoadReceptFromDB();
-            
+            ReceptLista = SaveLoad.LoadRecept("Recept");
             Antalportioner = 4;
             if (Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
             Nyttrecept = new Recept(Antalportioner);
-            //if (ReceptLista.Count > 0) ValtRecept = ReceptLista[0];
+            if (ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(4);
         }
 
         private void AddImageSource()

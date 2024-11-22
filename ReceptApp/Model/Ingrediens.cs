@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -8,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace ReceptApp
 {
-    public class Ingrediens : INotifyPropertyChanged
+    public class Ingrediens : INotifyPropertyChanged, INotifyCollectionChanged
     {
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
@@ -17,6 +19,7 @@ namespace ReceptApp
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
         #endregion
 
         #region Properties
@@ -35,8 +38,8 @@ namespace ReceptApp
         private string _bild;
 
         //public int ID { get; set; } för DB
+        public ObservableCollection<string> ViktMått { get; set; }
 
-        
         public string Namn
         {
             get { return _namn; }
@@ -129,6 +132,7 @@ namespace ReceptApp
                 if (_gramperdl != value)
                 {
                     _gramperdl = value;
+                    LäggTillViktmått();
                     OnPropertyChanged(nameof(GramPerDl));
                 }
             }
@@ -141,6 +145,7 @@ namespace ReceptApp
                 if (_liten != value)
                 {
                     _liten = value;
+                    LäggTillViktmått();
                     OnPropertyChanged(nameof(Liten));
                 }
             }
@@ -153,6 +158,7 @@ namespace ReceptApp
                 if (_medel != value)
                 {
                     _medel = value;
+                    LäggTillViktmått();
                     OnPropertyChanged(nameof(Medel));
                 }
 
@@ -166,6 +172,7 @@ namespace ReceptApp
                 if (_stor != value)
                 {
                     _stor = value;
+                    LäggTillViktmått();
                     OnPropertyChanged(nameof(Stor));
                 }
             }
@@ -178,6 +185,7 @@ namespace ReceptApp
                 if (_bild != value)
                 {
                     _bild = value;
+                    
                     OnPropertyChanged(nameof(Bild));
                 }
             }
@@ -198,22 +206,30 @@ namespace ReceptApp
            
         //}
 
-        public Ingrediens(string namn)
-        {
-            Namn = namn;
-        }
+        //public Ingrediens(string namn)
+        //{
+        //    Namn = namn;
+            
+        //}
 
         public Ingrediens()
         {
-            
+            ViktMått = new ObservableCollection<string> { "Gram" };
         }
 
-        //private void LäggTillViktmått()
-        //{
-        //    if (Viktmått[0] > 0) GramPerDl = Viktmått[0]; else GramPerDl = 0;
-        //    if (Viktmått[1] > 0) Liten = Viktmått[1]; else Liten = 0;
-        //    if (Viktmått[2] > 0) Medel = Viktmått[2]; else Medel = 0;
-        //    if (Viktmått[3] > 0) Stor = Viktmått[3]; else Stor = 0;
-        //}
+        private void LäggTillViktmått()
+        {
+            ViktMått = new ObservableCollection<string> { "Gram" };
+            if (GramPerDl > 0)
+            {
+                ViktMått.Add("Deciliter");
+                ViktMått.Add("Matsked");
+                ViktMått.Add("Tesked");
+                ViktMått.Add("Kryddmått");
+            }
+            if (Liten > 0) ViktMått.Add("Antal liten");
+            if (Medel > 0) ViktMått.Add("Antal medel");
+            if (Stor > 0) ViktMått.Add("Antal stor");
+        }
     }
 }

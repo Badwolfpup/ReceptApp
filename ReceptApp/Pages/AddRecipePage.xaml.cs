@@ -68,7 +68,7 @@ namespace ReceptApp.Pages
             var listview = sender as ListView;
             if (listview != null)
             {
-                AllLists.ValdIngrediens = (Ingrediens)listview.SelectedItem;
+                AllLists.ValdLäggTillIRecptIngrediens = (Ingrediens)listview.SelectedItem;
             }
         }
 
@@ -125,7 +125,8 @@ namespace ReceptApp.Pages
         {
             ComboBox box = sender as ComboBox;
             if (box == null) return;
-            AllLists.Nyttrecept.Antalportioner = int.Parse((string)box.SelectedItem);
+            ComboBoxItem item = (ComboBoxItem)box.SelectedItem;
+            AllLists.Nyttrecept.Antalportioner = int.Parse(item.Content.ToString());
             AllLists.Nyttrecept.BeräknaVärden();
         }
 
@@ -134,10 +135,11 @@ namespace ReceptApp.Pages
             if (!string.IsNullOrWhiteSpace(TextBoxNyReceptNamn.Text))
             {
                 AllLists.ReceptLista.Add(AllLists.Nyttrecept);
+                SaveLoad.SaveRecept("Recept", AllLists.ReceptLista);
                 AllLists.ValtRecept = AllLists.Nyttrecept;
                 AllLists.Nyttrecept = new Recept(4);
                 
-                //SaveLoad.SaveRecept("Recept", _main.KlassMedListor.ReceptLista);
+                
             }
             else MessageBox.Show("Du behöver ange ett namn på receptet");
         }
@@ -145,6 +147,7 @@ namespace ReceptApp.Pages
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             AllLists.Nyttrecept = new Recept(4);
+            TextBoxMått.Text = "";
         }
     }
 }

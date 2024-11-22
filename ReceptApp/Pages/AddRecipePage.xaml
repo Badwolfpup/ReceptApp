@@ -48,17 +48,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding ElementName=ScrollIngrediensNyttRecept, Path=SelectedItem.Namn}" Margin="0,10,0,0"></TextBlock>
 
-                <ComboBox Name="ComboBoxMått" SelectedIndex="0" Grid.Column="1">
-
-                    <ComboBoxItem Content="Gram"></ComboBoxItem>
-                    <ComboBoxItem Content="Deciliter"></ComboBoxItem>
-                    <ComboBoxItem Content="Matsked"></ComboBoxItem>
-                    <ComboBoxItem Content="Tesked"></ComboBoxItem>
-                    <ComboBoxItem Content="Kryddmått"></ComboBoxItem>
-                    <ComboBoxItem Content="Antal liten"></ComboBoxItem>
-                    <ComboBoxItem Content="Antal medel"></ComboBoxItem>
-                    <ComboBoxItem Content="Antal stor"></ComboBoxItem>
-                </ComboBox>
+                <ComboBox ItemsSource="{Binding ValdLäggTillIRecptIngrediens.ViktMått}" Name="ComboBoxMått" SelectedIndex="0" Grid.Column="1"></ComboBox>
                 <TextBox x:Name="TextBoxMått" Width="50" Grid.Column="2" PreviewTextInput="TextBoxMått_PreviewTextInput"></TextBox>
             </Grid>
             <Button Grid.Row="3" Height="25"  Content="Lägg till ingrediens" Margin="0,10,0,0" Click="AddIngredient_Click" ></Button>
@@ -125,11 +115,11 @@
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
                 <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
 
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Nyttrecept.PortionKalori}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Nyttrecept.PortionKolhydrat}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Nyttrecept.PortionSocker}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Nyttrecept.PortionFett}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Nyttrecept.PortionProtein}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Nyttrecept.PortionKalori, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Nyttrecept.PortionKolhydrat, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Nyttrecept.PortionSocker, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Nyttrecept.PortionFett, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Nyttrecept.PortionProtein, StringFormat=N2}"></TextBlock>
 
             </Grid>
             <Grid Grid.Row="6" >
