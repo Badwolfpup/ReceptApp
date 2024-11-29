@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
@@ -21,14 +22,13 @@ namespace ReceptApp.Pages
     /// </summary>
     public partial class RecipePage : Page
     {
-        public RecipePage()
-        {
-            InitializeComponent();
-        }
+
 
         public RecipePage(ListClass allLists)
         {
+            InitializeComponent();
             AllLists = allLists;
+            DataContext = allLists;
         }
 
         public ListClass AllLists { get; }
@@ -40,6 +40,40 @@ namespace ReceptApp.Pages
             {
                 AllLists.ReceptLista.Remove(r);
                 SaveLoad.SaveRecept("Recept", AllLists.ReceptLista);
+            }
+        }
+
+        private void FilterTextboxRecept_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(AllLists.Ingredienslista);
+            view.Filter = FilterMethod;
+        }
+
+        private bool FilterMethod(object obj)
+        {
+            if (obj is Ingrediens ingrediens)
+            {
+                return ingrediens.Namn.Contains(AllLists.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        private void AddAllToCart_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ReceptIngrediens i in AllLists.ValtRecept.ReceptIngredienser)
+            {
+                AllLists.ShoppingIngredienser.Add(i);
+            }
+        }
+
+        private void AddToCart_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.DataContext is ReceptIngrediens i)
+                {
+                    AllLists.ShoppingIngredienser.Add(i);
+                }
             }
         }
     }

@@ -8,13 +8,14 @@
       d:DesignHeight="600" d:DesignWidth="704"
       Title="RecipePage">
 
-
+    
     <Grid Background="#FFFBF9F9">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition Width="15"/>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0" >
             <TextBox Height="25" x:Name="FilterTextboxRecept" TextChanged="FilterTextboxRecept_TextChanged"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
@@ -64,20 +65,32 @@
                         <ComboBoxItem>5</ComboBoxItem>
                         <ComboBoxItem>6</ComboBoxItem>
                     </ComboBox>
+                    <Button Margin="10 0 0 0" Width="40" Click="AddAllToCart_Click">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;" />
+                    </Button>
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" Margin="0,5,0,0">
-                    <ListView ItemsSource="{Binding ValtRecept.ReceptIngredienser}">
-
-                        <ListView.ItemTemplate>
+                    <ItemsControl ItemsSource="{Binding ValtRecept.ReceptIngredienser}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock FontFamily="Roboto" FontSize="16">
-                            <Run Text="{Binding Mängd}"></Run>                                          
-                            <Run Text="{Binding Mått}"></Run>
-                            <Run Text="{Binding Ingrediens.Namn}"></Run>
-                                </TextBlock>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontFamily="Roboto" FontSize="16">
+                                        <Run Text="{Binding Mängd}"></Run>                                          
+                                        <Run Text="{Binding Mått}"></Run>
+                                        <Run Text="{Binding Ingrediens.Namn}"></Run>
+                                    </TextBlock>
+                                    <Button Margin="10 0 0 0" Click="AddToCart_Click">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;"></TextBlock>
+                                    </Button>
+                                </StackPanel>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </ScrollViewer>
             </Grid>
 

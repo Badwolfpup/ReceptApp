@@ -134,12 +134,14 @@ namespace ReceptApp.Pages
         {
             if (!string.IsNullOrWhiteSpace(TextBoxNyReceptNamn.Text))
             {
+                
                 AllLists.ReceptLista.Add(AllLists.Nyttrecept);
                 SaveLoad.SaveRecept("Recept", AllLists.ReceptLista);
                 AllLists.ValtRecept = AllLists.Nyttrecept;
                 AllLists.Nyttrecept = new Recept(4);
-                
-                
+                ScrollIngrediensNyttRecept.SelectedItem = null;
+                TextBoxMått.Text = "";
+
             }
             else MessageBox.Show("Du behöver ange ett namn på receptet");
         }

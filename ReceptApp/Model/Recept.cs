@@ -35,7 +35,7 @@ namespace ReceptApp
             }
         }
 
-        private string? _namn;
+        private string _namn;
 
         public string Namn
         {
@@ -65,6 +65,7 @@ namespace ReceptApp
                     _tidigareantalportioner = _antalportioner;
                     _antalportioner = value;
                     BeräknaIngrediensMängd();
+                    BeräknaVärden();
                     OnPropertyChanged(nameof(Antalportioner));
                 }
             }

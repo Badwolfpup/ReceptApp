@@ -193,25 +193,6 @@ namespace ReceptApp
         #endregion
 
 
-        //public Ingrediens(string namn, int kalori, int protein, int kolhydrat, int socker, int fett, int[] viktmått)
-        //{
-        //    Namn = namn;
-        //    Kalori = kalori;
-        //    Protein = protein;
-        //    Kolhydrat = kolhydrat;
-        //    Socker = socker;
-        //    Fett = fett;
-        //    Viktmått = viktmått;
-        //    LäggTillViktmått();
-           
-        //}
-
-        //public Ingrediens(string namn)
-        //{
-        //    Namn = namn;
-            
-        //}
-
         public Ingrediens()
         {
             ViktMått = new ObservableCollection<string> { "Gram" };
@@ -219,7 +200,6 @@ namespace ReceptApp
 
         private void LäggTillViktmått()
         {
-            ViktMått = new ObservableCollection<string> { "Gram" };
             if (GramPerDl > 0)
             {
                 ViktMått.Add("Deciliter");

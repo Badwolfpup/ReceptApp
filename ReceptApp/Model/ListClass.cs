@@ -27,6 +27,7 @@ namespace ReceptApp
         private Recept _nyttrecept;
         private ObservableCollection<Recept>? _receptlista;
         private Recept _valtrecept;
+        private ObservableCollection<ReceptIngrediens>? _shoppingingredienser;
         private int _antalportioner = 4;
         private string _addKnapp = "Lägg till";
         private string _ingredientfiltertext = string.Empty;
@@ -120,6 +121,19 @@ namespace ReceptApp
             }
         }
 
+        public ObservableCollection<ReceptIngrediens> ShoppingIngredienser
+        {
+            get => _shoppingingredienser;
+            set
+            {
+                if (_shoppingingredienser != value)
+                {
+                    _shoppingingredienser = value;
+                    OnPropertyChanged(nameof(ShoppingIngredienser));
+                }
+            }
+        }
+
         public Ingrediens ValdIngrediens
         {
             get { return _valdingrediens; }
@@ -179,6 +193,7 @@ namespace ReceptApp
             Ingredienslista = SaveLoad.LoadIngrediens("Ingrediens");
             //ReceptLista = SaveLoad.LoadReceptFromDB();
             ReceptLista = SaveLoad.LoadRecept("Recept");
+            ShoppingIngredienser = new ObservableCollection<ReceptIngrediens>(); 
             Antalportioner = 4;
             if (Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
             Nyttrecept = new Recept(Antalportioner);

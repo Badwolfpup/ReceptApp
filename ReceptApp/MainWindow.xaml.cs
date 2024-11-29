@@ -35,6 +35,7 @@ namespace ReceptApp
         IngredientPage ingredientPage;
         RecipePage recipepage;
         AddRecipePage addRecipePage;
+        ShoppingList shoppingList;
         ListClass AllLists;
 
         public MainWindow()
@@ -44,6 +45,7 @@ namespace ReceptApp
             ingredientPage = new IngredientPage(AllLists);
             recipepage = new RecipePage(AllLists);
             addRecipePage = new AddRecipePage(AllLists);
+            shoppingList = new ShoppingList(AllLists);
             ContentFrame.Navigate(ingredientPage);
         }
 
@@ -54,12 +56,19 @@ namespace ReceptApp
 
         private void Button_Click_Recipe(object sender, RoutedEventArgs e)
         {
+           // ContentFrame.Navigate(recipepage);
             ContentFrame.Navigate(recipepage);
         }
 
         private void Button_Click_AddRecipe(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(addRecipePage);
+        }
+
+        private void Button_Click_Inköpslista(object sender, RoutedEventArgs e)
+        {
+            ContentFrame.Navigate(shoppingList);
+
         }
 
         private void OnPasteExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -108,5 +117,8 @@ namespace ReceptApp
             }
 
         }
+
+
+
     }
 }
