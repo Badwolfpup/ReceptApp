@@ -21,7 +21,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Ingrediens.Namn, Mode=OneWay}" FontSize="16" FontFamily="Roboto" Margin="0,0,10,0"></TextBlock>
                             <ComboBox ItemsSource="{Binding Ingrediens.ViktMått}" SelectedItem="{Binding Mått, Mode=OneWay}" Width="50"></ComboBox>
-                            <TextBox Text="{Binding Antal, Mode=OneWay}" Width="50"></TextBox>
+                            <TextBox Text="{Binding Mängd, Mode=OneWay}" Width="50"></TextBox>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -30,7 +30,6 @@ namespace ReceptApp
         private int _kolhydrat;
         private int _socker;
         private int _fett;
-        //private int[] _viktmått;
         private int _gramperdl;
         private int _liten;
         private int _medel;
@@ -112,18 +111,7 @@ namespace ReceptApp
                 }
             }
         }
-        //public int[] Viktmått
-        //{
-        //    get { return _viktmått; }
-        //    set
-        //    {
-        //        if (_viktmått != value)
-        //        {
-        //            _viktmått = value;
-        //            OnPropertyChanged(nameof(Viktmått));
-        //        }
-        //    }
-        //}
+
         public int GramPerDl
         {
             get { return _gramperdl; }
@@ -132,7 +120,7 @@ namespace ReceptApp
                 if (_gramperdl != value)
                 {
                     _gramperdl = value;
-                    LäggTillViktmått();
+                    LäggTillGramPerDL();
                     OnPropertyChanged(nameof(GramPerDl));
                 }
             }
@@ -145,7 +133,7 @@ namespace ReceptApp
                 if (_liten != value)
                 {
                     _liten = value;
-                    LäggTillViktmått();
+                    LäggTillAntalLiten();
                     OnPropertyChanged(nameof(Liten));
                 }
             }
@@ -158,7 +146,7 @@ namespace ReceptApp
                 if (_medel != value)
                 {
                     _medel = value;
-                    LäggTillViktmått();
+                    LäggTillAntalMedel();
                     OnPropertyChanged(nameof(Medel));
                 }
 
@@ -172,7 +160,7 @@ namespace ReceptApp
                 if (_stor != value)
                 {
                     _stor = value;
-                    LäggTillViktmått();
+                    LäggTillAntalStor();
                     OnPropertyChanged(nameof(Stor));
                 }
             }
@@ -198,18 +186,54 @@ namespace ReceptApp
             ViktMått = new ObservableCollection<string> { "Gram" };
         }
 
-        private void LäggTillViktmått()
+        private void LäggTillGramPerDL()
         {
             if (GramPerDl > 0)
             {
-                ViktMått.Add("Deciliter");
-                ViktMått.Add("Matsked");
-                ViktMått.Add("Tesked");
-                ViktMått.Add("Kryddmått");
+                if (!ViktMått.Contains("Deciliter"))
+                {
+                    ViktMått.Add("Deciliter");
+                    ViktMått.Add("Matsked");
+                    ViktMått.Add("Tesked");
+                    ViktMått.Add("Kryddmått");
+                }
             }
-            if (Liten > 0) ViktMått.Add("Antal liten");
-            if (Medel > 0) ViktMått.Add("Antal medel");
-            if (Stor > 0) ViktMått.Add("Antal stor");
+            else
+            {
+                if (ViktMått.Contains("Deciliter"))
+                {
+                    ViktMått.Remove("Deciliter");
+                    ViktMått.Remove("Matsked");
+                    ViktMått.Remove("Tesked");
+                    ViktMått.Remove("Kryddmått");
+                }
+            }
         }
+
+        private void LäggTillAntalLiten()
+        {
+            if (Liten > 0) if (!ViktMått.Contains("Antal liten")) ViktMått.Add("Antal liten");
+            else if (ViktMått.Contains("Antal liten")) ViktMått.Remove("Antal liten");
+
+        }
+
+        private void LäggTillAntalMedel()
+        {
+            if (Medel > 0)
+            {
+                if (!ViktMått.Contains("Antal medel")) ViktMått.Add("Antal medel");
+                else if (ViktMått.Contains("Antal medel")) ViktMått.Remove("Antal medel");
+            }
+        }
+
+        private void LäggTillAntalStor()
+        {
+            if (Stor > 0)
+            {
+                if (!ViktMått.Contains("Antal stor")) ViktMått.Add("Antal stor");
+                else if (ViktMått.Contains("Antal stor")) ViktMått.Remove("Antal stor");
+            }
+        }
+
     }
 }
