@@ -79,6 +79,7 @@ namespace ReceptApp.Pages
                 Ingrediens i = ScrollIngrediensNyttRecept.SelectedItem as Ingrediens;
 
                 AllLists.Nyttrecept.ReceptIngredienser.Add(new ReceptIngrediens(i, KonverteraMåttTillText(ComboBoxMått.Text), int.Parse(TextBoxMått.Text)));
+                TextBoxMått.Text = "";
             }
             else MessageBox.Show("Du behöver ange hur mycket");
         }

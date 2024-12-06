@@ -79,7 +79,7 @@ namespace ReceptApp.Pages
 
         private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (sender is TextBox textBox)
+            if (sender is TextBox textBox && !textBox.IsFocused)
             {
                 textBox.Focus();
                 textBox.SelectAll();
@@ -89,7 +89,7 @@ namespace ReceptApp.Pages
 
         private void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is TextBox textBox)
+            if (sender is TextBox textBox && !textBox.IsFocused)
             {
                 textBox.Focus();
                 textBox.SelectAll();
@@ -197,6 +197,9 @@ namespace ReceptApp.Pages
             AllLists.ValdIngrediens = _tempValdIngrediens;
             AllLists.AddKnapp = "Lägg till";
             ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
+            BildRuta.Source = null;
+            BildRuta.Visibility = Visibility.Collapsed;
+            BindadBild.Visibility = Visibility.Visible;
             ScrollIngrediens.IsEnabled = true;
             FilterTextbox.IsEnabled = true;
             KollCheckBoxIsChecked();
@@ -222,5 +225,7 @@ namespace ReceptApp.Pages
                 SaveLoad.SaveIngrediens("Ingrediens", AllLists.Ingredienslista);
             }
         }
+
+
     }
 }

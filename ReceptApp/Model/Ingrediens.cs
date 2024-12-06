@@ -35,8 +35,64 @@ namespace ReceptApp
         private int _medel;
         private int _stor;
         private string _bild;
+        private bool _harGramPerDL;
+        private bool _harAntalLiten;
+        private bool _harAntalMedel;
+        private bool _harAntalStor;
 
         //public int ID { get; set; } för DB
+
+        public bool HarGramPerDL
+        {
+            get => _harGramPerDL;
+            set
+            {
+                if (_harGramPerDL != value)
+                {
+                    _harGramPerDL = value;
+                    OnPropertyChanged(nameof(HarGramPerDL));
+                }
+            }
+        }
+        public bool HarAntalLiten
+        {
+            get => _harAntalLiten;
+            set
+            {
+                if (_harAntalLiten != value)
+                {
+                    _harAntalLiten = value;
+                    OnPropertyChanged(nameof(HarAntalLiten));
+                }
+            }
+        }
+
+        public bool HarAntalMedel
+        {
+            get => _harAntalMedel;
+            set
+            {
+                if (_harAntalMedel != value)
+                {
+                    _harAntalMedel = value;
+                    OnPropertyChanged(nameof(HarAntalMedel));
+                }
+            }
+        }
+
+        public bool HarAntalStor
+        {
+            get => _harAntalStor;
+            set
+            {
+                if (_harAntalStor != value)
+                {
+                    _harAntalStor = value;
+                    OnPropertyChanged(nameof(HarAntalStor));
+                }
+            }
+        }
+
         public ObservableCollection<string> ViktMått { get; set; }
 
         public string Namn
@@ -190,6 +246,7 @@ namespace ReceptApp
         {
             if (GramPerDl > 0)
             {
+                HarGramPerDL = true;
                 if (!ViktMått.Contains("Deciliter"))
                 {
                     ViktMått.Add("Deciliter");
@@ -200,6 +257,7 @@ namespace ReceptApp
             }
             else
             {
+                HarGramPerDL = false;
                 if (ViktMått.Contains("Deciliter"))
                 {
                     ViktMått.Remove("Deciliter");
@@ -212,8 +270,16 @@ namespace ReceptApp
 
         private void LäggTillAntalLiten()
         {
-            if (Liten > 0) if (!ViktMått.Contains("Antal liten")) ViktMått.Add("Antal liten");
-            else if (ViktMått.Contains("Antal liten")) ViktMått.Remove("Antal liten");
+            if (Liten > 0)
+            {
+                HarAntalLiten = true;
+                if (!ViktMått.Contains("Antal liten")) ViktMått.Add("Antal liten");
+            }
+            else 
+            {
+                HarAntalLiten = false;
+                if (ViktMått.Contains("Antal liten")) ViktMått.Remove("Antal liten"); 
+            }
 
         }
 
@@ -221,8 +287,13 @@ namespace ReceptApp
         {
             if (Medel > 0)
             {
+                HarAntalMedel = true;
                 if (!ViktMått.Contains("Antal medel")) ViktMått.Add("Antal medel");
-                else if (ViktMått.Contains("Antal medel")) ViktMått.Remove("Antal medel");
+            }
+            else
+            {
+                HarAntalMedel = false;
+                if (ViktMått.Contains("Antal medel")) ViktMått.Remove("Antal medel");
             }
         }
 
@@ -230,8 +301,13 @@ namespace ReceptApp
         {
             if (Stor > 0)
             {
+                HarAntalStor = true;
                 if (!ViktMått.Contains("Antal stor")) ViktMått.Add("Antal stor");
-                else if (ViktMått.Contains("Antal stor")) ViktMått.Remove("Antal stor");
+            }
+            else
+            {
+                HarAntalStor = false;
+                if (ViktMått.Contains("Antal stor")) ViktMått.Remove("Antal stor");
             }
         }
 

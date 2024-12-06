@@ -117,11 +117,11 @@
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
                 <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
 
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ValtRecept.PortionKalori}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ValtRecept.PortionKolhydrat}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionSocker}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionFett}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding ValtRecept.PortionProtein}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ValtRecept.PortionKalori, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ValtRecept.PortionKolhydrat, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionSocker, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionFett, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding ValtRecept.PortionProtein, StringFormat=N2}"></TextBlock>
 
             </Grid>
         </Grid>
