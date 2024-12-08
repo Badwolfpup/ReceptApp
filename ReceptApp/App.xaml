@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:ReceptApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <local:RoundedNumber x:Key="RoundedNumber"></local:RoundedNumber>
     </Application.Resources>
 </Application>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.DirectoryServices.ActiveDirectory;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,4 +78,6 @@ namespace ReceptApp.Pages
             }
         }
     }
+
+    
 }

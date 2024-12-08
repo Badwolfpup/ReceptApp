@@ -80,7 +80,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock FontFamily="Roboto" FontSize="16">
-                                        <Run Text="{Binding Mängd}"></Run>                                          
+                                        <Run Text="{Binding Mängd, Converter={StaticResource RoundedNumber}}"></Run>                                          
                                         <Run Text="{Binding Mått}"></Run>
                                         <Run Text="{Binding Ingrediens.Namn}"></Run>
                                     </TextBlock>
@@ -117,11 +117,11 @@
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
                 <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
 
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ValtRecept.PortionKalori, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ValtRecept.PortionKolhydrat, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionSocker, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionFett, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding ValtRecept.PortionProtein, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ValtRecept.PortionKalori, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ValtRecept.PortionKolhydrat, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionSocker, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionFett, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding ValtRecept.PortionProtein, Converter={StaticResource RoundedNumber}}"></TextBlock>
 
             </Grid>
         </Grid>

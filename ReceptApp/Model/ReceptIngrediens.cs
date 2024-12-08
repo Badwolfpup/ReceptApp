@@ -19,11 +19,11 @@ namespace ReceptApp
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
-        private int _mängd;
+        private double _mängd;
         public Ingrediens Ingrediens { get; set; }
         public string Mått { get; set; }
 
-        public int Mängd 
+        public double Mängd 
         {
             get { return _mängd; }
             set
