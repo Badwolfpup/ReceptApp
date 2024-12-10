@@ -23,30 +23,29 @@ namespace ReceptApp.Pages
     /// </summary>
     public partial class RecipePage : Page
     {
+        App app = (App)Application.Current;
 
 
-        public RecipePage(ListClass allLists)
+        public RecipePage()
         {
             InitializeComponent();
-            AllLists = allLists;
-            DataContext = allLists;
+            DataContext = app;
         }
 
-        public ListClass AllLists { get; }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             Recept r = ScrollRecept.SelectedItem as Recept;
             if (r != null)
             {
-                AllLists.ReceptLista.Remove(r);
-                SaveLoad.SaveRecept("Recept", AllLists.ReceptLista);
+                app.ReceptLista.Remove(r);
+                SaveLoad.SaveRecept("Recept", app.ReceptLista);
             }
         }
 
         private void FilterTextboxRecept_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(AllLists.Ingredienslista);
+            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
             view.Filter = FilterMethod;
         }
 
@@ -54,16 +53,16 @@ namespace ReceptApp.Pages
         {
             if (obj is Ingrediens ingrediens)
             {
-                return ingrediens.Namn.Contains(AllLists.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
+                return ingrediens.Namn.Contains(app.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
             }
             return false;
         }
 
         private void AddAllToCart_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ReceptIngrediens i in AllLists.ValtRecept.ReceptIngredienser)
+            foreach (ReceptIngrediens i in app.ValtRecept.ReceptIngredienser)
             {
-                AllLists.ShoppingIngredienser.Add(i);
+                app.ShoppingIngredienser.Add(i);
             }
         }
 
@@ -73,7 +72,7 @@ namespace ReceptApp.Pages
             {
                 if (button.DataContext is ReceptIngrediens i)
                 {
-                    AllLists.ShoppingIngredienser.Add(i);
+                    app.ShoppingIngredienser.Add(i);
                 }
             }
         }

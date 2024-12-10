@@ -20,14 +20,13 @@ namespace ReceptApp.Pages
     /// </summary>
     public partial class ShoppingList : Page
     {
-        public ListClass AllLists { get; }
+        App app = (App)Application.Current;
 
 
-        public ShoppingList(ListClass allLists)
+        public ShoppingList()
         {
             InitializeComponent();
-            AllLists = allLists;
-            DataContext = allLists;
+            DataContext = app;
         }
     }
 }

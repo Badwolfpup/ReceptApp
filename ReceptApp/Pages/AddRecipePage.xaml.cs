@@ -32,15 +32,14 @@ namespace ReceptApp.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
+        App app = (App)Application.Current;
 
-        public ListClass AllLists { get; }
 
 
-        public AddRecipePage(ListClass allLists)
+        public AddRecipePage()
         {
             InitializeComponent();
-            AllLists = allLists;
-            DataContext = AllLists;
+            DataContext = app;
             
         }
 
@@ -48,7 +47,7 @@ namespace ReceptApp.Pages
 
         private void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(AllLists.Ingredienslista);
+            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
             view.Filter = FilterMethod;
 
         }
@@ -57,7 +56,7 @@ namespace ReceptApp.Pages
         {
             if (obj is Ingrediens ingrediens)
             {
-                return ingrediens.Namn.Contains(AllLists.AddRecipeFilterText, StringComparison.OrdinalIgnoreCase);
+                return ingrediens.Namn.Contains(app.AddRecipeFilterText, StringComparison.OrdinalIgnoreCase);
             }
             return false;
         }
@@ -68,7 +67,7 @@ namespace ReceptApp.Pages
             //var listview = sender as ListView;
             if (sender is ListView listview)
             {
-                AllLists.ValdLäggTillIRecptIngrediens = (Ingrediens)listview.SelectedItem;
+                app.ValdLäggTillIRecptIngrediens = (Ingrediens)listview.SelectedItem;
             }
         }
 
@@ -78,7 +77,7 @@ namespace ReceptApp.Pages
             {
                 Ingrediens i = ScrollIngrediensNyttRecept.SelectedItem as Ingrediens;
 
-                AllLists.Nyttrecept.ReceptIngredienser.Add(new ReceptIngrediens(i, KonverteraMåttTillText(ComboBoxMått.Text), int.Parse(TextBoxMått.Text)));
+                app.Nyttrecept.ReceptIngredienser.Add(new ReceptIngrediens(i, KonverteraMåttTillText(ComboBoxMått.Text), int.Parse(TextBoxMått.Text)));
                 TextBoxMått.Text = "";
             }
             else MessageBox.Show("Du behöver ange hur mycket");
@@ -114,7 +113,7 @@ namespace ReceptApp.Pages
         {
             ReceptIngrediens i = ScrollTillagdaIngredienser.SelectedItem as ReceptIngrediens;
             if (i == null) return;
-            AllLists.Nyttrecept.ReceptIngredienser.Remove(i);
+            app.Nyttrecept.ReceptIngredienser.Remove(i);
             //SaveLoad.Save("Ingrediens", Ingredienslista);
         }
 
@@ -132,8 +131,8 @@ namespace ReceptApp.Pages
             ComboBox box = sender as ComboBox;
             if (box == null) return;
             ComboBoxItem item = (ComboBoxItem)box.SelectedItem;
-            AllLists.Nyttrecept.Antalportioner = int.Parse(item.Content.ToString());
-            AllLists.Nyttrecept.BeräknaVärden();
+            app.Nyttrecept.Antalportioner = int.Parse(item.Content.ToString());
+            app.Nyttrecept.BeräknaVärden();
         }
 
         private void Läggtillrecept_Click(object sender, RoutedEventArgs e)
@@ -141,10 +140,10 @@ namespace ReceptApp.Pages
             if (!string.IsNullOrWhiteSpace(TextBoxNyReceptNamn.Text))
             {
                 
-                AllLists.ReceptLista.Add(AllLists.Nyttrecept);
-                SaveLoad.SaveRecept("Recept", AllLists.ReceptLista);
-                AllLists.ValtRecept = AllLists.Nyttrecept;
-                AllLists.Nyttrecept = new Recept(4);
+                app.ReceptLista.Add(app.Nyttrecept);
+                SaveLoad.SaveRecept("Recept", app.ReceptLista);
+                app.ValtRecept = app.Nyttrecept;
+                app.Nyttrecept = new Recept(4);
                 ScrollIngrediensNyttRecept.SelectedItem = null;
                 TextBoxMått.Text = "";
 
@@ -154,7 +153,7 @@ namespace ReceptApp.Pages
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            AllLists.Nyttrecept = new Recept(4);
+            app.Nyttrecept = new Recept(4);
             TextBoxMått.Text = "";
         }
     }

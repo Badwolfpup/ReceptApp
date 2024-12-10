@@ -32,21 +32,27 @@ namespace ReceptApp
 
         #endregion
 
+        App app = (App)Application.Current;
+
         IngredientPage ingredientPage;
         RecipePage recipepage;
         AddRecipePage addRecipePage;
         ShoppingList shoppingList;
         ListClass AllLists;
 
+
+
         public MainWindow()
         {
             InitializeComponent();
             AllLists = new ListClass();
-            ingredientPage = new IngredientPage(AllLists);
-            recipepage = new RecipePage(AllLists);
-            addRecipePage = new AddRecipePage(AllLists);
-            shoppingList = new ShoppingList(AllLists);
+            ingredientPage = new IngredientPage();
+            recipepage = new RecipePage();
+            addRecipePage = new AddRecipePage();
+            shoppingList = new ShoppingList();
             ContentFrame.Navigate(ingredientPage);
+
+            
         }
 
         private void Button_Click_Ingredient(object sender, RoutedEventArgs e)

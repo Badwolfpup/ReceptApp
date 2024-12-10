@@ -1,5 +1,4 @@
 ﻿Att göra:
-Flytta alla listor till App.xaml.cs och uppdatera alla referenser
 Gör ListClass till static
 Flytta all style och events som är globala till App.xaml
 
@@ -31,6 +30,7 @@ Ta bort extra visningar av gram i comboboxen i lägg till ingrediens i recept
 Kolla mängd som läggs till för skedarna
 Ta bort whitespace trailingoch leading i namn boxarna
 Markerar inte text vid tab
+Flytta alla listor till App.xaml.cs och uppdatera alla referenser
 
 
 (*OTESTAD*) Töm antalgram rutan vid ny ingrediens
