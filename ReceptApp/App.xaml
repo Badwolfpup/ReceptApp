@@ -5,5 +5,16 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <local:RoundedNumber x:Key="RoundedNumber"></local:RoundedNumber>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="FontFamily" Value="Roboto"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="FontFamily" Value="Roboto"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        </Style>
     </Application.Resources>
 </Application>

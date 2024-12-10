@@ -79,13 +79,15 @@ namespace ReceptApp.Pages
 
         private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (sender is TextBox textBox && !textBox.IsFocused)
+            if (sender is TextBox textBox)
             {
                 textBox.Focus();
                 textBox.SelectAll();
                 e.Handled = true;
             }
         }
+
+
 
         private void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -223,6 +225,16 @@ namespace ReceptApp.Pages
             if (sender is TextBox textBox)
             {
                 SaveLoad.SaveIngrediens("Ingrediens", AllLists.Ingredienslista);
+            }
+        }
+
+
+        private void NyNamn_PreviewNameInput(object sender, KeyEventArgs e)
+        {
+            if (sender is TextBox textBox && e.Key == Key.Space)
+            {
+                string newText = textBox.Text.Insert(textBox.SelectionStart, " ");
+                e.Handled = Regex.IsMatch(newText, @"^\s+|\s+$");
             }
         }
 

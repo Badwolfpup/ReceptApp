@@ -239,7 +239,22 @@ namespace ReceptApp
 
         public Ingrediens()
         {
-            ViktMått = new ObservableCollection<string> { "Gram" };
+            ViktMått = new ObservableCollection<string>();
+            //if (!ViktMått.Contains("Gram")) ViktMått.Add("Gram");
+            ViktMått.CollectionChanged += ViktMått_CollectionChanged;
+        }
+
+        private void ViktMått_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            TaBortExtraGram();
+        }
+
+        private void TaBortExtraGram()
+        {
+            if (ViktMått.Count(x => x == "Gram") > 1)
+            {
+                ViktMått.Remove("Gram");
+            }
         }
 
         private void LäggTillGramPerDL()

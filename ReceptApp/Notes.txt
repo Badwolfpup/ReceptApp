@@ -1,12 +1,18 @@
 ﻿Att göra:
-Visar inte antal kolhydrater
-Kontrollera beräkningen av näringsvärde på receptsida. Tycks tappa några av allt
-Visar inte antal dl (kanske alla mått utom gram)
+Flytta alla listor till App.xaml.cs och uppdatera alla referenser
+Gör ListClass till static
+Flytta all style och events som är globala till App.xaml
 
-Fixa ValueConverter så att värdet i textboxen ändras utifrån valet i combobox
-Dölja comboboxen och textboxen
-Fixa till lista som kan kopieras och klistras in i textdokument
-Fixa till designen, tex teckensnitt, färger, storlek på text, layout
+
+Fixa ValueConverter så att värdet i textboxen ändras utifrån valet i combobox ??Shoppinglist??
+Dölja comboboxen och textboxen ??Shoppinglist??
+Fixa till lista som kan kopieras och klistras in i textdokument ??Shoppinglist??
+
+Ändra så man kan ha 1 decimal i vissa inmatningsrutor i skapa recept - kolla om funkar med vanligt tangentbord
+Fix så att det sparas i json varje gång det förändras, lägg till i onpropertychanged
+(*OSTESTAD*) Gör så att checkboxes är ikryssade om har värde på ingrediens
+Fixa så att värde för dl och antal justeras efter antal portioner i receptvyn
+*FIXAD??*Fixa till designen, tex teckensnitt, färger, storlek på text, layout
 
 
 Fixat
@@ -18,8 +24,14 @@ Testa lägga till recept
 Ändra så att textrutan får fokus bara första gången
 Sätt maxwidth på namnrutan (bytte till Width=50 & HorizontalAlignment=Left)
 Begränsa antalet decimaler på receptsida
+Visar inte antal kolhydrater initialt (bugg med det receptet, ser ut att funka)
+Kontrollera beräkningen av näringsvärde på receptsida. Tycks tappa några av allt (hade int istf double så tappade decimaler)
+Visar inte antal dl (kanske alla mått utom gram)
+Ta bort extra visningar av gram i comboboxen i lägg till ingrediens i recept
+Kolla mängd som läggs till för skedarna
+Ta bort whitespace trailingoch leading i namn boxarna
+Markerar inte text vid tab
 
 
-(*OSTESTAD*) Gör så att checkboxes är ikryssade om har värde på ingrediens
 (*OTESTAD*) Töm antalgram rutan vid ny ingrediens
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ReceptApp
 {
-    public class Recept: INotifyPropertyChanged
+    public class Recept: INotifyPropertyChanged, INotifyCollectionChanged
     {
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
@@ -18,6 +18,7 @@ namespace ReceptApp
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
         #endregion
 
         private ObservableCollection<ReceptIngrediens>? _receptingredienser;
@@ -110,7 +111,7 @@ namespace ReceptApp
             {
                 if (_portionkolhydrat != value)
                 {
-                    _portionkolhydrat = value;
+                    _portionsocker = value;
                     OnPropertyChanged(nameof(PortionSocker));
                 }
 

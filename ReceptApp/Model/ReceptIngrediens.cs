@@ -39,7 +39,7 @@ namespace ReceptApp
 
         public double AntalGram { get; set; }
 
-        public ReceptIngrediens(Ingrediens ingrediens, string mått, int mängd)
+        public ReceptIngrediens(Ingrediens ingrediens, string mått, double mängd)
         {
             Ingrediens = ingrediens;
             Mått = mått;
@@ -52,16 +52,16 @@ namespace ReceptApp
             switch(Mått)
             {
                 case "g": return Mängd / 100.0;                   
-                case "dl": return Ingrediens.GramPerDl * Mängd / 100.0;
-                case "msk": return Ingrediens.GramPerDl / 100.0 * 15 * Mängd;
-                case "tsk": return Ingrediens.GramPerDl / 100.0 * 5 * Mängd;
-                case "krm": return Ingrediens.GramPerDl / 100.0 * 1 * Mängd;
-                case "liten": return Ingrediens.Liten / 100.0 * Mängd;
-                case "små": return Ingrediens.Liten / 100.0 * Mängd;
-                case "medelstor": return Ingrediens.Medel / 100.0 * Mängd;
-                case "medelstora": return Ingrediens.Medel / 100.0 * Mängd;
-                case "stor": return Ingrediens.Stor / 100.0 * Mängd;
-                case "stora": return Ingrediens.Stor / 100.0 * Mängd;
+                case "dl": return (Ingrediens.GramPerDl * Mängd) / 100.0;
+                case "msk": return (Ingrediens.GramPerDl * Mängd * 15 / 100) / 100.0;
+                case "tsk": return (Ingrediens.GramPerDl * Mängd * 5 / 100) / 100.0;
+                case "krm": return (Ingrediens.GramPerDl * Mängd / 100) / 100.0;
+                case "liten": return (Ingrediens.Liten * Mängd) / 100.0;
+                case "små": return (Ingrediens.Liten * Mängd) / 100.0;
+                case "medelstor": return (Ingrediens.Medel * Mängd) / 100.0;
+                case "medelstora": return (Ingrediens.Medel * Mängd) / 100.0;
+                case "stor": return (Ingrediens.Stor * Mängd) / 100.0;
+                case "stora": return (Ingrediens.Stor * Mängd) / 100.0;
                 default: return 0;
             }
         }

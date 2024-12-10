@@ -65,8 +65,8 @@ namespace ReceptApp.Pages
         private void ScrollIngrediensNyttRecept_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //ScrollIngrediensNyttRecept.SelectedIndex = _hasDeletedIngredient ? (_selectedindex > 0 ? _selectedindex - 1 : _selectedindex) : ScrollIngrediens.SelectedIndex;
-            var listview = sender as ListView;
-            if (listview != null)
+            //var listview = sender as ListView;
+            if (sender is ListView listview)
             {
                 AllLists.ValdLäggTillIRecptIngrediens = (Ingrediens)listview.SelectedItem;
             }
@@ -102,7 +102,12 @@ namespace ReceptApp.Pages
 
         private void TextBoxMått_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !Regex.IsMatch(e.Text, @"^\d+$");
+            if (sender is TextBox box)
+            {
+                string newText = box.Text.Insert(box.SelectionStart, e.Text);
+
+                e.Handled = !Regex.IsMatch(newText, @"^\d+(\,\d{0,1})?$");
+            }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
