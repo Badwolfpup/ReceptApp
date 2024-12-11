@@ -52,7 +52,7 @@ namespace ReceptApp.Pages
 
         private bool FilterMethod(object obj) => obj is Ingrediens ingrediens && ingrediens.Namn.Contains(app.IngredientFilterText, StringComparison.OrdinalIgnoreCase);
 
-        
+
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {

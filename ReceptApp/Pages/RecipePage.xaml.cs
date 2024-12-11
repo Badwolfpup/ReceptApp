@@ -51,9 +51,9 @@ namespace ReceptApp.Pages
 
         private bool FilterMethod(object obj)
         {
-            if (obj is Ingrediens ingrediens)
+            if (obj is Recept recept)
             {
-                return ingrediens.Namn.Contains(app.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
+                return recept.Namn.Contains(app.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
             }
             return false;
         }

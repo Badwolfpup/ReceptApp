@@ -4,7 +4,9 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace ReceptApp
@@ -213,9 +215,47 @@ namespace ReceptApp
         public BitmapImage TempBild { get; set; } = new BitmapImage();
 
 
-        private void AddImageSource()
+        public void AddImageSource()
         {
             ValdIngrediens.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
+        }
+
+        public void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                textBox.Focus();
+                textBox.SelectAll();
+                e.Handled = true;
+            }
+        }
+
+
+
+        public void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBox textBox && !textBox.IsFocused)
+            {
+                textBox.Focus();
+                textBox.SelectAll();
+                e.Handled = true;
+            }
+        }
+
+        public void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(Ingredienslista);
+            view.Filter = FilterMethod;
+
+        }
+
+        public bool FilterMethod(object obj)
+        {
+            if (obj is Ingrediens ingrediens)
+            {
+                return ingrediens.Namn.Contains(IngredientFilterText, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
         }
     }
 

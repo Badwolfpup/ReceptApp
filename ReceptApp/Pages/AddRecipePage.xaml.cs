@@ -43,7 +43,7 @@ namespace ReceptApp.Pages
             
         }
 
-        
+
 
         private void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
         {

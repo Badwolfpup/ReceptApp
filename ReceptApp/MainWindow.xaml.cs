@@ -38,14 +38,12 @@ namespace ReceptApp
         RecipePage recipepage;
         AddRecipePage addRecipePage;
         ShoppingList shoppingList;
-        ListClass AllLists;
-
+  
 
 
         public MainWindow()
         {
             InitializeComponent();
-            AllLists = new ListClass();
             ingredientPage = new IngredientPage();
             recipepage = new RecipePage();
             addRecipePage = new AddRecipePage();
@@ -108,13 +106,13 @@ namespace ReceptApp
                                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                                 bitmapImage.StreamSource = memoryStream;
                                 bitmapImage.EndInit();
-                                AllLists.TempBild = bitmapImage;
+                                app.TempBild = bitmapImage;
                                 //AllLists.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + @"\Bilder\" + NyNamn.Text;
-                                ingredientPage.BildRuta.Source = AllLists.TempBild;
+                                ingredientPage.BildRuta.Source = app.TempBild;
                                 ingredientPage.BildRuta.Visibility = Visibility.Visible;
                                 ingredientPage.BindadBild.Visibility = Visibility.Collapsed;
-                                AllLists.HasAddedImage = true;
-                                AllLists.HasExtension = false;
+                                app.HasAddedImage = true;
+                                app.HasExtension = false;
                             }
                         }
 
