@@ -14,7 +14,7 @@
             <ColumnDefinition Width="5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0">
-            <TextBox x:Name="FilterTextbox" Height="25" Text="{Binding IngredientFilterText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_FilterText_Changed"/>
+            <TextBox x:Name="FilterTextbox" Height="25" Text="{Binding IngredientFilterText, UpdateSourceTrigger=PropertyChanged}"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
                 <ListView x:Name="ScrollIngrediens" ItemsSource="{Binding Ingredienslista}" SelectionChanged="IngredientList_SelectionChanged"
                       SelectionMode="Single" SelectedItem="{Binding ValdIngrediens}">

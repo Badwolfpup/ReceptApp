@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using ReceptApp.Pages;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ReceptApp
@@ -244,9 +246,56 @@ namespace ReceptApp
 
         public void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(Ingredienslista);
-            view.Filter = FilterMethod;
+            string filtertext = "";
+            if (sender is TextBox box)
+            {
+                DependencyObject parent = box as DependencyObject;
 
+                while (parent != null)
+                {
+                    parent = LogicalTreeHelper.GetParent(parent);
+                    if (parent is IngredientPage)
+                    {
+                        filtertext = IngredientFilterText;
+                        break;
+                    }
+                    else if (parent is AddRecipePage)
+                    {
+                        filtertext = AddRecipeFilterText;
+                        break;
+                    }
+                    else if (parent is RecipePage)
+                    {
+                        filtertext = RecipeFilterText;
+                        break;
+                    }
+                }
+
+                if (parent is IngredientPage || parent is AddRecipePage)
+                {
+                    ICollectionView view = CollectionViewSource.GetDefaultView(Ingredienslista);
+                    view.Filter = obj =>
+                    {
+                        if (obj is Ingrediens ingrediens)
+                        {
+                            return ingrediens.Namn.Contains(filtertext, StringComparison.OrdinalIgnoreCase);
+                        }
+                        return false;
+                    };
+                }
+                else if (parent is RecipePage)
+                {
+                    ICollectionView view = CollectionViewSource.GetDefaultView(ReceptLista);
+                    view.Filter = obj =>
+                    {
+                        if (obj is Recept recept)
+                        {
+                            return recept.Namn.Contains(filtertext, StringComparison.OrdinalIgnoreCase);
+                        }
+                        return false;
+                    };
+                }
+            }
         }
 
         public bool FilterMethod(object obj)

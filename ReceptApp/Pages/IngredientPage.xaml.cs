@@ -39,18 +39,20 @@ namespace ReceptApp.Pages
         {
             InitializeComponent();
             DataContext = app;
-        }
-
-
-        private void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
-        {
-            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
-            view.Filter = FilterMethod;
+            FilterTextbox.TextChanged += ((App)Application.Current).TextBox_FilterText_Changed;
 
         }
 
 
-        private bool FilterMethod(object obj) => obj is Ingrediens ingrediens && ingrediens.Namn.Contains(app.IngredientFilterText, StringComparison.OrdinalIgnoreCase);
+        //private void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
+        //{
+        //    ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
+        //    view.Filter = FilterMethod;
+
+        //}
+
+
+        //private bool FilterMethod(object obj) => obj is Ingrediens ingrediens && ingrediens.Namn.Contains(app.IngredientFilterText, StringComparison.OrdinalIgnoreCase);
 
 
 

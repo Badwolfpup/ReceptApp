@@ -1,4 +1,5 @@
 ﻿Att göra:
+Fixa RecipeFilterText o den andra såa tt de blir lokala för sin page och uppdatera logiken i filtermetoden i App.xaml.cs
 Flytta alla valueconverter till App
 Fixa ValueConverter så att värdet i textboxen ändras utifrån valet i combobox ??Shoppinglist??
 Dölja comboboxen och textboxen ??Shoppinglist??

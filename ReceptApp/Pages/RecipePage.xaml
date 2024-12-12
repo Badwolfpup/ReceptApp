@@ -17,7 +17,7 @@
         </Grid.ColumnDefinitions>
         
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0" >
-            <TextBox Height="25" x:Name="FilterTextboxRecept" TextChanged="FilterTextboxRecept_TextChanged"/>
+            <TextBox Height="25" x:Name="FilterTextboxRecept" Text="{Binding RecipeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
                 <ListView x:Name="ScrollRecept" ItemsSource="{Binding ReceptLista}" SelectionMode="Single" SelectedItem="{Binding ValtRecept}" SelectedIndex="0">
                     <ListView.ItemsPanel>

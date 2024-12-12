@@ -30,6 +30,8 @@ namespace ReceptApp.Pages
         {
             InitializeComponent();
             DataContext = app;
+            FilterTextboxRecept.TextChanged += ((App)Application.Current).TextBox_FilterText_Changed;
+
         }
 
 
@@ -43,20 +45,20 @@ namespace ReceptApp.Pages
             }
         }
 
-        private void FilterTextboxRecept_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
-            view.Filter = FilterMethod;
-        }
+        //private void FilterTextboxRecept_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
+        //    view.Filter = FilterMethod;
+        //}
 
-        private bool FilterMethod(object obj)
-        {
-            if (obj is Recept recept)
-            {
-                return recept.Namn.Contains(app.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
-            }
-            return false;
-        }
+        //private bool FilterMethod(object obj)
+        //{
+        //    if (obj is Recept recept)
+        //    {
+        //        return recept.Namn.Contains(app.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
+        //    }
+        //    return false;
+        //}
 
         private void AddAllToCart_Click(object sender, RoutedEventArgs e)
         {
