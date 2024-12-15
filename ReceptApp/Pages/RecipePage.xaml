@@ -68,6 +68,9 @@
                     <Button Margin="10 0 0 0" Width="40" Click="AddAllToCart_Click">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;" />
                     </Button>
+                    <Button Margin="10 0 0 0" Width="40" Click="EditRecept_Click">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70F;" />
+                    </Button>
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" Margin="0,5,0,0">
                     <ItemsControl ItemsSource="{Binding ValtRecept.ReceptIngredienser}">
@@ -80,9 +83,13 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock FontFamily="Roboto" FontSize="16">
-                                        <Run Text="{Binding Mängd, Converter={StaticResource RoundedNumber}}"></Run>                                          
-                                        <Run Text="{Binding Mått}"></Run>
-                                        <Run Text="{Binding Ingrediens.Namn}"></Run>
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource MåttOchMängd}">
+                                                <Binding Path="Mängd"></Binding>
+                                                <Binding Path="Mått"></Binding>
+                                                <Binding Path="Ingrediens.Namn"></Binding>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
                                     </TextBlock>
                                     <Button Margin="10 0 0 0" Click="AddToCart_Click">
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;"></TextBlock>
@@ -102,7 +109,7 @@
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
+
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -113,15 +120,13 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="Kalorier"></TextBlock>
                 <TextBlock Grid.Column="0" Grid.Row="3" Text="Kolhydrater"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="Varav socker" Margin="0,0,5,0"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Fett"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Protein"></TextBlock>
 
                 <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ValtRecept.PortionKalori, Converter={StaticResource RoundedNumber}}"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ValtRecept.PortionKolhydrat, Converter={StaticResource RoundedNumber}}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionSocker, Converter={StaticResource RoundedNumber}}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionFett, Converter={StaticResource RoundedNumber}}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding ValtRecept.PortionProtein, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ValtRecept.PortionFett, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding ValtRecept.PortionProtein, Converter={StaticResource RoundedNumber}}"></TextBlock>
 
             </Grid>
         </Grid>

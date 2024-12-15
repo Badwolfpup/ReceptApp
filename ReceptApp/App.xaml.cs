@@ -34,9 +34,11 @@ namespace ReceptApp
             Ingredienslista = SaveLoad.LoadIngrediens("Ingrediens");
             ReceptLista = SaveLoad.LoadRecept("Recept");
             ShoppingIngredienser = new ObservableCollection<ReceptIngrediens>();
-            if (Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
+            ValdReceptIngrediens = new ReceptIngrediens();
+            if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
             Nyttrecept = new Recept(Antalportioner);
-            if (ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(Antalportioner);
+            if (ReceptLista!= null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(Antalportioner);
+            ValdIngrediensIRecept = new Ingrediens();
         }
 
 
@@ -84,6 +86,20 @@ namespace ReceptApp
             }
         }
 
+        private ReceptIngrediens _valdreceptingrediens; //Selected receptingrediens i Lägg till recept
+        public ReceptIngrediens ValdReceptIngrediens
+        {
+            get => _valdreceptingrediens;
+            set
+            {
+                if (_valdreceptingrediens != value)
+                {
+                    _valdreceptingrediens = value;
+                    OnPropertyChanged(nameof(ValdReceptIngrediens));
+                }
+            }
+        }
+
         private Ingrediens _valdingrediens;
         public Ingrediens ValdIngrediens
         {
@@ -98,16 +114,16 @@ namespace ReceptApp
             }
         }
 
-        private Ingrediens _valdLäggTillIRecptIngrediens;
-        public Ingrediens ValdLäggTillIRecptIngrediens
+        private Ingrediens _valdIngrediensIRecept;
+        public Ingrediens ValdIngrediensIRecept
         {
-            get => _valdLäggTillIRecptIngrediens;
+            get => _valdIngrediensIRecept;
             set
             {
-                if (_valdLäggTillIRecptIngrediens != value)
+                if (_valdIngrediensIRecept != value)
                 {
-                    _valdLäggTillIRecptIngrediens = value;
-                    OnPropertyChanged(nameof(ValdLäggTillIRecptIngrediens));
+                    _valdIngrediensIRecept = value;
+                    OnPropertyChanged(nameof(ValdIngrediensIRecept));
                 }
             }
         }
@@ -140,6 +156,7 @@ namespace ReceptApp
                 }
             }
         }
+
 
         private int _antalportioner = 4;
         public int Antalportioner
@@ -298,14 +315,8 @@ namespace ReceptApp
             }
         }
 
-        public bool FilterMethod(object obj)
-        {
-            if (obj is Ingrediens ingrediens)
-            {
-                return ingrediens.Namn.Contains(IngredientFilterText, StringComparison.OrdinalIgnoreCase);
-            }
-            return false;
-        }
+
+
     }
 
 
@@ -321,6 +332,23 @@ namespace ReceptApp
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MåttOchMängd : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            double mängd = values[0] is double ? (double)values[0] : 0;
+            string mått = values[1] is string ? (string)values[1] : "";
+            string namn = values[2] is string ? (string)values[2] : "";
+            string mängditext = mängd % 1 != 0 && mått != "g" ? (Math.Round(mängd * 2, MidpointRounding.AwayFromZero) / 2).ToString("0.0", culture) : mängd.ToString("0", culture);
+            return $"{mängditext} {mått} {namn}";
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

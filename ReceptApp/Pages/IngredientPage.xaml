@@ -74,34 +74,32 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Namn: " Grid.Column="0"></TextBlock>
-                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding ValdIngrediens.Namn}" HorizontalAlignment="Stretch" MaxWidth="150" PreviewKeyDown="NyNamn_PreviewNameInput"></TextBox>
+                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding ValdIngrediens.Namn}" HorizontalAlignment="Stretch" MaxWidth="150"></TextBox>
             </Grid>
             <TextBlock Text="Kalorier: " Grid.Column="0" Grid.Row="3"></TextBlock>
             <TextBlock Text="Kolhydrater: " Grid.Column="0" Grid.Row="4"></TextBlock>
-            <TextBlock Text="Varav socker: " Grid.Column="0" Grid.Row="5"></TextBlock>
-            <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="6"></TextBlock>
-            <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="7"></TextBlock>
+            <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="5"></TextBlock>
+            <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="6"></TextBlock>
 
-            <TextBox Name="NyKalori" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kalori}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NyKolhydrat" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kolhydrat}" Grid.Column="1" Grid.Row="4" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NySocker" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Socker}" Grid.Column="1" Grid.Row="5" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NyFett" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Fett}" Grid.Column="1" Grid.Row="6" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <TextBox Name="NyProtein" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Protein}" Grid.Column="1" Grid.Row="7" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
-            <Button x:Name="ButtonLäggTillIngrediens" Content="{Binding AddKnapp}" Grid.Column="0" Grid.Row="8" Margin="3" Padding="3" Height="25" Click="LäggTillIngrediens_Click"></Button>
+            <TextBox Name="NyKalori" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kalori, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyKolhydrat" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kolhydrat, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="4" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyFett" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Fett, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="5" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <TextBox Name="NyProtein" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Protein, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="6" PreviewTextInput="NyKalori_PreviewTextInput"></TextBox>
+            <Button x:Name="ButtonLäggTillIngrediens" Content="{Binding AddKnapp, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="8" Margin="3" Padding="3" Height="25" Click="LäggTillIngrediens_Click"></Button>
             <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Column="1" Grid.Row="8" Margin="3" Height="25" Visibility="Collapsed" Click="CancelTillIngrediens_Click"></Button>
 
             <UniformGrid Columns="2" Rows="4" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" >
-                <CheckBox Margin="0,0,0,0" x:Name="CheckBoxGramPerDL" Content="Gram per dl" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding HarGramPerDL}"></CheckBox>
-                <TextBox x:Name="TextBoxGramPerDL" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.GramPerDl}" IsEnabled="{Binding ElementName=CheckBoxGramPerDL, Path=IsChecked}"></TextBox>
+                <CheckBox Margin="0,0,0,0" x:Name="CheckBoxGramPerDL" Content="Gram per dl" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarGramPerDL, Mode=TwoWay}"></CheckBox>
+                <TextBox x:Name="TextBoxGramPerDL" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.GramPerDl, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramPerDL, Path=IsChecked}"></TextBox>
 
-                <CheckBox x:Name="CheckBoxGramLiten" Content="Gram liten" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding HarAntalLiten}"></CheckBox>
-                <TextBox x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Liten}" IsEnabled="{Binding ElementName=CheckBoxGramLiten, Path=IsChecked}" ></TextBox>
+                <CheckBox x:Name="CheckBoxGramLiten" Content="Gram liten" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarAntalLiten}"></CheckBox>
+                <TextBox x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Liten, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramLiten, Path=IsChecked}" ></TextBox>
 
-                <CheckBox x:Name="CheckBoxGramMedel" Content="Gram medel" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding HarAntalMedel}"></CheckBox>
-                <TextBox x:Name="TextBoxGramMedel" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Medel}" IsEnabled="{Binding ElementName=CheckBoxGramMedel, Path=IsChecked}" ></TextBox>
+                <CheckBox x:Name="CheckBoxGramMedel" Content="Gram medel" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarAntalMedel}"></CheckBox>
+                <TextBox x:Name="TextBoxGramMedel" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Medel, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramMedel, Path=IsChecked}" ></TextBox>
 
-                <CheckBox x:Name="CheckBoxGramStor" Content="Gram stor" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding HarAntalStor}"></CheckBox>
-                <TextBox x:Name="TextBoxGramStor" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Stor}" IsEnabled="{Binding ElementName=CheckBoxGramStor, Path=IsChecked}" ></TextBox>
+                <CheckBox x:Name="CheckBoxGramStor" Content="Gram stor" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarAntalStor}"></CheckBox>
+                <TextBox x:Name="TextBoxGramStor" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Stor, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramStor, Path=IsChecked}" ></TextBox>
             </UniformGrid>
         </Grid>
     </Grid>

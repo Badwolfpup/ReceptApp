@@ -14,7 +14,7 @@
             <ColumnDefinition Width="5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0">
-            <TextBox Height="25" x:Name="FilterTextboxNyttRecept" Text="{Binding AddRecipeFilterText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_FilterText_Changed"/>
+            <TextBox Height="25" x:Name="FilterTextboxNyttRecept" Text="{Binding AddRecipeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
                 <ListView x:Name="ScrollIngrediensNyttRecept" ItemsSource="{Binding Ingredienslista}" SelectionMode="Single" SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged">
                     <ListView.ItemTemplate>
@@ -46,14 +46,20 @@
                     <ColumnDefinition Width="2*"></ColumnDefinition>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding ElementName=ScrollIngrediensNyttRecept, Path=SelectedItem.Namn}" Margin="0,10,0,0"></TextBlock>
+                <TextBlock Grid.Column="0" Text="{Binding ValdIngrediensIRecept.Namn}" Margin="0,10,0,0"></TextBlock>
 
-                <ComboBox ItemsSource="{Binding ValdLäggTillIRecptIngrediens.ViktMått}" Name="ComboBoxMått" SelectedIndex="0" Grid.Column="1"></ComboBox>
-                <TextBox x:Name="TextBoxMått" Width="50" Grid.Column="2" PreviewTextInput="TextBoxMått_PreviewTextInput"></TextBox>
+                <ComboBox ItemsSource="{Binding ValdIngrediensIRecept.ViktMått}" Name="ComboBoxMått"  Grid.Column="1" SelectedIndex="0" SelectionChanged="ComboBoxMått_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox x:Name="TextBoxMått" Text="{Binding ValdReceptIngrediens.Mängd}" Width="50" Grid.Column="2" PreviewTextInput="TextBoxMått_PreviewTextInput"></TextBox>
             </Grid>
             <Button Grid.Row="3" Height="25"  Content="Lägg till ingrediens" Margin="0,10,0,0" Click="AddIngredient_Click" ></Button>
             <ScrollViewer Grid.Row="4" Margin="0,5,0,0" >
-                <ListView x:Name="ScrollTillagdaIngredienser" ItemsSource="{Binding Nyttrecept.ReceptIngredienser}">
+                <ListView x:Name="ScrollTillagdaIngredienser" ItemsSource="{Binding Nyttrecept.ReceptIngredienser}" SelectionChanged="ScrollTillagdaIngredienser_SelectionChanged" SelectedItem="{Binding ValdIngrediensAttLäggaTill}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <EventSetter Event="MouseRightButtonDown" Handler="ListViewItem_MouseRightButtonDown"></EventSetter>
@@ -73,9 +79,9 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock FontFamily="Roboto" FontSize="16">
-                                            <Run Text="{Binding Mängd}"></Run>                                          
-                                            <Run Text="{Binding Mått}"></Run>
-                                            <Run Text="{Binding Ingrediens.Namn}"></Run>
+                                            <Run Text="{Binding Mängd, UpdateSourceTrigger=PropertyChanged}"></Run>                                          
+                                            <Run Text="{Binding Mått, UpdateSourceTrigger=PropertyChanged}"></Run>
+                                            <Run Text="{Binding Ingrediens.Namn, UpdateSourceTrigger=PropertyChanged}"></Run>
                             </TextBlock>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -111,15 +117,13 @@
                 </StackPanel>
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="Kalorier"></TextBlock>
                 <TextBlock Grid.Column="0" Grid.Row="3" Text="Kolhydrater"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="Varav socker"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="5" Text="Fett"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="6" Text="Protein"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Fett"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Protein"></TextBlock>
 
                 <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Nyttrecept.PortionKalori, StringFormat=N2}"></TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Nyttrecept.PortionKolhydrat, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Nyttrecept.PortionSocker, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Nyttrecept.PortionFett, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Nyttrecept.PortionProtein, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Nyttrecept.PortionFett, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Nyttrecept.PortionProtein, StringFormat=N2}"></TextBlock>
 
             </Grid>
             <Grid Grid.Row="6" >

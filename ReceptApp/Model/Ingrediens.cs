@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ReceptApp.Model;
+using ReceptApp.Pages;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -12,6 +14,8 @@ namespace ReceptApp
 {
     public class Ingrediens : INotifyPropertyChanged, INotifyCollectionChanged
     {
+
+
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -23,78 +27,21 @@ namespace ReceptApp
         #endregion
 
         #region Properties
-        private string _namn;
-
-        private int _kalori;
-        private int _protein;
-        private int _kolhydrat;
-        private int _socker;
-        private int _fett;
-        private int _gramperdl;
-        private int _liten;
-        private int _medel;
-        private int _stor;
-        private string _bild;
-        private bool _harGramPerDL;
-        private bool _harAntalLiten;
-        private bool _harAntalMedel;
-        private bool _harAntalStor;
-
-        //public int ID { get; set; } för DB
-
-        public bool HarGramPerDL
+        private ObservableCollection<string> _viktMått; //Lista med viktmått
+        public ObservableCollection<string> ViktMått
         {
-            get => _harGramPerDL;
+            get { return _viktMått; }
             set
             {
-                if (_harGramPerDL != value)
+                if (_viktMått != value)
                 {
-                    _harGramPerDL = value;
-                    OnPropertyChanged(nameof(HarGramPerDL));
-                }
-            }
-        }
-        public bool HarAntalLiten
-        {
-            get => _harAntalLiten;
-            set
-            {
-                if (_harAntalLiten != value)
-                {
-                    _harAntalLiten = value;
-                    OnPropertyChanged(nameof(HarAntalLiten));
+                    _viktMått = value;
+                    OnPropertyChanged(nameof(ViktMått));
                 }
             }
         }
 
-        public bool HarAntalMedel
-        {
-            get => _harAntalMedel;
-            set
-            {
-                if (_harAntalMedel != value)
-                {
-                    _harAntalMedel = value;
-                    OnPropertyChanged(nameof(HarAntalMedel));
-                }
-            }
-        }
-
-        public bool HarAntalStor
-        {
-            get => _harAntalStor;
-            set
-            {
-                if (_harAntalStor != value)
-                {
-                    _harAntalStor = value;
-                    OnPropertyChanged(nameof(HarAntalStor));
-                }
-            }
-        }
-
-        public ObservableCollection<string> ViktMått { get; set; }
-
+        private string _namn; //Ingrediensens namn
         public string Namn
         {
             get { return _namn; }
@@ -107,6 +54,23 @@ namespace ReceptApp
                 }
             }
         }
+
+        private string _bild; //Gneväg till bild
+        public string Bild
+        {
+            get { return _bild; }
+            set
+            {
+                if (_bild != value)
+                {
+                    _bild = value;
+
+                    OnPropertyChanged(nameof(Bild));
+                }
+            }
+        }
+
+        private int _kalori; //Kalorier per 100g
         public int Kalori
         {
             get { return _kalori; }
@@ -119,6 +83,8 @@ namespace ReceptApp
                 }
             }
         }
+
+        private int _protein; //Protein per 100g
         public int Protein
         {
             get { return _protein; }
@@ -131,6 +97,8 @@ namespace ReceptApp
                 }
             }
         }
+
+        private int _kolhydrat; //Kolhydrater per 100g
         public int Kolhydrat
         {
             get { return _kolhydrat; }
@@ -143,18 +111,8 @@ namespace ReceptApp
                 }
             }
         }
-        public int Socker
-        {
-            get { return _socker; }
-            set
-            {
-                if (_socker != value)
-                {
-                    _socker = value;
-                    OnPropertyChanged(nameof(Socker));
-                }
-            }
-        }
+
+        private int _fett; //Fett per 100g
         public int Fett
         {
             get { return _fett; }
@@ -168,6 +126,7 @@ namespace ReceptApp
             }
         }
 
+        private int _gramperdl; //Gram per deciliter
         public int GramPerDl
         {
             get { return _gramperdl; }
@@ -181,6 +140,8 @@ namespace ReceptApp
                 }
             }
         }
+
+        private int _liten; //Vikt för liten storlek av ingreiensen
         public int Liten
         {
             get { return _liten; }
@@ -194,6 +155,8 @@ namespace ReceptApp
                 }
             }
         }
+
+        private int _medel; //Vikt för medel storlek av ingrediensen
         public int Medel
         {
             get { return _medel; }
@@ -208,6 +171,8 @@ namespace ReceptApp
 
             }
         }
+
+        private int _stor; //Vikt för stor storlek av ingrediensen
         public int Stor
         {
             get { return _stor; }
@@ -221,26 +186,89 @@ namespace ReceptApp
                 }
             }
         }
-        public string Bild
+
+        //private double _mängd; //Mängd av ingrediensen
+        //public double Mängd
+        //{
+        //    get { return _mängd; }
+        //    set
+        //    {
+        //        if (_mängd != value)
+        //        {
+        //            _mängd = value;
+        //            OnPropertyChanged(nameof(Mängd));
+
+        //        }
+        //    }
+        //}
+
+        private bool _harGramPerDL; //Om gram per deciliter har ett värde och att checkoboxen ska vara ibockad
+        public bool HarGramPerDL
         {
-            get { return _bild; }
+            get => _harGramPerDL;
             set
             {
-                if (_bild != value)
+                if (_harGramPerDL != value)
                 {
-                    _bild = value;
-                    
-                    OnPropertyChanged(nameof(Bild));
+                    _harGramPerDL = value;
+                    OnPropertyChanged(nameof(HarGramPerDL));
                 }
             }
         }
+
+        private bool _harAntalLiten; //Om liten har ett värde och att checkoboxen ska vara ibockad
+        public bool HarAntalLiten
+        {
+            get => _harAntalLiten;
+            set
+            {
+                if (_harAntalLiten != value)
+                {
+                    _harAntalLiten = value;
+                    OnPropertyChanged(nameof(HarAntalLiten));
+                }
+            }
+        }
+
+        private bool _harAntalMedel; //Om medel har ett värde och att checkoboxen ska vara ibockad
+        public bool HarAntalMedel
+        {
+            get => _harAntalMedel;
+            set
+            {
+                if (_harAntalMedel != value)
+                {
+                    _harAntalMedel = value;
+                    OnPropertyChanged(nameof(HarAntalMedel));
+                }
+            }
+        }
+
+        private bool _harAntalStor; //Om stor har ett värde och att checkoboxen ska vara ibockad
+        public bool HarAntalStor
+        {
+            get => _harAntalStor;
+            set
+            {
+                if (_harAntalStor != value)
+                {
+                    _harAntalStor = value;
+                    OnPropertyChanged(nameof(HarAntalStor));
+                }
+            }
+        }
+
+        public double AntalGram { get; set; } //Det relativa av ingrediensens tillagda vikt i förhållande till 100g. Ex 125g = 1,25
+
+
+
         #endregion
 
 
         public Ingrediens()
         {
             ViktMått = new ObservableCollection<string>();
-            //if (!ViktMått.Contains("Gram")) ViktMått.Add("Gram");
+            if (!ViktMått.Any(x => x == "Gram")) ViktMått.Add("Gram");
             ViktMått.CollectionChanged += ViktMått_CollectionChanged;
         }
 
@@ -249,20 +277,23 @@ namespace ReceptApp
             TaBortExtraGram();
         }
 
+        //Tar bort gram från viktmått om det finns fler än ett
         private void TaBortExtraGram()
         {
             if (ViktMått.Count(x => x == "Gram") > 1)
             {
-                ViktMått.Remove("Gram");
+                var item = ViktMått.FirstOrDefault(x => x == "Gram");
+                if (item != default) ViktMått.Remove(item);
             }
         }
 
+        //Lägger till Deciliter, Matsked, Tesked och Kryddmått i viktmått om GramPerDl har ett värde
         private void LäggTillGramPerDL()
         {
             if (GramPerDl > 0)
             {
                 HarGramPerDL = true;
-                if (!ViktMått.Contains("Deciliter"))
+                if (!ViktMått.Any(x => x == "Deciliter"))
                 {
                     ViktMått.Add("Deciliter");
                     ViktMått.Add("Matsked");
@@ -273,7 +304,7 @@ namespace ReceptApp
             else
             {
                 HarGramPerDL = false;
-                if (ViktMått.Contains("Deciliter"))
+                if (ViktMått.Any(x => x == "Deciliter"))
                 {
                     ViktMått.Remove("Deciliter");
                     ViktMått.Remove("Matsked");
@@ -283,48 +314,54 @@ namespace ReceptApp
             }
         }
 
+        //Lägger till Antal liten i viktmått om Liten har ett värde
         private void LäggTillAntalLiten()
         {
             if (Liten > 0)
             {
                 HarAntalLiten = true;
-                if (!ViktMått.Contains("Antal liten")) ViktMått.Add("Antal liten");
+                if (!ViktMått.Any(x => x == "Antal liten")) ViktMått.Add("Antal liten");
             }
             else 
             {
                 HarAntalLiten = false;
-                if (ViktMått.Contains("Antal liten")) ViktMått.Remove("Antal liten"); 
+                if (ViktMått.Any(x => x == "Antal liten")) ViktMått.Remove("Antal liten"); 
             }
 
         }
 
-        private void LäggTillAntalMedel()
+        //Lägger till Antal medel i viktmått om Medel har ett värde
+        private void LäggTillAntalMedel()   
         {
             if (Medel > 0)
             {
                 HarAntalMedel = true;
-                if (!ViktMått.Contains("Antal medel")) ViktMått.Add("Antal medel");
+                if (!ViktMått.Any(x => x == "Antal medel")) ViktMått.Add("Antal medel");
             }
             else
             {
                 HarAntalMedel = false;
-                if (ViktMått.Contains("Antal medel")) ViktMått.Remove("Antal medel");
+                if (ViktMått.Any(x => x == "Antal medel")) ViktMått.Remove("Antal medel");
             }
         }
 
+        //Lägger till Antal stor i viktmått om Stor har ett värde
         private void LäggTillAntalStor()
         {
             if (Stor > 0)
             {
                 HarAntalStor = true;
-                if (!ViktMått.Contains("Antal stor")) ViktMått.Add("Antal stor");
+                if (!ViktMått.Any(x => x == "Antal stor")) ViktMått.Add("Antal stor");
             }
             else
             {
                 HarAntalStor = false;
-                if (ViktMått.Contains("Antal stor")) ViktMått.Remove("Antal stor");
+                if (ViktMått.Any(x => x == "Antal stor")) ViktMått.Remove("Antal stor");
             }
         }
+
+
+
 
     }
 }

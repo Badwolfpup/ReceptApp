@@ -1,15 +1,13 @@
 ﻿Att göra:
-Fixa RecipeFilterText o den andra såa tt de blir lokala för sin page och uppdatera logiken i filtermetoden i App.xaml.cs
-Flytta alla valueconverter till App
 Fixa ValueConverter så att värdet i textboxen ändras utifrån valet i combobox ??Shoppinglist??
 Dölja comboboxen och textboxen ??Shoppinglist??
 Fixa till lista som kan kopieras och klistras in i textdokument ??Shoppinglist??
+Lägg till flik veckomeny där man kan skapa en större shoppinglista
 
-Fix så att det sparas i json varje gång det förändras, lägg till i onpropertychanged
-(*OSTESTAD*) Gör så att checkboxes är ikryssade om har värde på ingrediens
-Fixa så att värde för dl och antal justeras efter antal portioner i receptvyn
+Fundera hur man kan centralisera savemedtoder
+Fixa så att man kan välja från tillagda ingredienser i addrecipe och ändra mått o mängd
 *FIXAD??*Fixa till designen, tex teckensnitt, färger, storlek på text, layout
-
+****Fundera på att ändra alla listklasser till att impolementera interace och implementera gemensamma metoder och properties
 
 Fixat
 Fixa så att man kan byta/lägga till bilder efte ratt man har lagt till en ingrediens - kan bara lägga till vid ny ingrediens. Måste ta bort och lägga till ny om byta bild.
@@ -31,6 +29,12 @@ Flytta alla listor till App.xaml.cs och uppdatera alla referenser
 Gör ListClass till static
 Flytta all style och events som är globala till App.xaml
 Ändra så man kan ha 1 decimal i vissa inmatningsrutor i skapa recept - kolla om funkar med vanligt tangentbord
+Flytta alla valueconverter till App
+Fix så att det sparas i json varje gång det förändras, lägg till i onpropertychanged
+Gör så att checkboxes är ikryssade om har värde på ingrediens
+Fixa så Lägg till möjlighet att ändra på recept
+
 
 (*OTESTAD*) Töm antalgram rutan vid ny ingrediens
+(Blir onödigt komplicerat)Fixa RecipeFilterText o den andra såa tt de blir lokala för sin page och uppdatera logiken i filtermetoden i App.xaml.cs
 

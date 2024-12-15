@@ -71,6 +71,14 @@ namespace ReceptApp
         {
             if (!hasExtension) fileextension = ".png";
             filnamn += fileextension;
+
+            string bildfolder = _folderpath + @"\Bilder\";
+            if (!Directory.Exists(bildfolder)) Directory.CreateDirectory(bildfolder);
+
+            string filePath = Path.Combine(bildfolder, filnamn);
+
+            var file = Directory.GetFiles(bildfolder, filnamn);
+            if (file.Any()) return;
             if (img != null && !string.IsNullOrEmpty(filnamn))
             {
                 // Create a new BitmapEncoder
@@ -82,10 +90,8 @@ namespace ReceptApp
                     // Encode the BitmapImage and write the encoded data to the MemoryStream
                     encoder.Frames.Add(BitmapFrame.Create(img));
                     encoder.Save(memoryStream);
-                    string bildfolder = _folderpath + @"\Bilder\";
-                    if (!Directory.Exists(bildfolder)) Directory.CreateDirectory(bildfolder);
-                    string filePath = Path.Combine(bildfolder, filnamn);
-                    if (!Directory.Exists(_folderpath)) { Directory.CreateDirectory(_folderpath); }
+                    
+                    
                     // Write the encoded data from the MemoryStream to the file
                     File.WriteAllBytes(filePath, memoryStream.ToArray());
                 }

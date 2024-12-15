@@ -1,28 +1,33 @@
-﻿using System;
+﻿using ReceptApp.Model;
+using ReceptApp.Pages;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ReceptApp
 {
     public class ReceptIngrediens: INotifyPropertyChanged
     {
+
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
-        private double _mängd;
         public Ingrediens Ingrediens { get; set; }
-        public string Mått { get; set; }
 
+        private double _mängd;
         public double Mängd 
         {
             get { return _mängd; }
@@ -31,39 +36,86 @@ namespace ReceptApp
                 if (_mängd != value)
                 {
                     _mängd = value;
+                    BeräknaAntalGram();
                     OnPropertyChanged(nameof(Mängd));
+
                 }
             }
         }
 
+        private string _mått; //Valy mått för ingrediensen
+        public string Mått
+        {
+            get { return _mått; }
+            set
+            {
+                if (_mått != value)
+                {
+                    _mått = value;
+                    BeräknaAntalGram();
+                    OnPropertyChanged(nameof(Mått));
+                }
+            }
+        }
 
         public double AntalGram { get; set; }
 
         public ReceptIngrediens(Ingrediens ingrediens, string mått, double mängd)
         {
             Ingrediens = ingrediens;
-            Mått = mått;
             Mängd = mängd;
-            AntalGram = BeräknaAntalGram(); //Relativt till 100g, ex 125g = 1,25
+            Mått = mått;
+            BeräknaAntalGram(); //Relativt till 100g, ex 125g = 1,25
         }
 
-        public double BeräknaAntalGram()
+        public ReceptIngrediens()
         {
-            switch(Mått)
+        }
+
+        public void LäggTillInfo(Ingrediens ingrediens, string mått, double mängd)
+        {
+            Ingrediens = ingrediens;
+            Mängd = mängd;
+            Mått = mått;
+            BeräknaAntalGram(); //Relativt till 100g, ex 125g = 1,25
+        }
+
+        //Beräknar det relativa antalet gram av ingrediensen beroende på valt viktmått
+        public void BeräknaAntalGram()
+        {
+
+            switch (Mått)
             {
-                case "g": return Mängd / 100.0;                   
-                case "dl": return (Ingrediens.GramPerDl * Mängd) / 100.0;
-                case "msk": return (Ingrediens.GramPerDl * Mängd * 15 / 100) / 100.0;
-                case "tsk": return (Ingrediens.GramPerDl * Mängd * 5 / 100) / 100.0;
-                case "krm": return (Ingrediens.GramPerDl * Mängd / 100) / 100.0;
-                case "liten": return (Ingrediens.Liten * Mängd) / 100.0;
-                case "små": return (Ingrediens.Liten * Mängd) / 100.0;
-                case "medelstor": return (Ingrediens.Medel * Mängd) / 100.0;
-                case "medelstora": return (Ingrediens.Medel * Mängd) / 100.0;
-                case "stor": return (Ingrediens.Stor * Mängd) / 100.0;
-                case "stora": return (Ingrediens.Stor * Mängd) / 100.0;
-                default: return 0;
+                case "g": AntalGram = Mängd / 100.0; break;
+                case "dl": AntalGram = (Ingrediens.GramPerDl * Mängd) / 100.0; break;
+                case "msk": AntalGram = (Ingrediens.GramPerDl * Mängd * 15 / 100) / 100.0; break;
+                case "tsk": AntalGram = (Ingrediens.GramPerDl * Mängd * 5 / 100) / 100.0; break;
+                case "krm": AntalGram = (Ingrediens.GramPerDl * Mängd / 100) / 100.0; break;
+                case "liten": AntalGram = (Ingrediens.Liten * Mängd) / 100.0; break;
+                case "små": AntalGram = (Ingrediens.Liten * Mängd) / 100.0; break;
+                case "medelstor": AntalGram = (Ingrediens.Medel * Mängd) / 100.0; break;
+                case "medelstora": AntalGram = (Ingrediens.Medel * Mängd) / 100.0; break;
+                case "stor": AntalGram = (Ingrediens.Stor * Mängd) / 100.0; break;
+                case "stora": AntalGram = (Ingrediens.Stor * Mängd) / 100.0; break;
+                default: AntalGram = 0; break;
             }
         }
+
+        public string KonverteraMåttTillText(string text)
+        {
+            switch (text)
+            {
+                case "Gram": return "g";
+                case "Deciliter": return "dl";
+                case "Matsked": return "msk";
+                case "Tesked": return "tsk";
+                case "Kryddmått": return "krm";
+                case "Antal stor": if (Mängd > 1) return "stora"; else return "stor";
+                case "Antal medel": if (Mängd > 1) return "medelstora"; else return "medelstor";
+                case "Antal liten": if (Mängd > 1) return "små"; else return "liten";
+                default: return "";
+            }
+        }
+
     }
 }

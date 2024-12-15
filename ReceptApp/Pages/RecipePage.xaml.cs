@@ -45,26 +45,12 @@ namespace ReceptApp.Pages
             }
         }
 
-        //private void FilterTextboxRecept_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
-        //    view.Filter = FilterMethod;
-        //}
-
-        //private bool FilterMethod(object obj)
-        //{
-        //    if (obj is Recept recept)
-        //    {
-        //        return recept.Namn.Contains(app.RecipeFilterText, StringComparison.OrdinalIgnoreCase);
-        //    }
-        //    return false;
-        //}
 
         private void AddAllToCart_Click(object sender, RoutedEventArgs e)
         {
             foreach (ReceptIngrediens i in app.ValtRecept.ReceptIngredienser)
             {
-                app.ShoppingIngredienser.Add(i);
+                //app.ShoppingIngredienser.Add(i);
             }
         }
 
@@ -78,7 +64,16 @@ namespace ReceptApp.Pages
                 }
             }
         }
-    }
 
-    
+        private void EditRecept_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+                mainWindow.ContentFrame.Navigate(new AddRecipePage());
+                app.Nyttrecept = app.ValtRecept;
+               
+            }
+        }
+    }   
 }

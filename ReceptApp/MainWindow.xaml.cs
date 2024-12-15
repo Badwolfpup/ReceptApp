@@ -49,7 +49,6 @@ namespace ReceptApp
             addRecipePage = new AddRecipePage();
             shoppingList = new ShoppingList();
             ContentFrame.Navigate(ingredientPage);
-
             
         }
 

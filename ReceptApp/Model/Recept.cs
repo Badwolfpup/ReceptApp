@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReceptApp.Pages;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -6,15 +7,18 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ReceptApp
 {
     public class Recept: INotifyPropertyChanged, INotifyCollectionChanged
     {
+
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -22,7 +26,6 @@ namespace ReceptApp
         #endregion
 
         private ObservableCollection<ReceptIngrediens>? _receptingredienser;
-
         public ObservableCollection<ReceptIngrediens> ReceptIngredienser
         {
             get {  return _receptingredienser;}
@@ -37,7 +40,6 @@ namespace ReceptApp
         }
 
         private string _namn;
-
         public string Namn
         {
             get { return _namn; }
@@ -53,9 +55,6 @@ namespace ReceptApp
         }
 
         private int _antalportioner;
-
-        private int _tidigareantalportioner;
-
         public int Antalportioner
         {
             get { return _antalportioner; }
@@ -66,18 +65,14 @@ namespace ReceptApp
                     _tidigareantalportioner = _antalportioner;
                     _antalportioner = value;
                     BeräknaIngrediensMängd();
-                    BeräknaVärden();
+                    //BeräknaVärden();
                     OnPropertyChanged(nameof(Antalportioner));
                 }
             }
         }
 
         private double _portionkalori;
-        private double _portionkolhydrat;
-        private double _portionsocker; 
-        private double _portionfett;
-        private double _portionprotein;
-        public double PortionKalori 
+        public double PortionKalori
         {
             get { return _portionkalori; }
             set
@@ -91,7 +86,8 @@ namespace ReceptApp
             }
         }
 
-        public double PortionKolhydrat 
+        private double _portionkolhydrat;
+        public double PortionKolhydrat
         {
             get { return _portionkolhydrat; }
             set
@@ -104,20 +100,9 @@ namespace ReceptApp
 
             }
         }
-        public double PortionSocker 
-        {
-            get { return _portionsocker; }
-            set
-            {
-                if (_portionkolhydrat != value)
-                {
-                    _portionsocker = value;
-                    OnPropertyChanged(nameof(PortionSocker));
-                }
 
-            }
-        }
-        public double PortionFett 
+        private double _portionfett;
+        public double PortionFett
         {
             get { return _portionfett; }
             set
@@ -130,6 +115,8 @@ namespace ReceptApp
 
             }
         }
+
+        private double _portionprotein;
         public double PortionProtein 
         {
             get { return _portionprotein; }
@@ -144,6 +131,7 @@ namespace ReceptApp
             }
         }
 
+        private int _tidigareantalportioner;
 
 
         public Recept(int antalportioner)
@@ -152,7 +140,9 @@ namespace ReceptApp
             Antalportioner = antalportioner;
             _tidigareantalportioner = antalportioner;
             ReceptIngredienser.CollectionChanged += KaloriPortion_CollectionChanged;
-            
+            BeräknaVärden();
+
+
         }
 
         private void KaloriPortion_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -162,22 +152,23 @@ namespace ReceptApp
 
         public void BeräknaVärden()
         {
-            PortionKalori = 0; PortionProtein = 0; PortionFett = 0; PortionKolhydrat = 0; PortionSocker = 0;
+            PortionKalori = 0; PortionProtein = 0; PortionFett = 0; PortionKolhydrat = 0;;
             foreach (var item in ReceptIngredienser)
             {
-                PortionKalori += item.Ingrediens.Kalori * item.AntalGram / Antalportioner;
-                PortionKolhydrat += item.Ingrediens.Kolhydrat * item.AntalGram / Antalportioner;
-                PortionSocker += item.Ingrediens.Socker * item.AntalGram / Antalportioner;
-                PortionFett += item.Ingrediens.Fett * item.AntalGram / Antalportioner;
-                PortionProtein += item.Ingrediens.Protein * item.AntalGram / Antalportioner;
+
+                    PortionKalori += item.Ingrediens.Kalori * item.AntalGram / Antalportioner;
+                    PortionKolhydrat += item.Ingrediens.Kolhydrat * item.AntalGram / Antalportioner;
+                    PortionFett += item.Ingrediens.Fett * item.AntalGram / Antalportioner;
+                    PortionProtein += item.Ingrediens.Protein * item.AntalGram / Antalportioner;
+                
             }
         }
 
         private void BeräknaIngrediensMängd()
         {
-            foreach (var item in ReceptIngredienser)
+            foreach (var ingrediens in ReceptIngredienser)
             {
-                item.Mängd = item.Mängd / _tidigareantalportioner * _antalportioner;
+                ingrediens.Mängd = ingrediens.Mängd / _tidigareantalportioner * _antalportioner;
             }
         }
 
