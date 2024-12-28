@@ -43,6 +43,12 @@ namespace ReceptApp.Pages
             InitializeComponent();
             DataContext = app;
             FilterTextboxNyttRecept.TextChanged += ((App)Application.Current).TextBox_FilterText_Changed;
+            Loaded += AddRecipePage_Loaded;
+        }
+
+        private void AddRecipePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            app.Nyttrecept.BeräknaVärden();
         }
 
 
@@ -52,8 +58,9 @@ namespace ReceptApp.Pages
             //var listview = sender as ListView;
             if (sender is ListView listview && listview.SelectedItem is Ingrediens i)
             {
+                app.ValdReceptIngrediens = new ReceptIngrediens();
                 app.ValdIngrediensIRecept = i;
-                app.ValdReceptIngrediens.LäggTillInfo(i, "Gram", 0);
+                ComboBoxMått.SelectedIndex = 0;
             }
         }
 
@@ -66,9 +73,13 @@ namespace ReceptApp.Pages
                 {
                     MessageBox.Show("Du har inte valt en ingrediens eller försöker du lägga till en dublett"); return;
                 }
+                app.ValdReceptIngrediens.Mått = app.ValdReceptIngrediens.KonverteraMåttTillText(ComboBoxMått.Text);
+                app.ValdReceptIngrediens.Ingrediens = app.ValdIngrediensIRecept;
                 app.Nyttrecept.ReceptIngredienser.Add(app.ValdReceptIngrediens);
-                app.ValdIngrediensIRecept = new Ingrediens();
                 ScrollTillagdaIngredienser.SelectedItem = app.ValdReceptIngrediens;
+                app.ValdIngrediensIRecept.ÄrTillagdIRecept = true;
+                app.ValdIngrediensIRecept = new Ingrediens();
+                app.ValdReceptIngrediens = new ReceptIngrediens();
             }
             else MessageBox.Show("Du behöver ange hur mycket");
         }
@@ -89,8 +100,10 @@ namespace ReceptApp.Pages
         {
             ReceptIngrediens i = ScrollTillagdaIngredienser.SelectedItem as ReceptIngrediens;
             if (i == null) return;
+            i.Ingrediens.ÄrTillagdIRecept = false;
+            int index = app.Nyttrecept.ReceptIngredienser.IndexOf(i);
             app.Nyttrecept.ReceptIngredienser.Remove(i);
-            //SaveLoad.Save("Ingrediens", Ingredienslista);
+            app.ValdReceptIngrediens = app.Nyttrecept.ReceptIngredienser.Count == 0 ? app.ValdReceptIngrediens = new ReceptIngrediens() : (index >= app.Nyttrecept.ReceptIngredienser.Count ? app.Nyttrecept.ReceptIngredienser[app.Nyttrecept.ReceptIngredienser.Count - 1] : app.Nyttrecept.ReceptIngredienser[index]);
         }
 
         private void ListViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -114,10 +127,13 @@ namespace ReceptApp.Pages
         private void Läggtillrecept_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(TextBoxNyReceptNamn.Text))
-            {
-                
+            {                
                 app.ReceptLista.Add(app.Nyttrecept);
-                SaveLoad.SaveRecept("Recept", app.ReceptLista);
+                foreach (var item in app.Nyttrecept.ReceptIngredienser)
+                {
+                    item.Ingrediens.ÄrTillagdIRecept = false;
+                }
+                //SaveLoad.SaveRecept("Recept", app.ReceptLista);
                 app.ValtRecept = app.Nyttrecept;
                 app.Nyttrecept = new Recept(4);
                 ScrollIngrediensNyttRecept.SelectedItem = null;
@@ -138,22 +154,24 @@ namespace ReceptApp.Pages
             if (sender is ListView listview && listview.SelectedItem is ReceptIngrediens i)
             {
                 app.ValdReceptIngrediens = i;
+                app.ValdIngrediensIRecept = i.Ingrediens;
                 //ComboBoxMått.SelectedItem = i.Mått;
                 //TextBoxMått.Text = i.Mängd.ToString();
-                //switch (i.Mått)
-                //{
-                //    case "g": ComboBoxMått.SelectedItem = "Gram"; break;
-                //    case "dl": ComboBoxMått.SelectedItem = "Deciliter"; break;
-                //    case "msk": ComboBoxMått.SelectedItem = "Matsked"; break;
-                //    case "tsk": ComboBoxMått.SelectedItem = "Tesked"; break;
-                //    case "krm": ComboBoxMått.SelectedItem = "Kryddmått"; break;
-                //    case "stora": ComboBoxMått.SelectedItem = "Antal stor"; break;
-                //    case "stor": ComboBoxMått.SelectedItem = "Antal stor"; break;
-                //    case "medelstora": ComboBoxMått.SelectedItem = "Antal medel"; break;
-                //    case "medelstor": ComboBoxMått.SelectedItem = "Antal medel"; break;
-                //    case "små": ComboBoxMått.SelectedItem = "Antal liten"; break;
-                //    case "liten": ComboBoxMått.SelectedItem = "Antal liten"; break;
-                //}
+                switch (i.Mått)
+                {
+                    case "g": ComboBoxMått.SelectedItem = "Gram"; break;
+                    case "dl": ComboBoxMått.SelectedItem = "Deciliter"; break;
+                    case "msk": ComboBoxMått.SelectedItem = "Matsked"; break;
+                    case "tsk": ComboBoxMått.SelectedItem = "Tesked"; break;
+                    case "krm": ComboBoxMått.SelectedItem = "Kryddmått"; break;
+                    case "st": ComboBoxMått.SelectedItem = "Sttycken"; break;
+                    case "stora": ComboBoxMått.SelectedItem = "Antal stor"; break;
+                    case "stor": ComboBoxMått.SelectedItem = "Antal stor"; break;
+                    case "medelstora": ComboBoxMått.SelectedItem = "Antal medel"; break;
+                    case "medelstor": ComboBoxMått.SelectedItem = "Antal medel"; break;
+                    case "små": ComboBoxMått.SelectedItem = "Antal liten"; break;
+                    case "liten": ComboBoxMått.SelectedItem = "Antal liten"; break;
+                }
 
             }
         }
@@ -162,9 +180,17 @@ namespace ReceptApp.Pages
         {
             if (sender is ComboBox box && box.SelectedItem != null)
             {
+                if (app.ValdReceptIngrediens == null) return;   
                 app.ValdReceptIngrediens.Mått = app.ValdReceptIngrediens.KonverteraMåttTillText(box.SelectedItem.ToString());
-                SaveLoad.SaveRecept("Recept", app.ReceptLista);
 
+            }
+        }
+
+        private void TextBoxMått_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                AddIngredient_Click(sender, e);
             }
         }
     }

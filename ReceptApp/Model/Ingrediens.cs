@@ -1,4 +1,5 @@
-﻿using ReceptApp.Model;
+﻿using Newtonsoft.Json;
+using ReceptApp.Model;
 using ReceptApp.Pages;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace ReceptApp
@@ -41,6 +43,20 @@ namespace ReceptApp
             }
         }
 
+        private ObservableCollection<Priser> _prislista; //Lista med priser
+        public ObservableCollection<Priser> PrisLista
+        {
+            get { return _prislista; }
+            set
+            {
+                if (_prislista != value)
+                {
+                    _prislista = value;
+                    OnPropertyChanged(nameof(PrisLista));
+                }
+            }
+        }
+
         private string _namn; //Ingrediensens namn
         public string Namn
         {
@@ -55,8 +71,8 @@ namespace ReceptApp
             }
         }
 
-        private string _bild; //Gneväg till bild
-        public string Bild
+        private string? _bild; //Gneväg till bild
+        public string? Bild
         {
             get { return _bild; }
             set
@@ -126,8 +142,8 @@ namespace ReceptApp
             }
         }
 
-        private int _gramperdl; //Gram per deciliter
-        public int GramPerDl
+        private int? _gramperdl; //Gram per deciliter
+        public int? GramPerDl
         {
             get { return _gramperdl; }
             set
@@ -141,66 +157,94 @@ namespace ReceptApp
             }
         }
 
-        private int _liten; //Vikt för liten storlek av ingreiensen
-        public int Liten
-        {
-            get { return _liten; }
-            set
-            {
-                if (_liten != value)
-                {
-                    _liten = value;
-                    LäggTillAntalLiten();
-                    OnPropertyChanged(nameof(Liten));
-                }
-            }
-        }
-
-        private int _medel; //Vikt för medel storlek av ingrediensen
-        public int Medel
-        {
-            get { return _medel; }
-            set
-            {
-                if (_medel != value)
-                {
-                    _medel = value;
-                    LäggTillAntalMedel();
-                    OnPropertyChanged(nameof(Medel));
-                }
-
-            }
-        }
-
-        private int _stor; //Vikt för stor storlek av ingrediensen
-        public int Stor
-        {
-            get { return _stor; }
-            set
-            {
-                if (_stor != value)
-                {
-                    _stor = value;
-                    LäggTillAntalStor();
-                    OnPropertyChanged(nameof(Stor));
-                }
-            }
-        }
-
-        //private double _mängd; //Mängd av ingrediensen
-        //public double Mängd
+        //private int _liten; //Vikt för liten storlek av ingreiensen
+        //public int Liten
         //{
-        //    get { return _mängd; }
+        //    get { return _liten; }
         //    set
         //    {
-        //        if (_mängd != value)
+        //        if (_liten != value)
         //        {
-        //            _mängd = value;
-        //            OnPropertyChanged(nameof(Mängd));
-
+        //            _liten = value;
+        //            LäggTillAntalLiten();
+        //            OnPropertyChanged(nameof(Liten));
         //        }
         //    }
         //}
+
+        //private int _medel; //Vikt för medel storlek av ingrediensen
+        //public int Medel
+        //{
+        //    get { return _medel; }
+        //    set
+        //    {
+        //        if (_medel != value)
+        //        {
+        //            _medel = value;
+        //            LäggTillAntalMedel();
+        //            OnPropertyChanged(nameof(Medel));
+        //        }
+
+        //    }
+        //}
+
+        //private int _stor; //Vikt för stor storlek av ingrediensen
+        //public int Stor
+        //{
+        //    get { return _stor; }
+        //    set
+        //    {
+        //        if (_stor != value)
+        //        {
+        //            _stor = value;
+        //            LäggTillAntalStor();
+        //            OnPropertyChanged(nameof(Stor));
+        //        }
+        //    }
+        //}
+
+        private int? _styck; //Vikt per styck
+        public int? Styck
+        {
+            get { return _styck; }
+            set
+            {
+                if (_styck != value)
+                {
+                    _styck = value;
+                    LäggTillStyck();
+                    OnPropertyChanged(nameof(Styck));
+                }
+            }
+        }
+
+        //private double _pris; //Pris per vald enhet
+        //public double Pris
+        //{
+        //    get { return _pris; }
+        //    set
+        //    {
+        //        if (_pris != value)
+        //        {
+        //            _pris = value;
+        //            OnPropertyChanged(nameof(Pris));
+        //        }
+        //    }
+        //}
+
+        private bool _harStyck; //Om styck har ett värde och att checkoboxen ska vara ibockad
+        public bool HarStyck
+        {
+            get => _harStyck;
+            set
+            {
+                if (_harStyck != value)
+                {
+                    _harStyck = value;
+                    OnPropertyChanged(nameof(HarStyck));
+                }
+            }
+        }
 
         private bool _harGramPerDL; //Om gram per deciliter har ett värde och att checkoboxen ska vara ibockad
         public bool HarGramPerDL
@@ -216,44 +260,76 @@ namespace ReceptApp
             }
         }
 
-        private bool _harAntalLiten; //Om liten har ett värde och att checkoboxen ska vara ibockad
-        public bool HarAntalLiten
+        private bool _harPris; //Om pris har ett värde och att checkoboxen ska vara ibockad
+        public bool HarPris
         {
-            get => _harAntalLiten;
+            get => _harPris;
             set
             {
-                if (_harAntalLiten != value)
+                if (_harPris != value)
                 {
-                    _harAntalLiten = value;
-                    OnPropertyChanged(nameof(HarAntalLiten));
+                    _harPris = value;
+                    OnPropertyChanged(nameof(HarPris));
                 }
             }
         }
 
-        private bool _harAntalMedel; //Om medel har ett värde och att checkoboxen ska vara ibockad
-        public bool HarAntalMedel
-        {
-            get => _harAntalMedel;
-            set
-            {
-                if (_harAntalMedel != value)
-                {
-                    _harAntalMedel = value;
-                    OnPropertyChanged(nameof(HarAntalMedel));
-                }
-            }
-        }
+        #region GamlaProperties
+        //private bool _harAntalLiten; //Om liten har ett värde och att checkoboxen ska vara ibockad
+        //public bool HarAntalLiten
+        //{
+        //    get => _harAntalLiten;
+        //    set
+        //    {
+        //        if (_harAntalLiten != value)
+        //        {
+        //            _harAntalLiten = value;
+        //            OnPropertyChanged(nameof(HarAntalLiten));
+        //        }
+        //    }
+        //}
 
-        private bool _harAntalStor; //Om stor har ett värde och att checkoboxen ska vara ibockad
-        public bool HarAntalStor
+        //private bool _harAntalMedel; //Om medel har ett värde och att checkoboxen ska vara ibockad
+        //public bool HarAntalMedel
+        //{
+        //    get => _harAntalMedel;
+        //    set
+        //    {
+        //        if (_harAntalMedel != value)
+        //        {
+        //            _harAntalMedel = value;
+        //            OnPropertyChanged(nameof(HarAntalMedel));
+        //        }
+        //    }
+        //}
+
+        //private bool _harAntalStor; //Om stor har ett värde och att checkoboxen ska vara ibockad
+        //public bool HarAntalStor
+        //{
+        //    get => _harAntalStor;
+        //    set
+        //    {
+        //        if (_harAntalStor != value)
+        //        {
+        //            _harAntalStor = value;
+        //            OnPropertyChanged(nameof(HarAntalStor));
+        //        }
+        //    }
+        //}
+        #endregion
+
+        private bool _ärTillagdIRecept = false; //Om ingrediensen är tillagd i ett recept (medans man håller på att skapa recept)
+        [JsonIgnore]
+        public bool ÄrTillagdIRecept
         {
-            get => _harAntalStor;
+            get => _ärTillagdIRecept;
             set
             {
-                if (_harAntalStor != value)
+                if (_ärTillagdIRecept != value)
                 {
-                    _harAntalStor = value;
-                    OnPropertyChanged(nameof(HarAntalStor));
+                    _ärTillagdIRecept = value;
+                    OnPropertyChanged(nameof(ÄrTillagdIRecept));
+                    if (app.FilteredIngredientList != null) app.FilteredIngredientList.Refresh();
                 }
             }
         }
@@ -270,7 +346,10 @@ namespace ReceptApp
             ViktMått = new ObservableCollection<string>();
             if (!ViktMått.Any(x => x == "Gram")) ViktMått.Add("Gram");
             ViktMått.CollectionChanged += ViktMått_CollectionChanged;
+            PrisLista = new ObservableCollection<Priser>();
         }
+
+        App app = (App)Application.Current;
 
         private void ViktMått_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -314,54 +393,74 @@ namespace ReceptApp
             }
         }
 
-        //Lägger till Antal liten i viktmått om Liten har ett värde
-        private void LäggTillAntalLiten()
+        private void LäggTillStyck()
         {
-            if (Liten > 0)
+            if (Styck > 0)
             {
-                HarAntalLiten = true;
-                if (!ViktMått.Any(x => x == "Antal liten")) ViktMått.Add("Antal liten");
-            }
-            else 
-            {
-                HarAntalLiten = false;
-                if (ViktMått.Any(x => x == "Antal liten")) ViktMått.Remove("Antal liten"); 
-            }
-
-        }
-
-        //Lägger till Antal medel i viktmått om Medel har ett värde
-        private void LäggTillAntalMedel()   
-        {
-            if (Medel > 0)
-            {
-                HarAntalMedel = true;
-                if (!ViktMått.Any(x => x == "Antal medel")) ViktMått.Add("Antal medel");
+                HarStyck = true;
+                if (!ViktMått.Any(x => x == "Stycken"))
+                {
+                    ViktMått.Add("Stycken");
+                }
             }
             else
             {
-                HarAntalMedel = false;
-                if (ViktMått.Any(x => x == "Antal medel")) ViktMått.Remove("Antal medel");
+                HarStyck = false;
+                if (ViktMått.Any(x => x == "Styck"))
+                {
+                    ViktMått.Remove("Stycken");
+                }
             }
         }
+        #region GamlaMetoder
+        ////Lägger till Antal liten i viktmått om Liten har ett värde
+        //private void LäggTillAntalLiten()
+        //{
+        //    if (Liten > 0)
+        //    {
+        //        HarAntalLiten = true;
+        //        if (!ViktMått.Any(x => x == "Antal liten")) ViktMått.Add("Antal liten");
+        //    }
+        //    else 
+        //    {
+        //        HarAntalLiten = false;
+        //        if (ViktMått.Any(x => x == "Antal liten")) ViktMått.Remove("Antal liten"); 
+        //    }
 
-        //Lägger till Antal stor i viktmått om Stor har ett värde
-        private void LäggTillAntalStor()
-        {
-            if (Stor > 0)
-            {
-                HarAntalStor = true;
-                if (!ViktMått.Any(x => x == "Antal stor")) ViktMått.Add("Antal stor");
-            }
-            else
-            {
-                HarAntalStor = false;
-                if (ViktMått.Any(x => x == "Antal stor")) ViktMått.Remove("Antal stor");
-            }
-        }
+        //}
 
+        ////Lägger till Antal medel i viktmått om Medel har ett värde
+        //private void LäggTillAntalMedel()   
+        //{
+        //    if (Medel > 0)
+        //    {
+        //        HarAntalMedel = true;
+        //        if (!ViktMått.Any(x => x == "Antal medel")) ViktMått.Add("Antal medel");
+        //    }
+        //    else
+        //    {
+        //        HarAntalMedel = false;
+        //        if (ViktMått.Any(x => x == "Antal medel")) ViktMått.Remove("Antal medel");
+        //    }
+        //}
 
+        ////Lägger till Antal stor i viktmått om Stor har ett värde
+        //private void LäggTillAntalStor()
+        //{
+        //    if (Stor > 0)
+        //    {
+        //        HarAntalStor = true;
+        //        if (!ViktMått.Any(x => x == "Antal stor")) ViktMått.Add("Antal stor");
+        //    }
+        //    else
+        //    {
+        //        HarAntalStor = false;
+        //        if (ViktMått.Any(x => x == "Antal stor")) ViktMått.Remove("Antal stor");
+        //    }
+        //}
+        #endregion
 
 
     }
+
 }

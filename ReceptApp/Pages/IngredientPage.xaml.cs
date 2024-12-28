@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using ReceptApp.Model;
 
 namespace ReceptApp.Pages
 {
@@ -32,8 +33,10 @@ namespace ReceptApp.Pages
         private int _selectedindex; //Håller koll på vilken ingrediens som är vald i listan. Används för att behålla det index som är Selected i listan efter att en ingrediens har raderats.
         private bool _hasDeletedIngredient;  //Håller koll på om en ingrediens precis har blivit raderard    
         private Ingrediens _tempValdIngrediens { get; set; } //Sparar temporärt den valda ingrediensen
+        private Priser _tempValtPris { get; set; } //Sparar temporärt det valda priset
 
         public bool Nyingrediens { get; set; } //Styr om det är en ny ingrediens eller inte.
+        public bool Nypris { get; set; } //Styr om det är ett nytt pris eller inte
 
         public IngredientPage()
         {
@@ -48,12 +51,17 @@ namespace ReceptApp.Pages
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+
             if (app.ValdIngrediens != null)
             {
-                _selectedindex = ScrollIngrediens.SelectedIndex; //Sparar indexet på den ingrediensen som ska raderas.
-                _hasDeletedIngredient = true; //Sätter att en ingrediens har raderats.
-                app.Ingredienslista.Remove(app.ValdIngrediens); //Raderar ingrediensen från listan.              
-                SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
+                if (MessageBoxResult.OK == MessageBox.Show($"Är du säker på att du vill radera {app.ValdIngrediens.Namn}?", "Radera", MessageBoxButton.OKCancel))
+                {
+                    _selectedindex = ScrollIngrediens.SelectedIndex; //Sparar indexet på den ingrediensen som ska raderas.
+                    _hasDeletedIngredient = true; //Sätter att en ingrediens har raderats.
+                    app.Ingredienslista.Remove(app.ValdIngrediens); //Raderar ingrediensen från listan.              
+                    //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
+                }
+
             }
         }
 
@@ -64,6 +72,7 @@ namespace ReceptApp.Pages
             if (sender is ListView listView)
             {
                 app.ValdIngrediens = (Ingrediens)listView.SelectedItem; //Sätter den valda ingrediensen.
+                app.ValtPris = app.ValdIngrediens.PrisLista.Count > 0 ? app.ValdIngrediens.PrisLista[app.ValdIngrediens.PrisLista.Count-1] : new Priser(app.ValdIngrediens.Namn); //Sätter det valda priset.
             }
         }
 
@@ -99,6 +108,7 @@ namespace ReceptApp.Pages
                 if (open.ShowDialog() == true)
                 {
                     string filgenväg = open.FileName;
+                    if (open.InitialDirectory == System.IO.Path.GetDirectoryName(filgenväg)) SaveLoad.SkaKopieraBild = true;
                     _fileextension = System.IO.Path.GetExtension(filgenväg);
                     if (System.IO.Path.GetExtension(filgenväg) == ".jpg" || System.IO.Path.GetExtension(filgenväg) == ".jpeg" || System.IO.Path.GetExtension(filgenväg) == ".png")
                     {
@@ -121,9 +131,9 @@ namespace ReceptApp.Pages
         }
 
 
-        private void NyKalori_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void KollaSiffor_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !Regex.IsMatch(e.Text, @"^\d+$"); //Kollar så att det bara går att skriva siffror.
+            e.Handled = !Regex.IsMatch(e.Text, @"^$|^\d+$"); //Kollar så att det bara går att skriva siffror.
         }
 
         private void LäggTillIngrediens_Click(object sender, RoutedEventArgs e)
@@ -138,45 +148,36 @@ namespace ReceptApp.Pages
                     MessageBox.Show("Du måste fylla i alla fält"); 
                     return; 
                 }
-
                 app.ValdIngrediens.Namn = app.ValdIngrediens.Namn.Trim(); //Tar bort mellanslag i början och slutet av namnet.
                 string bildnamn = !app.HasExtension ? @"\Bilder\" + NyNamn.Text + ".png" : @"\Bilder\" + NyNamn.Text + _fileextension; //Genvägg till bilden.
                 app.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + bildnamn; //Sparar bildens sökväg i Ingrediensobjektet.
                 app.Ingredienslista.Add(app.ValdIngrediens); //Lägger till ingrediensen i listan.
+                app.FilteredIngredienslista.Add(app.ValdIngrediens); //Lägger till ingrediensen i den filtrerade listan.
                 app.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
-                Nyingrediens = false; 
-                ScrollIngrediens.SelectedItem = app.ValdIngrediens; //Markerar den nya ingrediensen i listan.
                 ÄndraTextOchVisibilityPåKnapparna();
                 EnableIngredientListAndFilterTextbox();
-
-                //KollCheckBoxIsChecked(); //Kollar vilka checkboxar som ska vara ikryssade.
+                Nyingrediens = false; 
+                ScrollIngrediens.SelectedItem = app.ValdIngrediens; //Markerar den nya ingrediensen i listan.                
                 if (app.HasAddedImage) SaveLoad.KopieraBild(app.TempBild, NyNamn.Text, _fileextension, app.HasExtension); //Kopierar bilden till mappen om man la till en bild .
                 app.HasAddedImage = false; //Återställer variabler (för när man lägger itll en en ny ingrediens igen.
-                SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar listan med ingrediesner.
+                //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar listan med ingrediesner.
                 BildRuta.Source = null; //Nollställer bilden.
                 BildRuta.Visibility = Visibility.Collapsed; //Gömmer bilden.
                 BindadBild.Visibility = Visibility.Visible; //Visar den bindade bilden.
             }
             else
             {
+                _tempValtPris = app.ValtPris; //Sparar det valda priset i en temporär variabel.
+                app.ValtPris = new Priser(""); //Skapar ett nytt prisobjekt.
                 _tempValdIngrediens = app.ValdIngrediens; //Sparar den valda ingrediensen i en temporär variabel.
                 app.ValdIngrediens = new Ingrediens(); //Skapar en ny tom ingrediens.
                 ÄndraTextOchVisibilityPåKnapparna();
                 EnableIngredientListAndFilterTextbox();
-                //KollCheckBoxIsChecked();
                 Nyingrediens = true; //Sätter att det är en ny ingrediens. Relevant för nästa "klick" på knappen.
                 app.ValdIngrediens.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png"; //Sätter en dummybild.
             }
         }
         
-
-        public void KollCheckBoxIsChecked()
-        {
-            CheckBoxGramPerDL.IsChecked = app.ValdIngrediens.GramPerDl > 0;
-            CheckBoxGramLiten.IsChecked = app.ValdIngrediens.Liten > 0;
-            CheckBoxGramMedel.IsChecked = app.ValdIngrediens.Medel > 0;
-            CheckBoxGramStor.IsChecked = app.ValdIngrediens.Stor > 0;
-        }
 
         private void EnableIngredientListAndFilterTextbox()
         {
@@ -196,7 +197,7 @@ namespace ReceptApp.Pages
         {
             if (Nyingrediens)
             {
-                app.AddKnapp = "Lägg till";
+                app.AddKnapp = "Ny ingrediens";
                 ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed;
             }
             else
@@ -209,36 +210,36 @@ namespace ReceptApp.Pages
         private void CancelTillIngrediens_Click(object sender, RoutedEventArgs e)
         {
             app.ValdIngrediens = _tempValdIngrediens; //Återställer den valda ingrediensen.
-            app.AddKnapp = "Lägg till"; //Ändrar tillbaka texten på knappen.
+            app.AddKnapp = "Ny ingrediens"; //Ändrar tillbaka texten på knappen.
             ButtonCancelTillIngrediens.Visibility = Visibility.Collapsed; //Gömmer cancel-knappen.
             BildRuta.Source = null; //Nollställer bilden.
             BildRuta.Visibility = Visibility.Collapsed; //Gömmer bilden.
             BindadBild.Visibility = Visibility.Visible; //Visar den bindade bilden.
-            ScrollIngrediens.IsEnabled = true; //Gör listan med ingredienser klickbar igen.
-            FilterTextbox.IsEnabled = true; //Gör sökfältet klickbart igen.
-            //KollCheckBoxIsChecked();
+            ÄndraTextOchVisibilityPåKnapparna();
+            EnableIngredientListAndFilterTextbox();
             Nyingrediens = false; //Sätter att det inte är en ny ingrediens.
             app.HasAddedImage = false; //Återställer variabler.
+            app.ValtPris = _tempValtPris; //Återställer det valda priset.
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            foreach (var control in Tab1Grid2.Children)
-            {
-                if (control is TextBox textBox)
-                {
-                    textBox.TextChanged += TextBox_TextChanged; //Lägger till eventhanterare för textboxarna i den valda griden.
-                }
-            }
-        }
+        //private void Grid_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (var control in Tab1Grid2.Children)
+        //    {
+        //        if (control is TextBox textBox)
+        //        {
+        //            textBox.TextChanged += TextBox_TextChanged; //Lägger till eventhanterare för textboxarna i den valda griden.
+        //        }
+        //    }
+        //}
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (sender is TextBox textBox)
-            {
-                SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar listan med ingredienser varje gång textn ändras.
-            }
-        }
+        //private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    if (sender is TextBox textBox)
+        //    {
+        //        SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar listan med ingredienser varje gång textn ändras.
+        //    }
+        //}
 
 
         private void NyNamn_PreviewNameInput(object sender, KeyEventArgs e) //Kollar att mellanslaget inte är först eller sist i namnet
@@ -250,6 +251,69 @@ namespace ReceptApp.Pages
             }
         }
 
+        private void Add_Price_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button)
+            {
+                if (Nypris)
+                {
+                    app.AddNyttPrisKnapp = "Lägg till pris";
+                    AddPrisOKButton.Width = 100;
+                    Nypris = false;
+                    AddPrisCANCELButton.Visibility = Visibility.Collapsed;
+                    app.ValdIngrediens.PrisLista.Add(app.ValtPris);
+                    //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
+                }
+                else
+                {
+                    app.AddNyttPrisKnapp = "OK";
+                    Nypris = true;
+                    AddPrisOKButton.Width = 50;
+                    AddPrisCANCELButton.Visibility = Visibility.Visible;
+                    _tempValtPris = app.ValtPris;
+                    app.ValtPris = new Priser(app.ValdIngrediens.Namn);
+                }
+            }
+            
+        }
 
+        private void Decimal_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (sender is TextBox box)
+            {
+                string newText = box.Text.Insert(box.SelectionStart, e.Text);
+
+                // Allow empty string or a valid decimal number
+                e.Handled = !Regex.IsMatch(newText, @"^$|^\d+(\,\d{0,2})?$");
+            }
+        }
+
+        private void Add_Price_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            app.AddNyttPrisKnapp = "Lägg till pris";
+            AddPrisOKButton.Width = 100;
+            AddPrisCANCELButton.Visibility = Visibility.Collapsed;
+            app.ValtPris = _tempValtPris;
+            Nypris = false;
+        }
+
+        private void Delete_Pris_Click(object sender, RoutedEventArgs e)
+        {
+            if (app.ValtPris != null)
+            {
+                int _index = app.ValdIngrediens.PrisLista.IndexOf(app.ValtPris);
+                app.ValdIngrediens.PrisLista.Remove(app.ValtPris);
+                app.ValtPris = app.ValdIngrediens.PrisLista.Count > 0 ? app.ValdIngrediens.PrisLista[_index > 0 ? _index - 1 : _index] : new Priser(app.ValdIngrediens.Namn);
+                //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
+            }
+        }
+
+        private void PrisListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListView listView)
+            {
+                app.ValtPris = (Priser)listView.SelectedItem;
+            }
+        }
     }
 }

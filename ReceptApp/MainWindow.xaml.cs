@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ReceptApp
 {
@@ -36,9 +37,9 @@ namespace ReceptApp
 
         IngredientPage ingredientPage;
         RecipePage recipepage;
-        AddRecipePage addRecipePage;
-        ShoppingList shoppingList;
-  
+        public AddRecipePage addRecipePage {  get; set; }
+        public ShoppingList shoppingList {  get; set; }
+        private DispatcherTimer _timer;
 
 
         public MainWindow()
@@ -49,7 +50,21 @@ namespace ReceptApp
             addRecipePage = new AddRecipePage();
             shoppingList = new ShoppingList();
             ContentFrame.Navigate(ingredientPage);
-            
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(5);
+            _timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            if (app.HasChangedData)
+            {
+                app.HasChangedData = false;
+                SaveLoad.SaveIngrediens("Ingredienser", app.Ingredienslista);
+                SaveLoad.SaveRecept("Recept", app.ReceptLista);
+                _timer.Stop();
+                _timer.Start();
+            }
         }
 
         private void Button_Click_Ingredient(object sender, RoutedEventArgs e)
@@ -73,6 +88,7 @@ namespace ReceptApp
             ContentFrame.Navigate(shoppingList);
 
         }
+
 
         private void OnPasteExecuted(object sender, ExecutedRoutedEventArgs e)
         {
@@ -120,7 +136,6 @@ namespace ReceptApp
             }
 
         }
-
 
 
     }

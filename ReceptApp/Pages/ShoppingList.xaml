@@ -9,20 +9,86 @@
       Title="ShoppingList">
 
     <Grid Background="#FFFDFDFD">
-        <ScrollViewer HorizontalAlignment="Center" Margin="10">
-            <ItemsControl ItemsSource="{Binding ShoppingIngredienser}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>
+            <TextBlock FontWeight="Black" HorizontalAlignment="Center" Margin="5" Text="Tillagda recept"></TextBlock>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="20 0 20 0">
+                <ItemsControl ItemsSource="{Binding ShoppingIngredienser}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="50"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Namn}" HorizontalAlignment="Center" FontSize="16" FontFamily="Roboto"></TextBlock>
+                                <Button Grid.Column="1" Click="DeleteRecipe_Click">
+                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
+        
+        <ScrollViewer Grid.Column="1" HorizontalAlignment="Center" Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding ReceptIngrediensShoppingList}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical"></StackPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <StackPanel Orientation="Vertical">
+                            <Grid Margin="0 0 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="100"></ColumnDefinition>
+                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Text="Ingrediens" FontSize="16" FontFamily="Roboto"></TextBlock>
+                                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="Mängd" FontSize="16" FontFamily="Roboto"></TextBlock>
+                                <TextBlock Grid.Column="2" HorizontalAlignment="Center" Text="Mått" FontSize="16" FontFamily="Roboto"></TextBlock>
+                                <Button Grid.Column="3" Click="AddToShoppingCart_Click">
+                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xF0E3;"></TextBlock>
+                                </Button>
+
+                            </Grid>
+                            <ItemsPresenter></ItemsPresenter>
+                        </StackPanel>
+                    </ControlTemplate>
+                </ItemsControl.Template>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Ingrediens.Namn, Mode=OneWay}" FontSize="16" FontFamily="Roboto" Margin="0,0,10,0"></TextBlock>
-                            <ComboBox ItemsSource="{Binding Ingrediens.ViktMått}" SelectedItem="{Binding Mått, Mode=OneWay}" Width="50"></ComboBox>
-                            <TextBox Text="{Binding Mängd, Mode=OneWay}" Width="50"></TextBox>
-                        </StackPanel>
+                        <Grid Margin="0 0 0 5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" HorizontalAlignment="Center" Text="{Binding Ingrediens.Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
+                            <TextBox Grid.Column="1" HorizontalAlignment="Center" Width="50" Text="{Binding Mängd}" FontSize="16" FontFamily="Roboto"></TextBox>
+                            <ComboBox ItemsSource="{Binding Ingrediens.ViktMått}" Margin="0 0 5 0" Grid.Column="2" Text="{Binding Mått, Converter={StaticResource KonverteraMåttTillText}}" FontSize="16" FontFamily="Roboto">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"></TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Button Grid.Column="3" Click="DeleteIngredient_Click">
+                                <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                            </Button>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

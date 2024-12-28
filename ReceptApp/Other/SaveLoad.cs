@@ -16,6 +16,7 @@ namespace ReceptApp
     {
         private static string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
         private static string _filename;
+        public static bool SkaKopieraBild { get; set; }
         //private static string connectionString = "Server=(local);Database=master;Integrated Security=True;";
 
 
@@ -69,6 +70,7 @@ namespace ReceptApp
 
         public static void KopieraBild(BitmapImage img, string filnamn, string fileextension, bool hasExtension)
         {
+            if (!SkaKopieraBild) return;
             if (!hasExtension) fileextension = ".png";
             filnamn += fileextension;
 
@@ -96,6 +98,7 @@ namespace ReceptApp
                     File.WriteAllBytes(filePath, memoryStream.ToArray());
                 }
             }
+            SkaKopieraBild = false;
         }
         #region Databas
         //public static void AddIngrediensToDB(Ingrediens i)

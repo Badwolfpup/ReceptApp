@@ -18,7 +18,7 @@
         
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0" >
             <TextBox Height="25" x:Name="FilterTextboxRecept" Text="{Binding RecipeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
-            <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch">
+            <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <ListView x:Name="ScrollRecept" ItemsSource="{Binding ReceptLista}" SelectionMode="Single" SelectedItem="{Binding ValtRecept}" SelectedIndex="0">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -72,7 +72,7 @@
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70F;" />
                     </Button>
                 </StackPanel>
-                <ScrollViewer Grid.Row="2" Margin="0,5,0,0">
+                <ScrollViewer Grid.Row="2" Margin="0,5,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <ItemsControl ItemsSource="{Binding ValtRecept.ReceptIngredienser}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -91,9 +91,9 @@
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
-                                    <Button Margin="10 0 0 0" Click="AddToCart_Click">
+                                    <!--<Button Margin="10 0 0 0" Click="AddToCart_Click">
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;"></TextBlock>
-                                    </Button>
+                                    </Button>-->
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

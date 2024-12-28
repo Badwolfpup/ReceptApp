@@ -6,6 +6,13 @@
     <Application.Resources>
         <local:RoundedNumber x:Key="RoundedNumber"></local:RoundedNumber>
         <local:MåttOchMängd x:Key="MåttOchMängd"></local:MåttOchMängd>
+        <local:KonverteraMått x:Key="KonverteraMått"></local:KonverteraMått>
+        <local:KonverteraMåttTillText x:Key="KonverteraMåttTillText"></local:KonverteraMåttTillText>
+        <local:KonverteraTillSvenskDecimal x:Key="KonverteraTillSvenskDecimal"></local:KonverteraTillSvenskDecimal>
+        <local:NullableIntConverter x:Key="NullableIntConverter"></local:NullableIntConverter>
+
+        <CollectionViewSource x:Key="FilreradIngrediensLista" Source="{Binding IngrediensLista}"></CollectionViewSource>
+        
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"></Setter>
             <Setter Property="FontFamily" Value="Roboto"></Setter>
@@ -13,11 +20,13 @@
         </Style>
 
         <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="FontSize" Value="14"></Setter>
             <Setter Property="FontFamily" Value="Roboto"></Setter>
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Margin" Value="4"></Setter>
             <EventSetter Event="GotKeyboardFocus" Handler="TextBox_GotKeyboardFocus"></EventSetter>
             <EventSetter Event="PreviewMouseDown" Handler="TextBox_PreviewMouseDown"></EventSetter>
+            <EventSetter Event="TextChanged" Handler="TextBox_TextChanged"></EventSetter>
         </Style>
     </Application.Resources>
 </Application>

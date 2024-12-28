@@ -1,13 +1,15 @@
 ﻿Att göra:
-Fixa ValueConverter så att värdet i textboxen ändras utifrån valet i combobox ??Shoppinglist??
-Dölja comboboxen och textboxen ??Shoppinglist??
-Fixa till lista som kan kopieras och klistras in i textdokument ??Shoppinglist??
-Lägg till flik veckomeny där man kan skapa en större shoppinglista
+(FIXAT???)Fixa design för priser
+(KLART???)Implentera färdigt Priser till ingredienser och hur det kopplas till shoppinglist
+Skapa algorithm för att ska en shoppinglista som konverterar olika mått till ett enda och föreslår lämplig "förpackning"
+Fixa design så textboxes o dylikt inte ändrar position
 
-Fundera hur man kan centralisera savemedtoder
-Fixa så att man kan välja från tillagda ingredienser i addrecipe och ändra mått o mängd
+
+Fixa Hamburger menu
+Kolla upp ModernWPF
 *FIXAD??*Fixa till designen, tex teckensnitt, färger, storlek på text, layout
-****Fundera på att ändra alla listklasser till att impolementera interace och implementera gemensamma metoder och properties
+
+
 
 Fixat
 Fixa så att man kan byta/lägga till bilder efte ratt man har lagt till en ingrediens - kan bara lägga till vid ny ingrediens. Måste ta bort och lägga till ny om byta bild.
@@ -33,8 +35,14 @@ Flytta alla valueconverter till App
 Fix så att det sparas i json varje gång det förändras, lägg till i onpropertychanged
 Gör så att checkboxes är ikryssade om har värde på ingrediens
 Fixa så Lägg till möjlighet att ändra på recept
-
-
+Fixa så att ingrediensen döljs om den är tillagd i recept
+Fixa till lista som kan kopieras och klistras in i textdokument ??Shoppinglist??
+Fixat så man kan justera mått och mängd i shoppinglist
+Fixa så att man kan välja från tillagda ingredienser i addrecipe och ändra mått o mängd 
+Enter för att lägga till ingrediens från måtttextbox
+Dokumentera var saker savas´- savar automatiskt var 5:e sekund om något ändrats samt om något addas alt tas bort från listorna
+Lägg till styck som alternativ
 (*OTESTAD*) Töm antalgram rutan vid ny ingrediens
 (Blir onödigt komplicerat)Fixa RecipeFilterText o den andra såa tt de blir lokala för sin page och uppdatera logiken i filtermetoden i App.xaml.cs
+Add nytt objekt valt pris när man lägger till ny ingrediens
 

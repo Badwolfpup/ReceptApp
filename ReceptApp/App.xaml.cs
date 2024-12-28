@@ -1,15 +1,21 @@
-﻿using ReceptApp.Pages;
+﻿using Newtonsoft.Json;
+using ReceptApp.Model;
+using ReceptApp.Pages;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+//using static System.Net.Mime.MediaTypeNames;
 
 namespace ReceptApp
 {
@@ -18,7 +24,7 @@ namespace ReceptApp
     /// </summary>
     /// 
 
-    public partial class App : Application, INotifyPropertyChanged
+    public partial class App : Application, INotifyPropertyChanged, INotifyCollectionChanged
     {
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
@@ -32,18 +38,63 @@ namespace ReceptApp
         public App()
         {
             Ingredienslista = SaveLoad.LoadIngrediens("Ingrediens");
+            FilteredIngredienslista = new ObservableCollection<Ingrediens>(Ingredienslista);
             ReceptLista = SaveLoad.LoadRecept("Recept");
-            ShoppingIngredienser = new ObservableCollection<ReceptIngrediens>();
+            ShoppingIngredienser = new ObservableCollection<Recept>();
             ValdReceptIngrediens = new ReceptIngrediens();
+            ValtPris = new Priser("");
             if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
             Nyttrecept = new Recept(Antalportioner);
-            if (ReceptLista!= null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(Antalportioner);
+            if (ReceptLista != null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(Antalportioner);
             ValdIngrediensIRecept = new Ingrediens();
+            FilteredIngredientList = CollectionViewSource.GetDefaultView(FilteredIngredienslista);
+            FilteredIngredientList.Filter = FilterPredicate;
+            ReceptLista.CollectionChanged += ReceptLista_CollectionChanged;
+            Ingredienslista.CollectionChanged += Ingredienslista_CollectionChanged;
+        }
+
+        private void Ingredienslista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SaveLoad.SaveIngrediens("Ingrediens", Ingredienslista);
+        }
+
+        private void ReceptLista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SaveLoad.SaveRecept("Recept", ReceptLista);
+        }
+
+        public event NotifyCollectionChangedEventHandler? CollectionChanged
+        {
+            add
+            {
+                ((INotifyCollectionChanged)Ingredienslista).CollectionChanged += value;
+                ((INotifyCollectionChanged)ReceptLista).CollectionChanged += value;
+            }
+
+            remove
+            {
+                ((INotifyCollectionChanged)Ingredienslista).CollectionChanged -= value;
+                ((INotifyCollectionChanged)ReceptLista).CollectionChanged -= value;
+            }
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Set culture to Swedish (uses comma for decimals)
+            var culture = new CultureInfo("sv-SE");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
         }
 
 
+
         #region Properties
-        
+
+        public List<string> PrisMåttLista { get; } = new List<string> { "g", "kg", "dl", "l" };
+        public List<string> PrisFörpackningstypLista { get; } = new List<string> {"", "st", "påse", "burk", "förp" };
+
         private ObservableCollection<Ingrediens>? _ingredienslista;
         public ObservableCollection<Ingrediens> Ingredienslista
         {
@@ -57,6 +108,22 @@ namespace ReceptApp
                 }
             }
         }
+
+        private ObservableCollection<Ingrediens>? _filteredIngredienslista;
+        public ObservableCollection<Ingrediens> FilteredIngredienslista
+        {
+            get { return _filteredIngredienslista; }
+            set
+            {
+                if (value != _filteredIngredienslista)
+                {
+                    _filteredIngredienslista = value;
+                    OnPropertyChanged(nameof(FilteredIngredienslista));
+                }
+            }
+        }
+
+        public ICollectionView FilteredIngredientList { get; set; }
 
         private ObservableCollection<Recept>? _receptlista;
         public ObservableCollection<Recept> ReceptLista
@@ -72,8 +139,8 @@ namespace ReceptApp
             }
         }
 
-        private ObservableCollection<ReceptIngrediens>? _shoppingingredienser;
-        public ObservableCollection<ReceptIngrediens> ShoppingIngredienser
+        private ObservableCollection<Recept>? _shoppingingredienser;
+        public ObservableCollection<Recept> ShoppingIngredienser
         {
             get => _shoppingingredienser;
             set
@@ -82,6 +149,20 @@ namespace ReceptApp
                 {
                     _shoppingingredienser = value;
                     OnPropertyChanged(nameof(ShoppingIngredienser));
+                }
+            }
+        }
+
+        private ObservableCollection<ReceptIngrediens> _receptingrediensshoppinglist;
+        public ObservableCollection<ReceptIngrediens> ReceptIngrediensShoppingList
+        {
+            get { return _receptingrediensshoppinglist; }
+            set
+            {
+                if (_receptingrediensshoppinglist != value)
+                {
+                    _receptingrediensshoppinglist = value;
+                    OnPropertyChanged(nameof(ReceptIngrediensShoppingList));
                 }
             }
         }
@@ -157,6 +238,19 @@ namespace ReceptApp
             }
         }
 
+        private Priser _valtpris;
+        public Priser ValtPris
+        {
+            get { return _valtpris; }
+            set
+            {
+                if (_valtpris != value)
+                {
+                    _valtpris = value;
+                    OnPropertyChanged(nameof(ValtPris));
+                }
+            }
+        }
 
         private int _antalportioner = 4;
         public int Antalportioner
@@ -172,7 +266,21 @@ namespace ReceptApp
             }
         }
 
-        private string _addKnapp = "Lägg till";
+        private string _addNyttPrisKnapp = "Lägg till pris";
+        public string AddNyttPrisKnapp
+        {
+            get => _addNyttPrisKnapp;
+            set
+            {
+                if (_addNyttPrisKnapp != value)
+                {
+                    _addNyttPrisKnapp = value;
+                    OnPropertyChanged(nameof(AddNyttPrisKnapp));
+                }
+            }
+        }
+
+        private string _addKnapp = "Ny ingrediens";
         public string AddKnapp
         {
             get => _addKnapp;
@@ -232,6 +340,16 @@ namespace ReceptApp
         public bool HasAddedImage { get; set; }
         public bool HasExtension { get; set; }
         public BitmapImage TempBild { get; set; } = new BitmapImage();
+        public bool HasChangedData { get; set; }
+
+        private bool FilterPredicate(object obj)
+        {
+            if (obj is Ingrediens ingrediens)
+            {
+                return !ingrediens.ÄrTillagdIRecept;
+            }
+            return false;
+        }
 
 
         public void AddImageSource()
@@ -248,7 +366,6 @@ namespace ReceptApp
                 e.Handled = true;
             }
         }
-
 
 
         public void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -315,8 +432,10 @@ namespace ReceptApp
             }
         }
 
-
-
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            HasChangedData = true;
+        }
     }
 
 
@@ -351,6 +470,128 @@ namespace ReceptApp
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class KonverteraMått : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var mått = values[0] is string ? (string)values[0] : "";
+            var mängd = values[1] is double ? (double)values[1] : 0;
+
+            switch (mått)
+            {
+                case "Gram": return "g";
+                case "Deciliter": return "dl";
+                case "Matsked": return "msk";
+                case "Tesked": return "tsk";
+                case "Kryddmått": return "krm";
+                case "Stycken": return "st";
+                case "Antal stor": if (mängd > 1) return "stora"; else return "stor";
+                case "Antal medel": if (mängd > 1) return "medelstora"; else return "medelstor";
+                case "Antal liten": if (mängd > 1) return "små"; else return "liten";
+                default: return "";
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            return new object[] { value, Binding.DoNothing };
+        }
+    }
+
+    public class KonverteraMåttTillText : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string text)
+            {
+                switch (text)
+                {
+                    case "g": return "Gram";
+                    case "dl": return "Deciliter";
+                    case "msk": return "Matsked";
+                    case "tsk": return "Tesked";
+                    case "krm": return "Kryddmått";
+                    case "st": return "Stycken";
+                    case "stor": return "Antal stor";
+                    case "stora": return "Antal stor";
+                    case "medelstor": return "Antal medel";
+                    case "medelstora": return "Antal medel";
+                    case "liten": return "Antal liten";
+                    case "små": return "Antal liten";
+                    default: return text;
+                }
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string text)
+            {
+                switch (text)
+                {
+                    case "Gram": return "g";
+                    case "Deciliter": return "dl";
+                    case "Matsked": return "msk";
+                    case "Tesked": return "tsk";
+                    case "Kryddmått": return "krm";
+                    case "Stycken": return "st";
+                    case "Antal stor": return "stor";
+                    case "Antal medel": return "medelstor";
+                    case "Antal liten": return "liten";
+                    default: return text;
+                }
+            }
+            return value;
+        }
+    }
+
+    public class KonverteraTillSvenskDecimal : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is double doubleValue)
+            {
+                if (doubleValue.ToString("R").Contains("."))
+                {
+                    if (doubleValue.ToString().Split('.')[1].Length > 1) return doubleValue.ToString("F2", new CultureInfo("sv-SE"));
+                    else return doubleValue.ToString("F1", new CultureInfo("sv-SE"));
+                }
+                return doubleValue.ToString(new CultureInfo("sv-SE"));
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string stringValue &&
+                double.TryParse(stringValue, NumberStyles.Any, new CultureInfo("sv-SE"), out var result))
+            {
+                return result;
+            }
+            return DependencyProperty.UnsetValue;
+        }
+    }
+
+    public class NullableIntConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value?.ToString() ?? string.Empty; // Convert null to empty string
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (string.IsNullOrWhiteSpace(value?.ToString()))
+                return null; // Convert empty string back to null
+
+            if (int.TryParse(value.ToString(), out int result))
+                return result; // Convert valid numbers
+
+            return DependencyProperty.UnsetValue; // Fallback for invalid input
         }
     }
 }

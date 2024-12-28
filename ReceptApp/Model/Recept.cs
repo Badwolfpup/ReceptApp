@@ -1,4 +1,5 @@
-﻿using ReceptApp.Pages;
+﻿using Newtonsoft.Json;
+using ReceptApp.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -71,8 +72,8 @@ namespace ReceptApp
             }
         }
 
-        private double _portionkalori;
-        public double PortionKalori
+        private double? _portionkalori;
+        public double? PortionKalori
         {
             get { return _portionkalori; }
             set
@@ -86,8 +87,8 @@ namespace ReceptApp
             }
         }
 
-        private double _portionkolhydrat;
-        public double PortionKolhydrat
+        private double? _portionkolhydrat;
+        public double? PortionKolhydrat
         {
             get { return _portionkolhydrat; }
             set
@@ -101,8 +102,8 @@ namespace ReceptApp
             }
         }
 
-        private double _portionfett;
-        public double PortionFett
+        private double? _portionfett;
+        public double? PortionFett
         {
             get { return _portionfett; }
             set
@@ -116,8 +117,8 @@ namespace ReceptApp
             }
         }
 
-        private double _portionprotein;
-        public double PortionProtein 
+        private double? _portionprotein;
+        public double? PortionProtein 
         {
             get { return _portionprotein; }
             set
@@ -172,6 +173,10 @@ namespace ReceptApp
             }
         }
 
-
+        public Recept Copy()
+        {
+            var json = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<Recept>(json);
+        }
     }
 }
