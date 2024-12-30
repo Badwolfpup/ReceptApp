@@ -36,7 +36,7 @@ namespace ReceptApp.Pages
 
         App app = (App)Application.Current;
 
-
+        private bool _valtreceptingrediens = false;
 
         public AddRecipePage()
         {
@@ -58,7 +58,7 @@ namespace ReceptApp.Pages
             //var listview = sender as ListView;
             if (sender is ListView listview && listview.SelectedItem is Ingrediens i)
             {
-                app.ValdReceptIngrediens = new ReceptIngrediens();
+                if (!_valtreceptingrediens) app.ValdReceptIngrediens = new ReceptIngrediens();
                 app.ValdIngrediensIRecept = i;
                 ComboBoxMått.SelectedIndex = 0;
             }
@@ -78,6 +78,8 @@ namespace ReceptApp.Pages
                 app.Nyttrecept.ReceptIngredienser.Add(app.ValdReceptIngrediens);
                 ScrollTillagdaIngredienser.SelectedItem = app.ValdReceptIngrediens;
                 app.ValdIngrediensIRecept.ÄrTillagdIRecept = true;
+                app.appdata.SaveAll();
+                //SaveLoad.SaveRecept("Recept", app.ReceptLista);
                 app.ValdIngrediensIRecept = new Ingrediens();
                 app.ValdReceptIngrediens = new ReceptIngrediens();
             }
@@ -103,6 +105,8 @@ namespace ReceptApp.Pages
             i.Ingrediens.ÄrTillagdIRecept = false;
             int index = app.Nyttrecept.ReceptIngredienser.IndexOf(i);
             app.Nyttrecept.ReceptIngredienser.Remove(i);
+            app.appdata.SaveAll();
+            //SaveLoad.SaveRecept("Recept", app.ReceptLista);
             app.ValdReceptIngrediens = app.Nyttrecept.ReceptIngredienser.Count == 0 ? app.ValdReceptIngrediens = new ReceptIngrediens() : (index >= app.Nyttrecept.ReceptIngredienser.Count ? app.Nyttrecept.ReceptIngredienser[app.Nyttrecept.ReceptIngredienser.Count - 1] : app.Nyttrecept.ReceptIngredienser[index]);
         }
 
@@ -121,7 +125,6 @@ namespace ReceptApp.Pages
             if (box == null) return;
             ComboBoxItem item = (ComboBoxItem)box.SelectedItem;
             app.Nyttrecept.Antalportioner = int.Parse(item.Content.ToString());
-            app.Nyttrecept.BeräknaVärden();
         }
 
         private void Läggtillrecept_Click(object sender, RoutedEventArgs e)
@@ -138,6 +141,7 @@ namespace ReceptApp.Pages
                 app.Nyttrecept = new Recept(4);
                 ScrollIngrediensNyttRecept.SelectedItem = null;
                 TextBoxMått.Text = "";
+                
 
             }
             else MessageBox.Show("Du behöver ange ett namn på receptet");
@@ -153,6 +157,7 @@ namespace ReceptApp.Pages
         {
             if (sender is ListView listview && listview.SelectedItem is ReceptIngrediens i)
             {
+                _valtreceptingrediens = true;
                 app.ValdReceptIngrediens = i;
                 app.ValdIngrediensIRecept = i.Ingrediens;
                 //ComboBoxMått.SelectedItem = i.Mått;
@@ -192,6 +197,11 @@ namespace ReceptApp.Pages
             {
                 AddIngredient_Click(sender, e);
             }
+        }
+
+        private void ScrollIngrediensNyttRecept_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+                _valtreceptingrediens = false;
         }
     }
 }

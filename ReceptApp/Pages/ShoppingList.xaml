@@ -10,11 +10,14 @@
 
     <Grid Background="#FFFDFDFD">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.RowSpan="2">
             <TextBlock FontWeight="Black" HorizontalAlignment="Center" Margin="5" Text="Tillagda recept"></TextBlock>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="20 0 20 0">
                 <ItemsControl ItemsSource="{Binding ShoppingIngredienser}">
@@ -27,7 +30,7 @@
                                     <ColumnDefinition Width="50"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Namn}" HorizontalAlignment="Center" FontSize="16" FontFamily="Roboto"></TextBlock>
-                                <Button Grid.Column="1" Click="DeleteRecipe_Click">
+                                <Button Grid.Column="1" Click="DeleteRecipe_Click" Margin="3">
                                     <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
                                 </Button>
                             </Grid>
@@ -36,34 +39,54 @@
                 </ItemsControl>
             </ScrollViewer>
         </StackPanel>
-        
-        <ScrollViewer Grid.Column="1" HorizontalAlignment="Center" Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding ReceptIngrediensShoppingList}">
-                <ItemsControl.ItemsPanel>
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
+            <RadioButton x:Name="RadioBilligast" Content="Billigast" IsChecked="True" Margin="0 0 20 0" Checked="SorteringsRadio_Checked"></RadioButton>
+            <RadioButton x:Name="RadioStorlek" Content="Närmast i storlek" Checked="SorteringsRadio_Checked"></RadioButton>
+        </StackPanel>
+        <ScrollViewer Grid.Column="1" Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
+            <ItemsControl x:Name="Prislista" ItemsSource="{Binding PriserIShoppingList}" HorizontalAlignment="Stretch">
+                <!--<ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical"></StackPanel>
+                        <UniformGrid Columns="3"></UniformGrid>
                     </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
+                </ItemsControl.ItemsPanel>-->
+                <ItemsControl.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+                        <Setter Property="Margin" Value="0 0 3 0"></Setter>
+                        <Setter Property="FontSize" Value="16"></Setter>
+                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                    </Style>
+                </ItemsControl.Resources>
                 <ItemsControl.Template>
                     <ControlTemplate TargetType="ItemsControl">
                         <StackPanel Orientation="Vertical">
                             <Grid Margin="0 0 0 10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="350"></ColumnDefinition>
                                     <ColumnDefinition Width="70"></ColumnDefinition>
-                                    <ColumnDefinition Width="100"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="60"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Text="Ingrediens" FontSize="16" FontFamily="Roboto"></TextBlock>
-                                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="Mängd" FontSize="16" FontFamily="Roboto"></TextBlock>
-                                <TextBlock Grid.Column="2" HorizontalAlignment="Center" Text="Mått" FontSize="16" FontFamily="Roboto"></TextBlock>
-                                <Button Grid.Column="3" Click="AddToShoppingCart_Click">
+                                <TextBlock Grid.Column="0" Text="Vara" FontSize="16" FontFamily="Roboto" FontWeight="Bold"></TextBlock>
+                                <TextBlock Grid.Column="1" Text="Summa" FontSize="16" FontFamily="Roboto" FontWeight="Bold"></TextBlock>
+                                <Button Grid.Column="2" Click="AddToShoppingCart_Click" Width="30">
                                     <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xF0E3;"></TextBlock>
+                                    <Button.ToolTip>
+                                        <TextBlock>Kopiera till urklipp</TextBlock>
+                                    </Button.ToolTip>
                                 </Button>
 
                             </Grid>
                             <ItemsPresenter></ItemsPresenter>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="350"></ColumnDefinition>
+                                    <ColumnDefinition Width="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="60"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Summa:" Margin="0 0 10 0" FontSize="16" FontFamily="Roboto" FontWeight="Bold" HorizontalAlignment="Right" Grid.Column="0"></TextBlock>
+                                <TextBlock Text="{Binding TotalSumma, StringFormat=N2}" FontSize="16" FontFamily="Roboto" FontWeight="Bold" Grid.Column="1"></TextBlock>
+                            </Grid>
                         </StackPanel>
                     </ControlTemplate>
                 </ItemsControl.Template>
@@ -71,27 +94,88 @@
                     <DataTemplate>
                         <Grid Margin="0 0 0 5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"></ColumnDefinition>
+                                <ColumnDefinition Width="350"></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
-                                <ColumnDefinition Width="100"></ColumnDefinition>
-                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                                <ColumnDefinition Width="30"></ColumnDefinition>
+                                <ColumnDefinition Width="30"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" HorizontalAlignment="Center" Text="{Binding Ingrediens.Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
-                            <TextBox Grid.Column="1" HorizontalAlignment="Center" Width="50" Text="{Binding Mängd}" FontSize="16" FontFamily="Roboto"></TextBox>
-                            <ComboBox ItemsSource="{Binding Ingrediens.ViktMått}" Margin="0 0 5 0" Grid.Column="2" Text="{Binding Mått, Converter={StaticResource KonverteraMåttTillText}}" FontSize="16" FontFamily="Roboto">
+                            <TextBlock Grid.Column="0">
+                                <Run Text="{Binding Pris, StringFormat=N2}"></Run>
+                                <Run Text="kr,"></Run>
+                                <Run Text="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}"></Run>
+                                <Run Text="{Binding Förpackningstyp}"></Run>
+                                <Run Text="{Binding Namn}"></Run>
+                                <Run Text="á"></Run>
+                                <Run Text="{Binding Mängd}"></Run>
+                                <Run Text="{Binding Mått}"></Run>
+                            </TextBlock>
+                            <TextBlock Text="{Binding Summa, StringFormat=N2}" Grid.Column="1"></TextBlock>
+                            
+                            <!--<ComboBox ItemsSource="{Binding Ingrediens.ViktMått}" Margin="0 0 5 0" Grid.Column="3" Text="{Binding Mått, Converter={StaticResource KonverteraMåttTillText}}" FontSize="16" FontFamily="Roboto">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding}"></TextBlock>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            <Button Grid.Column="3" Click="DeleteIngredient_Click">
+                            </ComboBox>-->
+                            <Button Grid.Column="2" Width="25" Height="25" Click="EditVara_Click">
+                                <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE70F;"></TextBlock>
+                                <Button.ToolTip>
+                                    <TextBlock>Ändra vara eller mängd</TextBlock>
+                                </Button.ToolTip>
+                            </Button>
+                            <Button Grid.Column="3" Width="25" Height="25" Click="DeleteIngredient_Click">
                                 <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                                <Button.ToolTip>
+                                    <TextBlock>Tabort vara från listan</TextBlock>
+                                </Button.ToolTip>
                             </Button>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        <Popup x:Name="prispopup" IsOpen="False" StaysOpen="True" Placement="Center" >
+            <StackPanel MinWidth="150" MinHeight="200">
+                <ListView Name="prislista" VerticalAlignment="Stretch">
+                    <ListView.Template>
+                        <ControlTemplate TargetType="ListView">
+                            <StackPanel Background="Wheat">
+                                <ItemsPresenter></ItemsPresenter>
+                                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                    <Button  BorderBrush="Bisque" Background="Beige" Click="ÄndraInköpsLista_Click" >
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74E;"></TextBlock>
+                                    </Button>
+                                    <Button BorderBrush="Bisque" Margin="10 0 0 0" Background="Beige" HorizontalAlignment="Right" Click="StängPopup_Click">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Foreground="Red" Text="&#xE711;"></TextBlock>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </ListView.Template>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton Checked="RadioButton_Checked" GroupName="RadioPrisVal">
+                                    <RadioButton.Content>
+                                        <TextBlock>
+                                            <Run Text="{Binding Pris, StringFormat=N2}"></Run>
+                                            <Run Text="kr,"></Run>
+                                            <Run Text="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}"></Run>
+                                            <Run Text="{Binding Förpackningstyp}"></Run>
+                                            <Run Text="{Binding Namn}"></Run>
+                                            <Run Text="á"></Run>
+                                            <Run Text="{Binding Mängd}"></Run>
+                                            <Run Text="{Binding Mått}"></Run>
+                                        </TextBlock>
+                                    </RadioButton.Content>
+                                </RadioButton>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </StackPanel>
+        </Popup>
     </Grid>
 </Page>

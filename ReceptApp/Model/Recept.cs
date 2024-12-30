@@ -65,8 +65,8 @@ namespace ReceptApp
                 {
                     _tidigareantalportioner = _antalportioner;
                     _antalportioner = value;
-                    BeräknaIngrediensMängd();
-                    //BeräknaVärden();
+                    //BeräknaIngrediensMängd();
+                    BeräknaVärden();
                     OnPropertyChanged(nameof(Antalportioner));
                 }
             }
@@ -146,9 +146,12 @@ namespace ReceptApp
 
         }
 
+        App app = (App)Application.Current;
+
         private void KaloriPortion_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             BeräknaVärden();
+            app.appdata.SaveAll();
         }
 
         public void BeräknaVärden()

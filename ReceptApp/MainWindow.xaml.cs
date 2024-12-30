@@ -50,22 +50,23 @@ namespace ReceptApp
             addRecipePage = new AddRecipePage();
             shoppingList = new ShoppingList();
             ContentFrame.Navigate(ingredientPage);
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromSeconds(5);
-            _timer.Tick += Timer_Tick;
+            //_timer = new DispatcherTimer();
+            //_timer.Interval = TimeSpan.FromSeconds(5);
+            //_timer.Tick += Timer_Tick;
+            //_timer.Start();
         }
 
-        private void Timer_Tick(object? sender, EventArgs e)
-        {
-            if (app.HasChangedData)
-            {
-                app.HasChangedData = false;
-                SaveLoad.SaveIngrediens("Ingredienser", app.Ingredienslista);
-                SaveLoad.SaveRecept("Recept", app.ReceptLista);
-                _timer.Stop();
-                _timer.Start();
-            }
-        }
+        //private void Timer_Tick(object? sender, EventArgs e)
+        //{
+        //    if (app.HasChangedData)
+        //    {
+        //        app.HasChangedData = false;
+        //        SaveLoad.SaveIngrediens("Ingredienser", app.Ingredienslista);
+        //        SaveLoad.SaveRecept("Recept", app.ReceptLista);
+        //        _timer.Stop();
+        //        _timer.Start();
+        //    }
+        //}
 
         private void Button_Click_Ingredient(object sender, RoutedEventArgs e)
         {

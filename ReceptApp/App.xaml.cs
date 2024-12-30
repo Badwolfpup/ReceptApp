@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,11 +38,17 @@ namespace ReceptApp
 
         public App()
         {
-            Ingredienslista = SaveLoad.LoadIngrediens("Ingrediens");
+            appdata = AppData.Load();
+            Ingredienslista = appdata.Ingredienslista;
+            //Ingredienslista.CollectionChanged += Ingredienslista_CollectionChanged;
+            ReceptLista = appdata.ReceptLista;
+            //ReceptLista.CollectionChanged += ReceptLista_CollectionChanged;
+
             FilteredIngredienslista = new ObservableCollection<Ingrediens>(Ingredienslista);
-            ReceptLista = SaveLoad.LoadRecept("Recept");
+
             ShoppingIngredienser = new ObservableCollection<Recept>();
             ValdReceptIngrediens = new ReceptIngrediens();
+            PriserIShoppingList = new ObservableCollection<Priser>();
             ValtPris = new Priser("");
             if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
             Nyttrecept = new Recept(Antalportioner);
@@ -49,18 +56,18 @@ namespace ReceptApp
             ValdIngrediensIRecept = new Ingrediens();
             FilteredIngredientList = CollectionViewSource.GetDefaultView(FilteredIngredienslista);
             FilteredIngredientList.Filter = FilterPredicate;
-            ReceptLista.CollectionChanged += ReceptLista_CollectionChanged;
-            Ingredienslista.CollectionChanged += Ingredienslista_CollectionChanged;
+
+
         }
 
         private void Ingredienslista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            SaveLoad.SaveIngrediens("Ingrediens", Ingredienslista);
+            appdata.SaveAll();
         }
 
         private void ReceptLista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            SaveLoad.SaveRecept("Recept", ReceptLista);
+            appdata.SaveAll();
         }
 
         public event NotifyCollectionChangedEventHandler? CollectionChanged
@@ -91,9 +98,10 @@ namespace ReceptApp
 
 
         #region Properties
+        public AppData appdata { get; set; }
 
         public List<string> PrisMåttLista { get; } = new List<string> { "g", "kg", "dl", "l" };
-        public List<string> PrisFörpackningstypLista { get; } = new List<string> {"", "st", "påse", "burk", "förp" };
+        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt", "st", "tub", "påse", "burk", "förp" };
 
         private ObservableCollection<Ingrediens>? _ingredienslista;
         public ObservableCollection<Ingrediens> Ingredienslista
@@ -103,7 +111,20 @@ namespace ReceptApp
             {
                 if (value != _ingredienslista)
                 {
+                    if (_ingredienslista != null)
+                    {
+                        // Detach the event from the old collection
+                        _ingredienslista.CollectionChanged -= Ingredienslista_CollectionChanged;
+                    }
+
                     _ingredienslista = value;
+
+                    if (_ingredienslista != null)
+                    {
+                        // Attach the event to the new collection
+                        _ingredienslista.CollectionChanged += Ingredienslista_CollectionChanged;
+                    }
+                    if (!ReferenceEquals(_ingredienslista, appdata.Ingredienslista)) MessageBox.Show("Listorna är desynchade igen");
                     OnPropertyChanged(nameof(Ingredienslista));
                 }
             }
@@ -133,7 +154,19 @@ namespace ReceptApp
             {
                 if (value != _receptlista)
                 {
+                    if (_receptlista != null)
+                    {
+                        // Detach the event from the old collection
+                        _receptlista.CollectionChanged -= Ingredienslista_CollectionChanged;
+                    }
+
                     _receptlista = value;
+
+                    if (_receptlista != null)
+                    {
+                        // Attach the event to the new collection
+                        _receptlista.CollectionChanged += Ingredienslista_CollectionChanged;
+                    }
                     OnPropertyChanged(nameof(ReceptLista));
                 }
             }
@@ -163,6 +196,20 @@ namespace ReceptApp
                 {
                     _receptingrediensshoppinglist = value;
                     OnPropertyChanged(nameof(ReceptIngrediensShoppingList));
+                }
+            }
+        }
+
+        private ObservableCollection<Priser>? _priserishoppinglist;
+        public ObservableCollection<Priser> PriserIShoppingList
+        {
+            get { return _priserishoppinglist; }
+            set
+            {
+                if (_priserishoppinglist != value)
+                {
+                    _priserishoppinglist = value;
+                    OnPropertyChanged(nameof(PriserIShoppingList));
                 }
             }
         }
@@ -322,7 +369,7 @@ namespace ReceptApp
             }
         }
 
-        private string _recipefiltertext = string.Empty;       
+        private string _recipefiltertext = string.Empty;
         public string RecipeFilterText
         {
             get => _recipefiltertext;
@@ -335,6 +382,23 @@ namespace ReceptApp
                 }
             }
         }
+
+        private double _totalsumma;
+        public double TotalSumma
+        {
+            get => _totalsumma;
+            set
+            {
+                if (_totalsumma != value)
+                {
+                    _totalsumma = value;
+                    OnPropertyChanged(nameof(TotalSumma));
+                }
+            }
+        }
+
+        public bool SkaKopieraBild { get; set; }
+
         #endregion
 
         public bool HasAddedImage { get; set; }
@@ -349,6 +413,42 @@ namespace ReceptApp
                 return !ingrediens.ÄrTillagdIRecept;
             }
             return false;
+        }
+
+        public void KopieraBild(BitmapImage img, string filnamn, string fileextension, bool hasExtension)
+        {
+            if (!SkaKopieraBild)
+            {
+                SkaKopieraBild = true; return;
+            }
+            if (!hasExtension) fileextension = ".png";
+            filnamn += fileextension;
+            string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
+            string bildfolder = _folderpath + @"\Bilder\";
+            if (!Directory.Exists(bildfolder)) Directory.CreateDirectory(bildfolder);
+
+            string filePath = Path.Combine(bildfolder, filnamn);
+
+            var file = Directory.GetFiles(bildfolder, filnamn);
+            if (file.Any()) return;
+            if (img != null && !string.IsNullOrEmpty(filnamn))
+            {
+                // Create a new BitmapEncoder
+                BitmapEncoder encoder = new PngBitmapEncoder(); // Choose the appropriate encoder based on your requirements
+
+                // Create a new MemoryStream to hold the encoded image data
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    // Encode the BitmapImage and write the encoded data to the MemoryStream
+                    encoder.Frames.Add(BitmapFrame.Create(img));
+                    encoder.Save(memoryStream);
+
+
+                    // Write the encoded data from the MemoryStream to the file
+                    File.WriteAllBytes(filePath, memoryStream.ToArray());
+                }
+            }
+
         }
 
 
@@ -434,7 +534,7 @@ namespace ReceptApp
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            HasChangedData = true;
+            if (appdata != null) appdata.SaveAll();
         }
     }
 
@@ -580,6 +680,8 @@ namespace ReceptApp
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is int intValue && intValue == 0) return string.Empty;
+
             return value?.ToString() ?? string.Empty; // Convert null to empty string
         }
 
@@ -594,4 +696,6 @@ namespace ReceptApp
             return DependencyProperty.UnsetValue; // Fallback for invalid input
         }
     }
+
+
 }

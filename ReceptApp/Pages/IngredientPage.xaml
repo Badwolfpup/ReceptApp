@@ -161,7 +161,7 @@
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Namn" Width="auto" Binding="{Binding Namn}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Pris" Width="auto" Binding="{Binding Pris}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Pris" Width="auto" Binding="{Binding Pris, StringFormat=N2}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Mängd" Width="auto" Binding="{Binding Mängd}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Mått" Width="auto" Binding="{Binding Mått}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Antal" Width="auto" Binding="{Binding Antal}"></DataGridTextColumn>

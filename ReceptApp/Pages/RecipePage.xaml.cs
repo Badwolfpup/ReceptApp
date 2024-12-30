@@ -76,7 +76,7 @@ namespace ReceptApp.Pages
                 MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
                 mainWindow.ContentFrame.Navigate(mainWindow.addRecipePage);
                 app.Nyttrecept = app.ValtRecept;
-               
+                //app.ValdReceptIngrediens = app.Nyttrecept.ReceptIngredienser[0];
             }
         }
     }   

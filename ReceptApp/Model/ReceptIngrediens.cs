@@ -86,13 +86,14 @@ namespace ReceptApp
             BeräknaAntalGram(); //Relativt till 100g, ex 125g = 1,25
         }
 
-        //Beräknar det relativa antalet gram av ingrediensen beroende på valt viktmått
+        //Beräknar det relativa antalet gram av ingrediensen beroende på valt viktmått relativt till 100g
         public void BeräknaAntalGram()
         {
 
             switch (Mått)
             {
                 case "g": AntalGram = Mängd / 100.0; break;
+                case "st": AntalGram = Mängd * Ingrediens.Styck / 100; break;
                 case "dl": AntalGram = (Ingrediens.GramPerDl * Mängd) / 100.0; break;
                 case "msk": AntalGram = (Ingrediens.GramPerDl * Mängd * 15 / 100) / 100.0; break;
                 case "tsk": AntalGram = (Ingrediens.GramPerDl * Mängd * 5 / 100) / 100.0; break;

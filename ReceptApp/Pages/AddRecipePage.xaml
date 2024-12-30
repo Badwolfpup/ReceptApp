@@ -16,7 +16,7 @@
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0">
             <TextBox Height="25" x:Name="FilterTextboxNyttRecept" Text="{Binding AddRecipeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <ListView x:Name="ScrollIngrediensNyttRecept" ItemsSource="{Binding FilteredIngredientList}" SelectionMode="Single" SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged" SelectedItem="{Binding ValdIngrediensIRecept}">
+                <ListView x:Name="ScrollIngrediensNyttRecept" ItemsSource="{Binding FilteredIngredientList}" PreviewMouseDown="ScrollIngrediensNyttRecept_MouseLeftButtonDown" SelectionMode="Single" SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged" SelectedItem="{Binding ValdIngrediensIRecept}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>

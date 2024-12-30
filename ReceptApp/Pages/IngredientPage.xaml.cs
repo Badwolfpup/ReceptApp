@@ -58,8 +58,7 @@ namespace ReceptApp.Pages
                 {
                     _selectedindex = ScrollIngrediens.SelectedIndex; //Sparar indexet på den ingrediensen som ska raderas.
                     _hasDeletedIngredient = true; //Sätter att en ingrediens har raderats.
-                    app.Ingredienslista.Remove(app.ValdIngrediens); //Raderar ingrediensen från listan.              
-                    //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
+                    app.Ingredienslista.Remove(app.ValdIngrediens); //Raderar ingrediensen från listan.
                 }
 
             }
@@ -71,6 +70,7 @@ namespace ReceptApp.Pages
             _hasDeletedIngredient = false; //Återställer variabeln.
             if (sender is ListView listView)
             {
+                if (listView.SelectedItem == null) return;  
                 app.ValdIngrediens = (Ingrediens)listView.SelectedItem; //Sätter den valda ingrediensen.
                 app.ValtPris = app.ValdIngrediens.PrisLista.Count > 0 ? app.ValdIngrediens.PrisLista[app.ValdIngrediens.PrisLista.Count-1] : new Priser(app.ValdIngrediens.Namn); //Sätter det valda priset.
             }
@@ -108,7 +108,14 @@ namespace ReceptApp.Pages
                 if (open.ShowDialog() == true)
                 {
                     string filgenväg = open.FileName;
-                    if (open.InitialDirectory == System.IO.Path.GetDirectoryName(filgenväg)) SaveLoad.SkaKopieraBild = true;
+                    string directiryname = System.IO.Path.GetDirectoryName(filgenväg) + "\\";
+                    if (open.InitialDirectory == System.IO.Path.GetDirectoryName(filgenväg) + "\\")
+                    {
+                        NyNamn.Text = System.IO.Path.GetFileNameWithoutExtension(filgenväg);
+                        app.ValdIngrediens.Namn = NyNamn.Text;
+                        NyNamn.IsEnabled = false;
+                        app.SkaKopieraBild = false;
+                    }
                     _fileextension = System.IO.Path.GetExtension(filgenväg);
                     if (System.IO.Path.GetExtension(filgenväg) == ".jpg" || System.IO.Path.GetExtension(filgenväg) == ".jpeg" || System.IO.Path.GetExtension(filgenväg) == ".png")
                     {
@@ -153,17 +160,18 @@ namespace ReceptApp.Pages
                 app.ValdIngrediens.Bild = AppDomain.CurrentDomain.BaseDirectory + bildnamn; //Sparar bildens sökväg i Ingrediensobjektet.
                 app.Ingredienslista.Add(app.ValdIngrediens); //Lägger till ingrediensen i listan.
                 app.FilteredIngredienslista.Add(app.ValdIngrediens); //Lägger till ingrediensen i den filtrerade listan.
-                app.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
+                app.appdata.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
+                app.Ingredienslista = app.appdata.Ingredienslista;
                 ÄndraTextOchVisibilityPåKnapparna();
                 EnableIngredientListAndFilterTextbox();
                 Nyingrediens = false; 
                 ScrollIngrediens.SelectedItem = app.ValdIngrediens; //Markerar den nya ingrediensen i listan.                
-                if (app.HasAddedImage) SaveLoad.KopieraBild(app.TempBild, NyNamn.Text, _fileextension, app.HasExtension); //Kopierar bilden till mappen om man la till en bild .
+                if (app.HasAddedImage) app.KopieraBild(app.TempBild, NyNamn.Text, _fileextension, app.HasExtension); //Kopierar bilden till mappen om man la till en bild .
                 app.HasAddedImage = false; //Återställer variabler (för när man lägger itll en en ny ingrediens igen.
-                //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar listan med ingrediesner.
                 BildRuta.Source = null; //Nollställer bilden.
                 BildRuta.Visibility = Visibility.Collapsed; //Gömmer bilden.
                 BindadBild.Visibility = Visibility.Visible; //Visar den bindade bilden.
+                NyNamn.IsEnabled = true;
             }
             else
             {
@@ -222,25 +230,6 @@ namespace ReceptApp.Pages
             app.ValtPris = _tempValtPris; //Återställer det valda priset.
         }
 
-        //private void Grid_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    foreach (var control in Tab1Grid2.Children)
-        //    {
-        //        if (control is TextBox textBox)
-        //        {
-        //            textBox.TextChanged += TextBox_TextChanged; //Lägger till eventhanterare för textboxarna i den valda griden.
-        //        }
-        //    }
-        //}
-
-        //private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    if (sender is TextBox textBox)
-        //    {
-        //        SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar listan med ingredienser varje gång textn ändras.
-        //    }
-        //}
-
 
         private void NyNamn_PreviewNameInput(object sender, KeyEventArgs e) //Kollar att mellanslaget inte är först eller sist i namnet
         {
@@ -262,7 +251,6 @@ namespace ReceptApp.Pages
                     Nypris = false;
                     AddPrisCANCELButton.Visibility = Visibility.Collapsed;
                     app.ValdIngrediens.PrisLista.Add(app.ValtPris);
-                    //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
                 }
                 else
                 {
@@ -304,7 +292,6 @@ namespace ReceptApp.Pages
                 int _index = app.ValdIngrediens.PrisLista.IndexOf(app.ValtPris);
                 app.ValdIngrediens.PrisLista.Remove(app.ValtPris);
                 app.ValtPris = app.ValdIngrediens.PrisLista.Count > 0 ? app.ValdIngrediens.PrisLista[_index > 0 ? _index - 1 : _index] : new Priser(app.ValdIngrediens.Namn);
-                //SaveLoad.SaveIngrediens("Ingrediens", app.Ingredienslista); //Sparar om listan med ingredienser.
             }
         }
 

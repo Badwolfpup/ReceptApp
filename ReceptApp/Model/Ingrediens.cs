@@ -57,6 +57,20 @@ namespace ReceptApp
             }
         }
 
+        private int _id;
+        public int Id
+        {
+            get { return _id; }
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
+
         private string _namn; //Ingrediensens namn
         public string Namn
         {
@@ -334,7 +348,7 @@ namespace ReceptApp
             }
         }
 
-        public double AntalGram { get; set; } //Det relativa av ingrediensens tillagda vikt i förhållande till 100g. Ex 125g = 1,25
+        //public double AntalGram { get; set; } //Det relativa av ingrediensens tillagda vikt i förhållande till 100g. Ex 125g = 1,25
 
 
 
@@ -347,6 +361,14 @@ namespace ReceptApp
             if (!ViktMått.Any(x => x == "Gram")) ViktMått.Add("Gram");
             ViktMått.CollectionChanged += ViktMått_CollectionChanged;
             PrisLista = new ObservableCollection<Priser>();
+            PrisLista.CollectionChanged += PrisLista_CollectionChanged;
+        }
+
+
+
+        private void PrisLista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (app.appdata !=null) app.appdata.SaveAll();
         }
 
         App app = (App)Application.Current;
@@ -406,7 +428,7 @@ namespace ReceptApp
             else
             {
                 HarStyck = false;
-                if (ViktMått.Any(x => x == "Styck"))
+                if (ViktMått.Any(x => x == "Stycken"))
                 {
                     ViktMått.Remove("Stycken");
                 }

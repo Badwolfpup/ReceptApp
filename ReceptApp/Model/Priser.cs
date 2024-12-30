@@ -11,22 +11,6 @@ using System.Windows;
 
 namespace ReceptApp.Model
 {
-    public enum Förpackning
-    {
-        st,
-        förp,
-        burk,
-        påse
-    } 
-
-    public enum ViktEnheter
-    {
-        g,
-        kg,
-        dl,
-        l
-    }
-
 
     public class Priser : INotifyPropertyChanged
     {
@@ -42,7 +26,7 @@ namespace ReceptApp.Model
 
         App app = (App)Application.Current;
 
-        private double? _prisPerKg;
+        private double? _prisPerKg = 0;
         public double? PrisPerKg
         {
             get { return _prisPerKg; }
@@ -56,7 +40,7 @@ namespace ReceptApp.Model
             }
         }
 
-        private double? _prisPerLiter;
+        private double? _prisPerLiter = 0;
         public double? PrisPerLiter
         {
             get { return _prisPerLiter; }
@@ -70,7 +54,7 @@ namespace ReceptApp.Model
             }
         }
 
-        private double? _prisPerSt;
+        private double? _prisPerSt = 0;
         public double? PrisPerSt
         {
             get { return _prisPerSt; }
@@ -112,11 +96,25 @@ namespace ReceptApp.Model
             }
         }
 
-        private string? _namn = "";
-        public string? Namn
+        private double? _summa;
+        public double? Summa
+        {
+            get { return _summa; }
+            set
+            {
+                if (_summa != value)
+                {
+                    _summa = value;
+                    OnPropertyChanged(nameof(Summa));
+                }
+            }
+        }
+
+        private string _namn = "";
+        public string Namn
         {
             get { return _namn; }
-            private set
+            set
             {
                 if (_namn != value)
                 {
@@ -126,7 +124,21 @@ namespace ReceptApp.Model
             }
         }
 
-        private int? _antal = 0;
+        private int _antalprodukter;
+        public int AntalProdukter
+        {
+            get { return _antalprodukter; }
+            set
+            {
+                if (_antalprodukter != value)
+                {
+                    _antalprodukter = value;
+                    OnPropertyChanged(nameof(AntalProdukter));
+                }
+            }
+        }
+
+        private int? _antal;
         public int? Antal
         {
             get { return _antal; }
@@ -149,12 +161,13 @@ namespace ReceptApp.Model
                 if (_mått != value)
                 {
                     _mått = value;
+                    JämförelsePriser();
                     OnPropertyChanged(nameof(Mått));
                 }
             }
         }
 
-        private string? _förpackningstyp = "st";
+        private string? _förpackningstyp;
         public string? Förpackningstyp
         {
             get { return _förpackningstyp; }
@@ -167,6 +180,7 @@ namespace ReceptApp.Model
                 }
             }
         }
+
 
         public Priser(string namn)
         {

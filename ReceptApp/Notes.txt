@@ -1,13 +1,15 @@
 ﻿Att göra:
+Totalkostanad per ingrediens, samt totalt för receptet, lägga till kostnad per styck
+Converter föra tt anpassar mått o dylikt till plural
 (FIXAT???)Fixa design för priser
 (KLART???)Implentera färdigt Priser till ingredienser och hur det kopplas till shoppinglist
-Skapa algorithm för att ska en shoppinglista som konverterar olika mått till ett enda och föreslår lämplig "förpackning"
 Fixa design så textboxes o dylikt inte ändrar position
-
 
 Fixa Hamburger menu
 Kolla upp ModernWPF
 *FIXAD??*Fixa till designen, tex teckensnitt, färger, storlek på text, layout
+(KANSKE SENARE)Koll att det finns förpackningstyp om siffra anges
+Fixa knappar i addrecipe, samma som i ingrediens
 
 
 
@@ -45,4 +47,11 @@ Lägg till styck som alternativ
 (*OTESTAD*) Töm antalgram rutan vid ny ingrediens
 (Blir onödigt komplicerat)Fixa RecipeFilterText o den andra såa tt de blir lokala för sin page och uppdatera logiken i filtermetoden i App.xaml.cs
 Add nytt objekt valt pris när man lägger till ny ingrediens
-
+Lägg till lösvikt som förpackningstyp
+Lägg till tub som förpackningstyp
+2 decimaler i prislistan på ingrediensen för pris
+Ändra så att antlet portioner förändrar n'ringsvärdet, inte mängden
+Den ska visa mängden förpackningar, inte vikt i shoppinglist
+Ta bort recept från shoppinglist ska uppdatera shoopinglistan
+Undersök varför collectionchanged inte triggar när man ska editera ett recept men triggas när man skapar ett nytt
+Skapa algorithm för att ska en shoppinglista som konverterar olika mått till ett enda och föreslår lämplig "förpackning"
