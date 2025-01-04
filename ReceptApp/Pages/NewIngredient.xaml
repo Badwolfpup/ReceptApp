@@ -1,0 +1,62 @@
+﻿<Window x:Class="ReceptApp.Pages.NewIngredient"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReceptApp.Pages"
+        mc:Ignorable="d"
+        Title="NewIngredient" Height="450" Width="800" SizeToContent="WidthAndHeight">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Paste" Executed="OnPasteExecuted"/>
+    </Window.CommandBindings>
+    <Grid x:Name="Tab1Grid2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="180"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Image x:Name="BindadBild" Source="{Binding NyIngrediens.Bild}"  Grid.Row="0" Grid.ColumnSpan="2" Stretch="Uniform"
+               Width="150" Height="150" MinHeight="40" MinWidth="40" MouseDown="Image_MouseDown"></Image>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Namn: " Grid.Column="0"></TextBlock>
+            <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding NyIngrediens.Namn, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" MaxWidth="150"></TextBox>
+        </Grid>
+        <TextBlock Text="Kalorier: " Grid.Column="0" Grid.Row="2"></TextBlock>
+        <TextBlock Text="Kolhydrater: " Grid.Column="0" Grid.Row="3"></TextBlock>
+        <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="4"></TextBlock>
+        <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="5"></TextBlock>
+
+        <TextBox Name="NyKalori" Width="50" HorizontalAlignment="Left" Text="{Binding NyIngrediens.Kalori, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"  Grid.Row="2" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+        <TextBox Name="NyKolhydrat" Width="50" HorizontalAlignment="Left" Text="{Binding NyIngrediens.Kolhydrat, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="3" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+        <TextBox Name="NyFett" Width="50" HorizontalAlignment="Left" Text="{Binding NyIngrediens.Fett, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="4" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+        <TextBox Name="NyProtein" Width="50" HorizontalAlignment="Left" Text="{Binding NyIngrediens.Protein, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="5" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+        <CheckBox Grid.Column="0" Grid.Row="6" x:Name="NyIngrediensCheckBoxGramPerDL" Content="Gram per dl" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding NyIngrediens.HarGramPerDL, Mode=TwoWay}"></CheckBox>
+        <TextBox Grid.Column="1" Grid.Row="6" x:Name="NyIngrediensTextBoxGramPerDL" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding NyIngrediens.GramPerDl, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=NyIngrediensCheckBoxGramPerDL, Path=IsChecked}"></TextBox>
+        <CheckBox Grid.Column="0" Grid.Row="7" x:Name="NyIngrediensCheckBoxGramStyck" Content="Gram per styck" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding NyIngrediens.HarStyck}"></CheckBox>
+        <TextBox Grid.Column="1" Grid.Row="7" x:Name="NyIngrediensTextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding NyIngrediens.Styck, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=NyIngrediensCheckBoxGramStyck, Path=IsChecked}" ></TextBox>
+
+        <Button x:Name="ButtonLäggTillIngrediens" Content="OK" Grid.Row="8" Grid.Column="0" Width="50" Margin="3" Padding="3" Height="25" Click="LäggTillIngrediens_Click"></Button>
+        <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Row="8" Grid.Column="1" Margin="3" Height="25" Click="CancelLäggTillIngrediens_Click"></Button>
+
+
+    </Grid>
+
+</Window>

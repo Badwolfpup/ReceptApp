@@ -1,0 +1,49 @@
+﻿<Window x:Class="ReceptApp.Pages.ChangePrice"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReceptApp.Pages"
+        mc:Ignorable="d"
+        Title="ChangePrice" Height="450" Width="800" SizeToContent="WidthAndHeight">
+    <Grid>
+        <StackPanel>
+            <DataGrid ItemsSource="{Binding }" AutoGenerateColumns="False" SelectionChanged="DataGrid_SelectionChanged" Loaded="DataGrid_Loaded">
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="5"></Setter>
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                        <Setter Property="VerticalContentAlignment" Value="Bottom" />
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Pris" Binding="{Binding Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Jämför" Binding="{Binding JämförelsePris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="# Prod" Binding="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}"></DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Typ av prod">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource KonverteraTypTillPlural}">
+                                            <Binding Path="Förpackningstyp"></Binding>
+                                            <Binding Path="AntalProdukter"></Binding>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Mängd" Binding="{Binding Mängd}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Mått" Binding="{Binding Mått}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Spara" Margin="0 0 30 0" Click="VäljNyttPris_Click"></Button>
+                <Button Content="Avbryt" Click="Avbryt_Click"></Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

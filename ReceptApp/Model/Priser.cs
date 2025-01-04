@@ -26,6 +26,22 @@ namespace ReceptApp.Model
 
         App app = (App)Application.Current;
 
+        public bool SkaÄndraJmfrPris { get; set; } = true;
+
+        private double? _jämförelsepris;
+        public double? JämförelsePris
+        {
+            get { return _jämförelsepris; }
+            set
+            {
+                if (_jämförelsepris != value)
+                {
+                    _jämförelsepris = value;
+                    OnPropertyChanged(nameof(JämförelsePris));
+                }
+            }
+        }
+
         private double? _prisPerKg = 0;
         public double? PrisPerKg
         {
@@ -152,7 +168,7 @@ namespace ReceptApp.Model
             }
         }
 
-        private string? _mått = "g";
+        private string? _mått;
         public string? Mått
         {
             get { return _mått; }
@@ -161,7 +177,7 @@ namespace ReceptApp.Model
                 if (_mått != value)
                 {
                     _mått = value;
-                    JämförelsePriser();
+                    if (SkaÄndraJmfrPris) JämförelsePriser();
                     OnPropertyChanged(nameof(Mått));
                 }
             }
@@ -191,23 +207,23 @@ namespace ReceptApp.Model
         {
             if (Mått == "g")
             {
-                PrisPerKg = Pris / Mängd * 1000;
+                JämförelsePris = Pris / Mängd * 1000;
             }
             else if (Mått == "kg")
             {
-                PrisPerKg = Pris / Mängd;
+                JämförelsePris = Pris / Mängd;
             }
             else if (Mått == "l")
             {
-                PrisPerLiter = Pris / Mängd;
+                JämförelsePris = Pris / Mängd;
             }
             else if (Mått == "dl")
             {
-                PrisPerLiter = Pris / Mängd * 10;
+                JämförelsePris = Pris / Mängd * 10;
             }
             else if (Mått == "st")
             {
-                PrisPerSt = Pris / Mängd;
+                JämförelsePris = Pris / Mängd;
             }
         }
     }

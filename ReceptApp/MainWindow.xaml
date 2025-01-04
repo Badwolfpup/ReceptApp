@@ -6,10 +6,8 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:ReceptApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="900">
-    <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.Paste" Executed="OnPasteExecuted"/>
-    </Window.CommandBindings>
+        Title="MainWindow" Height="700" Width="950">
+
     <Grid x:Name="Maingrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
@@ -27,12 +25,11 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
 
-                <ColumnDefinition></ColumnDefinition>
+
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Background="LightGoldenrodYellow" Content="Ingrediens" Click="Button_Click_Ingredient"></Button>
             <Button Grid.Column="1" Background="LightGoldenrodYellow" Content="Recept" Click="Button_Click_Recipe"></Button>
-            <Button Grid.Column="2" Background="LightGoldenrodYellow" Content="Skapa nytt recept" Click="Button_Click_AddRecipe"></Button>
-            <Button Grid.Column="4" Background="LightGoldenrodYellow" Content="Inköpslista" Click="Button_Click_Inköpslista"></Button>
+            <Button Grid.Column="2" Background="LightGoldenrodYellow" Content="Inköpslista" Click="Button_Click_Inköpslista"></Button>
 
         </Grid>
         <Frame Grid.Row="1" x:Name="ContentFrame" NavigationUIVisibility="Hidden"></Frame>

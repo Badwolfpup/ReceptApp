@@ -5,16 +5,17 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ReceptApp.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="704"
+      d:DesignHeight="600" d:DesignWidth="900"
       Title="IngredientPage">
 
     <Grid x:Name="Tab1Grid" Background="#FFFDFDFD">
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"></ColumnDefinition>
-            <ColumnDefinition Width="5*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition Width="6*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0">
-            <TextBox x:Name="FilterTextbox" Height="25" Text="{Binding IngredientFilterText, UpdateSourceTrigger=PropertyChanged}"/>
+        <StackPanel Width="300" HorizontalAlignment="Left" Margin="30,20,0,0" Grid.Column="0">
+            <TextBox x:Name="FilterTextbox" Height="25" Text="" TextChanged="FilterTextbox_TextChanged"/>
             <ScrollViewer Margin="0,10,0,0" Height="320" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <ListView x:Name="ScrollIngrediens" ItemsSource="{Binding Ingredienslista}" SelectionChanged="IngredientList_SelectionChanged"
                       SelectionMode="Single" SelectedItem="{Binding ValdIngrediens}" Padding="0" Margin="0">
@@ -39,6 +40,9 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </ScrollViewer>
+            <Button Content="Lägg till ny ingrediens"  Margin="3" Padding="3" Height="25" Click="ÖppnaIngrediens_Click"></Button>
+            <Button Content="Lägg till nytt pris"  Margin="3" Padding="3" Height="25" Click="Add_Price_Click"></Button>
+
         </StackPanel>
 
 
@@ -63,109 +67,96 @@
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
-
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Image x:Name="BindadBild" Source="{Binding ValdIngrediens.Bild}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
-               Width="200" Height="200" MinHeight="40" MinWidth="40" MouseDown="Image_MouseDown"></Image>
-            <Image x:Name="BildRuta" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
-                    Width="200" Height="200" MinHeight="40" MinWidth="40" MouseDown="Image_MouseDown" Visibility="Collapsed"></Image>
+            <Image Source="{Binding ValdIngrediens.Bild}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Stretch="Uniform"
+               Width="200" Height="200" MinHeight="40" MinWidth="40" ></Image>
+
             <Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Namn: " Grid.Column="0"></TextBlock>
-                <TextBox Name="NyNamn" Grid.Column="1" Text="{Binding ValdIngrediens.Namn}" HorizontalAlignment="Stretch" MaxWidth="150"></TextBox>
+                <TextBox Grid.Column="1" Width="150" Text="{Binding ValdIngrediens.Namn}" HorizontalAlignment="Stretch" MaxWidth="150"></TextBox>
             </Grid>
             <TextBlock Text="Kalorier: " Grid.Column="0" Grid.Row="3"></TextBlock>
+            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kalori, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+
             <TextBlock Text="Kolhydrater: " Grid.Column="0" Grid.Row="4"></TextBlock>
+            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kolhydrat, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="4" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+
             <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="5"></TextBlock>
+            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Fett, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="5" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+
             <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="6"></TextBlock>
+            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Protein, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="6" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
+            
+            <CheckBox Grid.Column="0" Grid.Row="7" x:Name="CheckBoxGramPerDL" Content="Gram per dl" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarGramPerDL, Mode=TwoWay}"></CheckBox>
+            <TextBox Grid.Column="1" Grid.Row="7" x:Name="TextBoxGramPerDL" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding ValdIngrediens.GramPerDl, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramPerDL, Path=IsChecked}"></TextBox>
 
-            <TextBox Name="NyKalori" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kalori, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="3" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
-            <TextBox Name="NyKolhydrat" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Kolhydrat, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="4" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
-            <TextBox Name="NyFett" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Fett, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="5" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
-            <TextBox Name="NyProtein" Width="50" HorizontalAlignment="Left" Text="{Binding ValdIngrediens.Protein, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="6" PreviewTextInput="KollaSiffor_PreviewTextInput"></TextBox>
-            <Button x:Name="ButtonLäggTillIngrediens" Content="{Binding AddKnapp, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="7" Margin="3" Padding="3" Height="25" Click="LäggTillIngrediens_Click"></Button>
-            <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Column="1" Grid.Row="7" Margin="3" Height="25" Visibility="Collapsed" Click="CancelTillIngrediens_Click"></Button>
+            <CheckBox Grid.Column="0" Grid.Row="8" x:Name="CheckBoxGramStyck" Content="Gram per st" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarStyck}"></CheckBox>
+            <TextBox Grid.Column="1" Grid.Row="8" x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding ValdIngrediens.Styck, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramStyck, Path=IsChecked}" ></TextBox>
 
 
-            <Grid Grid.Column="2" Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" x:Name="CheckBoxGramPerDL" Content="Gram per dl" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarGramPerDL, Mode=TwoWay}"></CheckBox>
-                <TextBox Grid.Column="1" x:Name="TextBoxGramPerDL" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding ValdIngrediens.GramPerDl, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramPerDL, Path=IsChecked}"></TextBox>
-            </Grid>
+
+            <TextBlock Grid.Column="2" Grid.Row="2" Text="Priser:"></TextBlock>
             <Grid Grid.Column="2" Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-
-                <CheckBox Grid.Column="0" x:Name="CheckBoxGramStyck" Content="Gram per styck" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarStyck}"></CheckBox>
-                <TextBox Grid.Column="1" x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding ValdIngrediens.Styck, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramStyck, Path=IsChecked}" ></TextBox>
-            </Grid>
-
-            <TextBlock Grid.Column="2" Grid.Row="4" Text="Priser:"></TextBlock>
-            <Grid Grid.Column="2" Grid.Row="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Width="30" Text="{Binding ValtPris.Mängd, Converter={StaticResource KonverteraTillSvenskDecimal}, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="Decimal_PreviewTextInput" HorizontalAlignment="Left" ></TextBox>
-                <ComboBox ItemsSource="{Binding PrisMåttLista}" Grid.Column="1" Margin="3" SelectedItem="{Binding ValtPris.Mått}" ></ComboBox>
+                <ComboBox ItemsSource="{Binding PrisMåttLista}" Width="60" HorizontalAlignment="Left" Grid.Column="1" Margin="3" SelectedItem="{Binding ValtPris.Mått}" ></ComboBox>
             </Grid>
-            <Grid Grid.Column="2" Grid.Row="6">
+            <Grid Grid.Column="2" Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Width="30" PreviewTextInput="KollaSiffor_PreviewTextInput"  Text="{Binding ValtPris.Antal, FallbackValue='0', TargetNullValue='0',UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableIntConverter}}" HorizontalAlignment="Left" ></TextBox>
-                <ComboBox ItemsSource="{Binding PrisFörpackningstypLista}" Grid.Column="1" Margin="3" SelectedItem="{Binding ValtPris.Förpackningstyp}" ></ComboBox>
+                <ComboBox ItemsSource="{Binding PrisFörpackningstypLista}" Width="60" HorizontalAlignment="Left" Grid.Column="1" Margin="3" SelectedItem="{Binding ValtPris.Förpackningstyp}" ></ComboBox>
             </Grid>
-            <Grid Grid.Column="2" Grid.Row="7">
+            <Grid Grid.Column="2" Grid.Row="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
                     <ColumnDefinition Width="106"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Pris:" HorizontalAlignment="Right"></TextBlock>
-                <TextBox Grid.Column="1" Width="45" PreviewTextInput="Decimal_PreviewTextInput"  Text="{Binding ValtPris.Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}" HorizontalAlignment="Left" ></TextBox>
-                <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <Button x:Name="AddPrisOKButton" Margin="3" Width="100" Content="{Binding AddNyttPrisKnapp}" Click="Add_Price_Click"></Button>
-                    <Button x:Name="AddPrisCANCELButton" Margin="3" Width="50" Content="Cancel" Click="Add_Price_Cancel_Click" Visibility="Collapsed"></Button>
-                </StackPanel>
+                <TextBox Grid.Column="1" Width="65"  PreviewTextInput="Decimal_PreviewTextInput"  Text="{Binding ValtPris.Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}" HorizontalAlignment="Left" ></TextBox>
     
             </Grid>
 
-
-
-                <!--<CheckBox x:Name="CheckBoxGramLiten" Content="Gram liten" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarAntalLiten}"></CheckBox>
-                <TextBox x:Name="TextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Liten, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramLiten, Path=IsChecked}" ></TextBox>-->
-
-                <!--<CheckBox x:Name="CheckBoxGramMedel" Content="Gram medel" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarAntalMedel}"></CheckBox>
-                <TextBox x:Name="TextBoxGramMedel" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Medel, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramMedel, Path=IsChecked}" ></TextBox>-->
-
-                <!--<CheckBox x:Name="CheckBoxGramStor" Content="Gram stor" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding ValdIngrediens.HarAntalStor}"></CheckBox>
-                <TextBox x:Name="TextBoxGramStor" Width="30" HorizontalAlignment="Left" PreviewTextInput="NyKalori_PreviewTextInput" Text="{Binding ValdIngrediens.Stor, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxGramStor, Path=IsChecked}" ></TextBox>-->
-
-            <DataGrid AutoGenerateColumns="False" x:Name="PrisListview" ItemsSource="{Binding ValdIngrediens.PrisLista}" SelectionChanged="PrisListview_SelectionChanged" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="8">
+            <DataGrid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="9" Margin="0 10 0 10" AutoGenerateColumns="False" x:Name="PrisListview" ItemsSource="{Binding ValdIngrediens.PrisLista}" SelectionChanged="PrisListview_SelectionChanged" >
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                        <Setter Property="FontWeight" Value="SemiBold"></Setter>
+                        <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Column.ActualWidth}"></Setter>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="5"></Setter>
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Radera" Click="Delete_Pris_Click"></MenuItem>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Namn" Width="auto" Binding="{Binding Namn}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Pris" Width="auto" Binding="{Binding Pris, StringFormat=N2}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Mängd" Width="auto" Binding="{Binding Mängd}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Mått" Width="auto" Binding="{Binding Mått}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Antal" Width="auto" Binding="{Binding Antal}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Typ" Width="auto" Binding="{Binding Förpackningstyp}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Pris" Binding="{Binding Pris, StringFormat=N2}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Mängd" Binding="{Binding Mängd}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Mått" Binding="{Binding Mått}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Antal" Binding="{Binding Antal}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Typ" Binding="{Binding Förpackningstyp}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

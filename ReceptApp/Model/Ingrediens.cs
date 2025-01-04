@@ -343,7 +343,6 @@ namespace ReceptApp
                 {
                     _ärTillagdIRecept = value;
                     OnPropertyChanged(nameof(ÄrTillagdIRecept));
-                    if (app.FilteredIngredientList != null) app.FilteredIngredientList.Refresh();
                 }
             }
         }
@@ -376,6 +375,12 @@ namespace ReceptApp
         private void ViktMått_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             TaBortExtraGram();
+        }
+
+        public Ingrediens Copy()
+        {
+            var json = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<Ingrediens>(json);
         }
 
         //Tar bort gram från viktmått om det finns fler än ett

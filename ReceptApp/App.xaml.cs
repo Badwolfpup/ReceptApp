@@ -40,20 +40,14 @@ namespace ReceptApp
         {
             appdata = AppData.Load();
             Ingredienslista = appdata.Ingredienslista;
-            //Ingredienslista.CollectionChanged += Ingredienslista_CollectionChanged;
             ReceptLista = appdata.ReceptLista;
-            //ReceptLista.CollectionChanged += ReceptLista_CollectionChanged;
 
             FilteredIngredienslista = new ObservableCollection<Ingrediens>(Ingredienslista);
-
             ShoppingIngredienser = new ObservableCollection<Recept>();
-            ValdReceptIngrediens = new ReceptIngrediens();
             PriserIShoppingList = new ObservableCollection<Priser>();
             ValtPris = new Priser("");
-            if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); AddImageSource(); }
-            Nyttrecept = new Recept(Antalportioner);
-            if (ReceptLista != null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(Antalportioner);
-            ValdIngrediensIRecept = new Ingrediens();
+            if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); }
+            if (ReceptLista != null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(4);
             FilteredIngredientList = CollectionViewSource.GetDefaultView(FilteredIngredienslista);
             FilteredIngredientList.Filter = FilterPredicate;
 
@@ -214,20 +208,6 @@ namespace ReceptApp
             }
         }
 
-        private ReceptIngrediens _valdreceptingrediens; //Selected receptingrediens i Lägg till recept
-        public ReceptIngrediens ValdReceptIngrediens
-        {
-            get => _valdreceptingrediens;
-            set
-            {
-                if (_valdreceptingrediens != value)
-                {
-                    _valdreceptingrediens = value;
-                    OnPropertyChanged(nameof(ValdReceptIngrediens));
-                }
-            }
-        }
-
         private Ingrediens _valdingrediens;
         public Ingrediens ValdIngrediens
         {
@@ -242,37 +222,9 @@ namespace ReceptApp
             }
         }
 
-        private Ingrediens _valdIngrediensIRecept;
-        public Ingrediens ValdIngrediensIRecept
-        {
-            get => _valdIngrediensIRecept;
-            set
-            {
-                if (_valdIngrediensIRecept != value)
-                {
-                    _valdIngrediensIRecept = value;
-                    OnPropertyChanged(nameof(ValdIngrediensIRecept));
-                }
-            }
-        }
-
-        private Recept _nyttrecept;
-        public Recept Nyttrecept //För lägg till recept
-        {
-            get { return _nyttrecept; }
-            set
-            {
-                if (_nyttrecept != value)
-                {
-                    _nyttrecept = value;
-                    OnPropertyChanged(nameof(Nyttrecept));
-                }
-            }
-        }
-
 
         private Recept _valtrecept;
-        public Recept ValtRecept //För receptlistan
+        public Recept ValtRecept 
         {
             get { return _valtrecept; }
             set
@@ -299,90 +251,8 @@ namespace ReceptApp
             }
         }
 
-        private int _antalportioner = 4;
-        public int Antalportioner
-        {
-            get { return _antalportioner; }
-            set
-            {
-                if (_antalportioner != value)
-                {
-                    _antalportioner = value;
-                    OnPropertyChanged(nameof(Antalportioner));
-                }
-            }
-        }
 
-        private string _addNyttPrisKnapp = "Lägg till pris";
-        public string AddNyttPrisKnapp
-        {
-            get => _addNyttPrisKnapp;
-            set
-            {
-                if (_addNyttPrisKnapp != value)
-                {
-                    _addNyttPrisKnapp = value;
-                    OnPropertyChanged(nameof(AddNyttPrisKnapp));
-                }
-            }
-        }
-
-        private string _addKnapp = "Ny ingrediens";
-        public string AddKnapp
-        {
-            get => _addKnapp;
-            set
-            {
-                if (_addKnapp != value)
-                {
-                    _addKnapp = value;
-                    OnPropertyChanged(nameof(AddKnapp));
-                }
-            }
-        }
-
-        private string _ingredientfiltertext = string.Empty;
-        public string IngredientFilterText
-        {
-            get => _ingredientfiltertext;
-            set
-            {
-                if (_ingredientfiltertext != value)
-                {
-                    _ingredientfiltertext = value;
-                    OnPropertyChanged(nameof(IngredientFilterText));
-                }
-            }
-        }
-
-        private string _addrecipefiltertext = string.Empty;
-        public string AddRecipeFilterText
-        {
-            get => _addrecipefiltertext;
-            set
-            {
-                if (_addrecipefiltertext != value)
-                {
-                    _addrecipefiltertext = value;
-                    OnPropertyChanged(nameof(AddRecipeFilterText));
-                }
-            }
-        }
-
-        private string _recipefiltertext = string.Empty;
-        public string RecipeFilterText
-        {
-            get => _recipefiltertext;
-            set
-            {
-                if (_recipefiltertext != value)
-                {
-                    _recipefiltertext = value;
-                    OnPropertyChanged(nameof(RecipeFilterText));
-                }
-            }
-        }
-
+ 
         private double _totalsumma;
         public double TotalSumma
         {
@@ -397,13 +267,10 @@ namespace ReceptApp
             }
         }
 
-        public bool SkaKopieraBild { get; set; }
-
+        
         #endregion
 
-        public bool HasAddedImage { get; set; }
-        public bool HasExtension { get; set; }
-        public BitmapImage TempBild { get; set; } = new BitmapImage();
+
         public bool HasChangedData { get; set; }
 
         private bool FilterPredicate(object obj)
@@ -415,47 +282,6 @@ namespace ReceptApp
             return false;
         }
 
-        public void KopieraBild(BitmapImage img, string filnamn, string fileextension, bool hasExtension)
-        {
-            if (!SkaKopieraBild)
-            {
-                SkaKopieraBild = true; return;
-            }
-            if (!hasExtension) fileextension = ".png";
-            filnamn += fileextension;
-            string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
-            string bildfolder = _folderpath + @"\Bilder\";
-            if (!Directory.Exists(bildfolder)) Directory.CreateDirectory(bildfolder);
-
-            string filePath = Path.Combine(bildfolder, filnamn);
-
-            var file = Directory.GetFiles(bildfolder, filnamn);
-            if (file.Any()) return;
-            if (img != null && !string.IsNullOrEmpty(filnamn))
-            {
-                // Create a new BitmapEncoder
-                BitmapEncoder encoder = new PngBitmapEncoder(); // Choose the appropriate encoder based on your requirements
-
-                // Create a new MemoryStream to hold the encoded image data
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    // Encode the BitmapImage and write the encoded data to the MemoryStream
-                    encoder.Frames.Add(BitmapFrame.Create(img));
-                    encoder.Save(memoryStream);
-
-
-                    // Write the encoded data from the MemoryStream to the file
-                    File.WriteAllBytes(filePath, memoryStream.ToArray());
-                }
-            }
-
-        }
-
-
-        public void AddImageSource()
-        {
-            ValdIngrediens.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
-        }
 
         public void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -478,67 +304,14 @@ namespace ReceptApp
             }
         }
 
-        public void TextBox_FilterText_Changed(object sender, TextChangedEventArgs e)
-        {
-            string filtertext = "";
-            if (sender is TextBox box)
-            {
-                DependencyObject parent = box as DependencyObject;
-
-                while (parent != null)
-                {
-                    parent = LogicalTreeHelper.GetParent(parent);
-                    if (parent is IngredientPage)
-                    {
-                        filtertext = IngredientFilterText;
-                        break;
-                    }
-                    else if (parent is AddRecipePage)
-                    {
-                        filtertext = AddRecipeFilterText;
-                        break;
-                    }
-                    else if (parent is RecipePage)
-                    {
-                        filtertext = RecipeFilterText;
-                        break;
-                    }
-                }
-
-                if (parent is IngredientPage || parent is AddRecipePage)
-                {
-                    ICollectionView view = CollectionViewSource.GetDefaultView(Ingredienslista);
-                    view.Filter = obj =>
-                    {
-                        if (obj is Ingrediens ingrediens)
-                        {
-                            return ingrediens.Namn.Contains(filtertext, StringComparison.OrdinalIgnoreCase);
-                        }
-                        return false;
-                    };
-                }
-                else if (parent is RecipePage)
-                {
-                    ICollectionView view = CollectionViewSource.GetDefaultView(ReceptLista);
-                    view.Filter = obj =>
-                    {
-                        if (obj is Recept recept)
-                        {
-                            return recept.Namn.Contains(filtertext, StringComparison.OrdinalIgnoreCase);
-                        }
-                        return false;
-                    };
-                }
-            }
-        }
-
+       
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (appdata != null) appdata.SaveAll();
         }
     }
 
-
+    #region Converters
     public class RoundedNumber : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -660,7 +433,7 @@ namespace ReceptApp
                     if (doubleValue.ToString().Split('.')[1].Length > 1) return doubleValue.ToString("F2", new CultureInfo("sv-SE"));
                     else return doubleValue.ToString("F1", new CultureInfo("sv-SE"));
                 }
-                return doubleValue.ToString(new CultureInfo("sv-SE"));
+                return doubleValue.ToString(doubleValue % 1 == 0 ? "F0" : "F2", new CultureInfo("sv-SE"));
             }
             return value;
         }
@@ -697,5 +470,35 @@ namespace ReceptApp
         }
     }
 
+    public class KonverteraTypTillPlural : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            string typ = values[0] is string ? (string)values[0] : "";
+            int antal = values[1] is int ? (int)values[1] : 0;
+            int antalipack = values[2] is int ? (int)values[2] : 0;
+            if (typ != "")
+            {
+                if (antal > 1)
+                {
+                    switch (typ)
+                    {
+                        case "påse": return antalipack > 1 ? $"{antalipack}-pack påsar" : "påsar";
+                        case "burk": return antalipack > 1 ? $"{antalipack}-pack burkar" : "burkar";
+                        case "förp": return antalipack > 1 ? $"{antalipack}-pack förpackningar" : "förpackningar";
+                        case "tub": return antalipack > 1 ? $"{antalipack}-pack tuber" : "tuber";
+                        default: return typ;
+                    }
+                }
+                else return typ;
+            }
+            return typ;
+        }
 
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    #endregion
 }

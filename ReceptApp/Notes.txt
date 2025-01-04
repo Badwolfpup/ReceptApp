@@ -1,15 +1,9 @@
 ﻿Att göra:
-Totalkostanad per ingrediens, samt totalt för receptet, lägga till kostnad per styck
-Converter föra tt anpassar mått o dylikt till plural
-(FIXAT???)Fixa design för priser
-(KLART???)Implentera färdigt Priser till ingredienser och hur det kopplas till shoppinglist
-Fixa design så textboxes o dylikt inte ändrar position
+
 
 Fixa Hamburger menu
 Kolla upp ModernWPF
-*FIXAD??*Fixa till designen, tex teckensnitt, färger, storlek på text, layout
-(KANSKE SENARE)Koll att det finns förpackningstyp om siffra anges
-Fixa knappar i addrecipe, samma som i ingrediens
+
 
 
 
@@ -55,3 +49,11 @@ Den ska visa mängden förpackningar, inte vikt i shoppinglist
 Ta bort recept från shoppinglist ska uppdatera shoopinglistan
 Undersök varför collectionchanged inte triggar när man ska editera ett recept men triggas när man skapar ett nytt
 Skapa algorithm för att ska en shoppinglista som konverterar olika mått till ett enda och föreslår lämplig "förpackning"
+Totalkostanad per ingrediens, samt totalt för receptet, lägga till kostnad per styck
+Converter föra tt anpassar mått o dylikt till plural
+(KLART???)Implentera färdigt Priser till ingredienser och hur det kopplas till shoppinglist
+*FIXAD??*Fixa till designen, tex teckensnitt, färger, storlek på text, layout
+(KANSKE SENARE)Koll att det finns förpackningstyp om siffra anges
+Fixa knappar i addrecipe, samma som i ingrediens
+(FIXAT???)Fixa design för priser, flytta ner under och förstora fönstret
+Fixa design så textboxes o dylikt inte ändrar position
