@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:ReceptApp.Pages"
         mc:Ignorable="d"
         Title="NewPrice" Height="450" Width="800" SizeToContent="WidthAndHeight">
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="45">
         <StackPanel>
-            <TextBlock Text="Ingrediensens namn:" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="0 0 0 5"></TextBlock>
+            <TextBlock Text="Ingrediensens namn:" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0 0 0 5"></TextBlock>
             <TextBlock Text="{Binding NyPris.Namn}" Grid.Column="0" Grid.Row="1" Margin="0 0 0 5"></TextBlock>
 
         
@@ -30,7 +30,7 @@
 
             </Grid.RowDefinitions>
 
-                <TextBlock Text="Mängd:" Grid.Column="0" Grid.Row="2" Margin="0 0 10 5"></TextBlock>
+            <TextBlock Text="Mängd:" Grid.Column="0" Grid.Row="2" Margin="0 0 10 5"></TextBlock>
             <TextBlock Text="Mått:" Grid.Column="1" Grid.Row="2" Margin="0 0 0 5" HorizontalAlignment="Center"></TextBlock>
 
             <TextBox Width="50" Height="30" Grid.Column="0" Grid.Row="3" FontSize="16" VerticalContentAlignment="Center" HorizontalAlignment="Left" Text="{Binding NyPris.Mängd, Converter={StaticResource KonverteraTillSvenskDecimal}, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="Decimal_PreviewTextInput" ></TextBox>
@@ -43,12 +43,18 @@
 
             <TextBox Width="50" Height="30"  Grid.Column="0" Grid.Row="5" FontSize="16" VerticalContentAlignment="Center" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding NyPris.Antal, FallbackValue='0', TargetNullValue='0',UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableIntConverter}}"></TextBox>
             <ComboBox Grid.Row="5" Grid.Column="1" Width="70" ItemsSource="{Binding PrisFörpackningstypLista}" SelectionChanged="Förpackningstyp_SelectionChanged"></ComboBox>
-        
-            <TextBlock Text="Pris:" Grid.Column="0" Grid.Row="6" Margin="0 5 0 5"></TextBlock>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="6" Margin="0 5 0 5">
+                    <TextBlock Text="Pris:" ></TextBlock>
+                    <CheckBox x:Name="JmfrprisCheckbox" VerticalAlignment="Center" Margin="10 0 0 0">
+                        <CheckBox.ToolTip>
+                            <TextBlock Text="Ange priset som jämförelsepris"></TextBlock>
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                </StackPanel>
             <TextBox Width="50" Height="30" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" FontSize="16" VerticalContentAlignment="Center" Text="{Binding NyPris.Pris, StringFormat=N2, Converter={StaticResource KonverteraTillSvenskDecimal}, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="Decimal_PreviewTextInput" ></TextBox>
         
-            <Button Grid.Row="7" Grid.Column="0" Content="OK" Width="50" Margin="3" Padding="3" Height="25" Click="LäggTillPris_Click"></Button>
-            <Button Grid.Row="7" Grid.Column="1" Content="Cancel" Width="50" Margin="3" Height="25" Click="CancelLäggTillPris_Click"></Button>
+            <Button Grid.Row="7" Grid.Column="0" Content="OK" Width="70" Margin="8"  Height="25" Click="LäggTillPris_Click"></Button>
+            <Button Grid.Row="7" Grid.Column="1" Content="Cancel" Width="70"  Height="25" Click="CancelLäggTillPris_Click"></Button>
         </Grid>
         </StackPanel>
     </Grid>

@@ -1,5 +1,5 @@
 ﻿Att göra:
-
+Fixa pris för st saker
 
 Fixa Hamburger menu
 Kolla upp ModernWPF
@@ -57,3 +57,8 @@ Converter föra tt anpassar mått o dylikt till plural
 Fixa knappar i addrecipe, samma som i ingrediens
 (FIXAT???)Fixa design för priser, flytta ner under och förstora fönstret
 Fixa design så textboxes o dylikt inte ändrar position
+Fixa så att eventet i recept triggas efter att det laddas from json
+Fixa så att kalori i recept ändras när värde på ingrediens ändras (och prislista i Ingrediens))
+Fixa pris så man kan lägga till en fast vikt på förp och koppla det till jmfrpris (som kyckling i paket)
+Fixa så man kan skriva decimaler i konverter
+Antal i  blir  wacky om man kör st, som för paprika, 4st blev 600st

@@ -1,21 +1,12 @@
-﻿using Newtonsoft.Json;
-using ReceptApp.Model;
-using ReceptApp.Pages;
+﻿using ReceptApp.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 //using static System.Net.Mime.MediaTypeNames;
 
 namespace ReceptApp
@@ -34,6 +25,7 @@ namespace ReceptApp
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
         #endregion
 
         public App()
@@ -64,20 +56,20 @@ namespace ReceptApp
             appdata.SaveAll();
         }
 
-        public event NotifyCollectionChangedEventHandler? CollectionChanged
-        {
-            add
-            {
-                ((INotifyCollectionChanged)Ingredienslista).CollectionChanged += value;
-                ((INotifyCollectionChanged)ReceptLista).CollectionChanged += value;
-            }
+        //public event NotifyCollectionChangedEventHandler? CollectionChanged
+        //{
+        //    add
+        //    {
+        //        ((INotifyCollectionChanged)Ingredienslista).CollectionChanged += value;
+        //        ((INotifyCollectionChanged)ReceptLista).CollectionChanged += value;
+        //    }
 
-            remove
-            {
-                ((INotifyCollectionChanged)Ingredienslista).CollectionChanged -= value;
-                ((INotifyCollectionChanged)ReceptLista).CollectionChanged -= value;
-            }
-        }
+        //    remove
+        //    {
+        //        ((INotifyCollectionChanged)Ingredienslista).CollectionChanged -= value;
+        //        ((INotifyCollectionChanged)ReceptLista).CollectionChanged -= value;
+        //    }
+        //}
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -95,7 +87,7 @@ namespace ReceptApp
         public AppData appdata { get; set; }
 
         public List<string> PrisMåttLista { get; } = new List<string> { "g", "kg", "dl", "l" };
-        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt", "st", "tub", "påse", "burk", "förp" };
+        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt (g/kg)", "st", "tub", "påse", "burk", "förp" };
 
         private ObservableCollection<Ingrediens>? _ingredienslista;
         public ObservableCollection<Ingrediens> Ingredienslista
@@ -224,7 +216,7 @@ namespace ReceptApp
 
 
         private Recept _valtrecept;
-        public Recept ValtRecept 
+        public Recept ValtRecept
         {
             get { return _valtrecept; }
             set
@@ -252,7 +244,7 @@ namespace ReceptApp
         }
 
 
- 
+
         private double _totalsumma;
         public double TotalSumma
         {
@@ -267,7 +259,7 @@ namespace ReceptApp
             }
         }
 
-        
+
         #endregion
 
 
@@ -304,7 +296,7 @@ namespace ReceptApp
             }
         }
 
-       
+
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (appdata != null) appdata.SaveAll();
@@ -387,13 +379,12 @@ namespace ReceptApp
                     case "msk": return "Matsked";
                     case "tsk": return "Tesked";
                     case "krm": return "Kryddmått";
-                    case "st": return "Stycken";
-                    case "stor": return "Antal stor";
-                    case "stora": return "Antal stor";
-                    case "medelstor": return "Antal medel";
-                    case "medelstora": return "Antal medel";
-                    case "liten": return "Antal liten";
-                    case "små": return "Antal liten";
+                    //case "stor": return "Antal stor";
+                    //case "stora": return "Antal stor";
+                    //case "medelstor": return "Antal medel";
+                    //case "medelstora": return "Antal medel";
+                    //case "liten": return "Antal liten";
+                    //case "små": return "Antal liten";
                     default: return text;
                 }
             }
@@ -412,9 +403,9 @@ namespace ReceptApp
                     case "Tesked": return "tsk";
                     case "Kryddmått": return "krm";
                     case "Stycken": return "st";
-                    case "Antal stor": return "stor";
-                    case "Antal medel": return "medelstor";
-                    case "Antal liten": return "liten";
+                    //case "Antal stor": return "stor";
+                    //case "Antal medel": return "medelstor";
+                    //case "Antal liten": return "liten";
                     default: return text;
                 }
             }
@@ -426,6 +417,7 @@ namespace ReceptApp
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is string text) return text;
             if (value is double doubleValue)
             {
                 if (doubleValue.ToString("R").Contains("."))
@@ -440,10 +432,14 @@ namespace ReceptApp
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string stringValue &&
-                double.TryParse(stringValue, NumberStyles.Any, new CultureInfo("sv-SE"), out var result))
+            if (value is string stringValue)
             {
-                return result;
+                if (stringValue.EndsWith(",") || stringValue.EndsWith(".")) return DependencyProperty.UnsetValue;
+                if (double.TryParse(stringValue, NumberStyles.Any, new CultureInfo("sv-SE"), out var result))
+                {
+                    return result;
+                }
+
             }
             return DependencyProperty.UnsetValue;
         }

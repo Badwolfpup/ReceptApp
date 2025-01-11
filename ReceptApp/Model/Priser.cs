@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ReceptApp.Model
@@ -84,7 +77,7 @@ namespace ReceptApp.Model
             }
         }
 
-        private double? _pris = 0;
+        private double? _pris;
         public double? Pris
         {
             get { return _pris; }
@@ -98,7 +91,7 @@ namespace ReceptApp.Model
             }
         }
 
-        private double? _mängd = 0;
+        private double? _mängd;
         public double? Mängd
         {
             get { return _mängd; }
@@ -203,7 +196,7 @@ namespace ReceptApp.Model
             Namn = namn;
         }
 
-        private void JämförelsePriser()
+        public void JämförelsePriser()
         {
             if (Mått == "g")
             {
@@ -224,6 +217,22 @@ namespace ReceptApp.Model
             else if (Mått == "st")
             {
                 JämförelsePris = Pris / Mängd;
+            }
+        }
+
+        public void PrisSomJmfrPris()
+        {
+            if (Mått == "g")
+            {
+                Pris = Mängd / 1000 * JämförelsePris;
+            }
+            else if (Mått == "kg")
+            {
+                Pris = Mängd / 10 * JämförelsePris;
+            }
+            else
+            {
+                Pris = Mängd * JämförelsePris;
             }
         }
     }

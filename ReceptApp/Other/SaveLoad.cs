@@ -1,95 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.IO;
-using System.Data.SqlClient;
-//using Dapper; Used för mapping to DB
-using System.Windows.Media.Imaging;
-using ReceptApp.Model;
-
+﻿//using Dapper; Used för mapping to DB
 namespace ReceptApp
 {
     public static class SaveLoad
     {
-       // private static string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
-       // private static string _filename;
-       //// public static bool SkaKopieraBild { get; set; }
-       // //private static string connectionString = "Server=(local);Database=master;Integrated Security=True;";
+        // private static string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
+        // private static string _filename;
+        //// public static bool SkaKopieraBild { get; set; }
+        // //private static string connectionString = "Server=(local);Database=master;Integrated Security=True;";
 
 
 
 
 
-       // public static void SaveIngrediens(string filename, ObservableCollection<Ingrediens> ingrediens)
-       // {
-       //     _filename = _folderpath + filename + ".json";
+        // public static void SaveIngrediens(string filename, ObservableCollection<Ingrediens> ingrediens)
+        // {
+        //     _filename = _folderpath + filename + ".json";
 
-       //     JsonSerializerSettings settings = new JsonSerializerSettings
-       //     {
-       //         TypeNameHandling = TypeNameHandling.All,
-       //         PreserveReferencesHandling = PreserveReferencesHandling.Objects
-       //     };
+        //     JsonSerializerSettings settings = new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All,
+        //         PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        //     };
 
-       //     string file = JsonConvert.SerializeObject(ingrediens, settings);
-       //     File.WriteAllText(_filename, file);
-       // }
+        //     string file = JsonConvert.SerializeObject(ingrediens, settings);
+        //     File.WriteAllText(_filename, file);
+        // }
 
-       // public static void SaveRecept(string filename, ObservableCollection<Recept> recept)
-       // {
-       //     _filename = _folderpath + filename + ".json";
+        // public static void SaveRecept(string filename, ObservableCollection<Recept> recept)
+        // {
+        //     _filename = _folderpath + filename + ".json";
 
-       //     JsonSerializerSettings settings = new JsonSerializerSettings
-       //     {
-       //         TypeNameHandling = TypeNameHandling.All,
-       //         PreserveReferencesHandling = PreserveReferencesHandling.Objects
-       //     };
-       //     string file = JsonConvert.SerializeObject(recept, settings);
-       //     File.WriteAllText(_filename, file);
-       // }
+        //     JsonSerializerSettings settings = new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All,
+        //         PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        //     };
+        //     string file = JsonConvert.SerializeObject(recept, settings);
+        //     File.WriteAllText(_filename, file);
+        // }
 
-       // public static ObservableCollection<Ingrediens> LoadIngrediens(string filename)
-       // {
-       //     _filename = _folderpath + filename + ".json";
-       //     if (File.Exists(_filename))
-       //     {
-       //         string file = File.ReadAllText(_filename);
-       //         JsonSerializerSettings settings = new JsonSerializerSettings
-       //         {
-       //             TypeNameHandling = TypeNameHandling.All,
-       //             PreserveReferencesHandling = PreserveReferencesHandling.Objects
-       //         };
-       //         if (!string.IsNullOrEmpty(file))
-       //         {
-       //             ObservableCollection<Ingrediens> ingrediens = JsonConvert.DeserializeObject<ObservableCollection<Ingrediens>>(file,settings);
-       //             return ingrediens;
-       //         }
-       //     }
-       //     return new ObservableCollection<Ingrediens>();
-       // }
+        // public static ObservableCollection<Ingrediens> LoadIngrediens(string filename)
+        // {
+        //     _filename = _folderpath + filename + ".json";
+        //     if (File.Exists(_filename))
+        //     {
+        //         string file = File.ReadAllText(_filename);
+        //         JsonSerializerSettings settings = new JsonSerializerSettings
+        //         {
+        //             TypeNameHandling = TypeNameHandling.All,
+        //             PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        //         };
+        //         if (!string.IsNullOrEmpty(file))
+        //         {
+        //             ObservableCollection<Ingrediens> ingrediens = JsonConvert.DeserializeObject<ObservableCollection<Ingrediens>>(file,settings);
+        //             return ingrediens;
+        //         }
+        //     }
+        //     return new ObservableCollection<Ingrediens>();
+        // }
 
-       // public static ObservableCollection<Recept> LoadRecept(string filename)
-       // {
-       //     _filename = _folderpath + filename + ".json";
-       //     if (File.Exists(_filename))
-       //     {
-       //         string file = File.ReadAllText(_filename);
-       //         JsonSerializerSettings settings = new JsonSerializerSettings
-       //         {
-       //             TypeNameHandling = TypeNameHandling.All,
-       //             PreserveReferencesHandling = PreserveReferencesHandling.Objects
-       //         };
-       //         if (!string.IsNullOrEmpty(file))
-       //         {
-       //             ObservableCollection<Recept> recept = JsonConvert.DeserializeObject<ObservableCollection<Recept>>(file, settings);
-       //             return recept;
-       //         }
-       //     }
-       //     return new ObservableCollection<Recept>();
-       // }
+        // public static ObservableCollection<Recept> LoadRecept(string filename)
+        // {
+        //     _filename = _folderpath + filename + ".json";
+        //     if (File.Exists(_filename))
+        //     {
+        //         string file = File.ReadAllText(_filename);
+        //         JsonSerializerSettings settings = new JsonSerializerSettings
+        //         {
+        //             TypeNameHandling = TypeNameHandling.All,
+        //             PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        //         };
+        //         if (!string.IsNullOrEmpty(file))
+        //         {
+        //             ObservableCollection<Recept> recept = JsonConvert.DeserializeObject<ObservableCollection<Recept>>(file, settings);
+        //             return recept;
+        //         }
+        //     }
+        //     return new ObservableCollection<Recept>();
+        // }
 
 
 
@@ -119,8 +107,8 @@ namespace ReceptApp
         //            // Encode the BitmapImage and write the encoded data to the MemoryStream
         //            encoder.Frames.Add(BitmapFrame.Create(img));
         //            encoder.Save(memoryStream);
-                    
-                    
+
+
         //            // Write the encoded data from the MemoryStream to the file
         //            File.WriteAllBytes(filePath, memoryStream.ToArray());
         //        }

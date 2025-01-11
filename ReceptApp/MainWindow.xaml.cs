@@ -1,18 +1,6 @@
-﻿
-using ReceptApp;
-using ReceptApp.Pages;
+﻿using ReceptApp.Pages;
 using System.ComponentModel;
-using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace ReceptApp
@@ -37,7 +25,7 @@ namespace ReceptApp
 
         IngredientPage ingredientPage;
         RecipePage recipepage;
-        public ShoppingList shoppingList {  get; set; }
+        public ShoppingList shoppingList { get; set; }
         private DispatcherTimer _timer;
 
 
@@ -73,7 +61,7 @@ namespace ReceptApp
 
         private void Button_Click_Recipe(object sender, RoutedEventArgs e)
         {
-           // ContentFrame.Navigate(recipepage);
+            // ContentFrame.Navigate(recipepage);
             ContentFrame.Navigate(recipepage);
         }
 

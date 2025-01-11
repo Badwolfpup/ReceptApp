@@ -29,6 +29,7 @@
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource KonverteraTypTillPlural}">
                                             <Binding Path="Förpackningstyp"></Binding>
+                                            <Binding Path="Antal"></Binding>
                                             <Binding Path="AntalProdukter"></Binding>
                                         </MultiBinding>
                                     </TextBlock.Text>
@@ -41,8 +42,8 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Orientation="Horizontal">
-                <Button Content="Spara" Margin="0 0 30 0" Click="VäljNyttPris_Click"></Button>
-                <Button Content="Avbryt" Click="Avbryt_Click"></Button>
+                <Button Content="Spara" Width="70" Margin="0 0 30 0" Click="VäljNyttPris_Click"></Button>
+                <Button Content="Avbryt" Width="70" Click="Avbryt_Click"></Button>
             </StackPanel>
         </StackPanel>
     </Grid>

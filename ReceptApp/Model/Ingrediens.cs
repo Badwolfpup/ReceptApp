@@ -1,16 +1,9 @@
 ﻿using Newtonsoft.Json;
 using ReceptApp.Model;
-using ReceptApp.Pages;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace ReceptApp
 {
@@ -25,7 +18,7 @@ namespace ReceptApp
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        //public event NotifyCollectionChangedEventHandler? CollectionChanged;
         #endregion
 
         #region Properties
@@ -37,7 +30,20 @@ namespace ReceptApp
             {
                 if (_viktMått != value)
                 {
+
+                    if (_viktMått != null)
+                    {
+                        // Detach the event from the old collection
+                        _viktMått.CollectionChanged -= ViktMått_CollectionChanged;
+                    }
+
                     _viktMått = value;
+
+                    if (_viktMått != null)
+                    {
+                        // Attach the event to the new collection
+                        _viktMått.CollectionChanged += ViktMått_CollectionChanged;
+                    }
                     OnPropertyChanged(nameof(ViktMått));
                 }
             }
@@ -51,7 +57,19 @@ namespace ReceptApp
             {
                 if (_prislista != value)
                 {
+                    if (_prislista != null)
+                    {
+                        // Detach the event from the old collection
+                        _prislista.CollectionChanged -= PrisLista_CollectionChanged;
+                    }
+
                     _prislista = value;
+
+                    if (_prislista != null)
+                    {
+                        // Attach the event to the new collection
+                        _prislista.CollectionChanged += PrisLista_CollectionChanged;
+                    }
                     OnPropertyChanged(nameof(PrisLista));
                 }
             }
@@ -347,7 +365,6 @@ namespace ReceptApp
             }
         }
 
-        //public double AntalGram { get; set; } //Det relativa av ingrediensens tillagda vikt i förhållande till 100g. Ex 125g = 1,25
 
 
 
@@ -358,16 +375,28 @@ namespace ReceptApp
         {
             ViktMått = new ObservableCollection<string>();
             if (!ViktMått.Any(x => x == "Gram")) ViktMått.Add("Gram");
-            ViktMått.CollectionChanged += ViktMått_CollectionChanged;
             PrisLista = new ObservableCollection<Priser>();
-            PrisLista.CollectionChanged += PrisLista_CollectionChanged;
         }
 
+        public event NotifyCollectionChangedEventHandler? CollectionChanged
+        {
+            add
+            {
+                ((INotifyCollectionChanged)PrisLista).CollectionChanged += value;
+                ((INotifyCollectionChanged)ViktMått).CollectionChanged += value;
+            }
 
+            remove
+            {
+                ((INotifyCollectionChanged)PrisLista).CollectionChanged -= value;
+                ((INotifyCollectionChanged)ViktMått).CollectionChanged -= value;
+
+            }
+        }
 
         private void PrisLista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (app.appdata !=null) app.appdata.SaveAll();
+            if (app.appdata != null) app.appdata.SaveAll();
         }
 
         App app = (App)Application.Current;

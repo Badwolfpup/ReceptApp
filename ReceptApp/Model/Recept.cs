@@ -1,25 +1,19 @@
 ﻿using Newtonsoft.Json;
-using ReceptApp.Pages;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ReceptApp
 {
-    public class Recept: INotifyPropertyChanged, INotifyCollectionChanged
+    public class Recept : INotifyPropertyChanged, INotifyCollectionChanged
     {
 
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            
+
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -27,14 +21,35 @@ namespace ReceptApp
         #endregion
 
         private ObservableCollection<ReceptIngrediens>? _receptingredienser;
-        public ObservableCollection<ReceptIngrediens> ReceptIngredienser
+        public ObservableCollection<ReceptIngrediens>? ReceptIngredienser
         {
-            get {  return _receptingredienser;}
+            get { return _receptingredienser; }
             set
             {
                 if (_receptingredienser != value)
                 {
+                    if (_receptingredienser != null)
+                    {
+                        // Detach the event from the old collection
+                        _receptingredienser.CollectionChanged -= KaloriPortion_CollectionChanged;
+                        foreach (var item in _receptingredienser)
+                        {
+                            item.PropertyChanged -= KaloriPortion_PropertyChanged;
+                        }
+                    }
+
                     _receptingredienser = value;
+
+                    if (_receptingredienser != null)
+                    {
+                        // Attach the event to the new collection
+                        _receptingredienser.CollectionChanged += KaloriPortion_CollectionChanged;
+                        foreach (var item in _receptingredienser)
+                        {
+                            item.PropertyChanged += KaloriPortion_PropertyChanged;
+                        }
+                    }
+
                     OnPropertyChanged(nameof(ReceptIngredienser));
                 }
             }
@@ -118,7 +133,7 @@ namespace ReceptApp
         }
 
         private double? _portionprotein;
-        public double? PortionProtein 
+        public double? PortionProtein
         {
             get { return _portionprotein; }
             set
@@ -136,7 +151,7 @@ namespace ReceptApp
 
 
         public Recept(int antalportioner)
-        {            
+        {
             ReceptIngredienser = new ObservableCollection<ReceptIngrediens>();
             Antalportioner = antalportioner;
             _tidigareantalportioner = antalportioner;
@@ -148,23 +163,47 @@ namespace ReceptApp
 
         App app = (App)Application.Current;
 
-        private void KaloriPortion_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void KaloriPortion_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+
             BeräknaVärden();
             app.appdata.SaveAll();
         }
 
+        private void KaloriPortion_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Mängd" || e.PropertyName == "Mått")
+            {
+                BeräknaVärden();
+                app.appdata.SaveAll();
+            }
+
+        }
+
+        //public event NotifyCollectionChangedEventHandler? CollectionChanged
+        //{
+        //    add
+        //    {
+        //        ((INotifyCollectionChanged)ReceptIngredienser).CollectionChanged += value;
+        //    }
+
+        //    remove
+        //    {
+        //        ((INotifyCollectionChanged)ReceptIngredienser).CollectionChanged -= value;
+        //    }
+        //}
+
         public void BeräknaVärden()
         {
-            PortionKalori = 0; PortionProtein = 0; PortionFett = 0; PortionKolhydrat = 0;;
+            PortionKalori = 0; PortionProtein = 0; PortionFett = 0; PortionKolhydrat = 0; ;
             foreach (var item in ReceptIngredienser)
             {
 
-                    PortionKalori += item.Ingrediens.Kalori * item.AntalGram / Antalportioner;
-                    PortionKolhydrat += item.Ingrediens.Kolhydrat * item.AntalGram / Antalportioner;
-                    PortionFett += item.Ingrediens.Fett * item.AntalGram / Antalportioner;
-                    PortionProtein += item.Ingrediens.Protein * item.AntalGram / Antalportioner;
-                
+                PortionKalori += item.Ingrediens.Kalori * item.AntalGram / Antalportioner;
+                PortionKolhydrat += item.Ingrediens.Kolhydrat * item.AntalGram / Antalportioner;
+                PortionFett += item.Ingrediens.Fett * item.AntalGram / Antalportioner;
+                PortionProtein += item.Ingrediens.Protein * item.AntalGram / Antalportioner;
+
             }
         }
 

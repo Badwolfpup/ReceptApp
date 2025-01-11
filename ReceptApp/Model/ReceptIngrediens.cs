@@ -1,20 +1,8 @@
-﻿using Newtonsoft.Json;
-using ReceptApp.Model;
-using ReceptApp.Pages;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ComponentModel;
 
 namespace ReceptApp
 {
-    public class ReceptIngrediens: INotifyPropertyChanged
+    public class ReceptIngrediens : INotifyPropertyChanged
     {
 
         #region InotifyPropertyChanged
@@ -30,7 +18,7 @@ namespace ReceptApp
         public Ingrediens Ingrediens { get; set; }
 
         private double _mängd = 0;
-        public double Mängd 
+        public double Mängd
         {
             get { return _mängd; }
             set

@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReceptApp.Model
 {
@@ -24,7 +19,7 @@ namespace ReceptApp.Model
             {
                 TypeNameHandling = TypeNameHandling.All,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                Formatting = Formatting.Indented 
+                Formatting = Formatting.Indented
 
             };
 

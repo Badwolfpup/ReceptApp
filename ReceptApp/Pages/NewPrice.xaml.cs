@@ -1,19 +1,9 @@
 ﻿using ReceptApp.Model;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ReceptApp.Pages
 {
@@ -73,9 +63,19 @@ namespace ReceptApp.Pages
                 MessageBox.Show("Du behöver ange förpackningstyp.");
                 return;
             }
+            if (NyPris.Mått == "")
+            {
+                MessageBox.Show("Du måste ange ett mått"); return;
+            }
             if (NyPris.Förpackningstyp == "lösvikt")
             {
                 NyPris.Antal = null;
+            }
+
+            if ((bool)JmfrprisCheckbox.IsChecked)
+            {
+                NyPris.JämförelsePris = NyPris.Pris;
+                NyPris.PrisSomJmfrPris();
             }
             app.ValdIngrediens.PrisLista.Add(NyPris);
             app.ValtPris = NyPris;

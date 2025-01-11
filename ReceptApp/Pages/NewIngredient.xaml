@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReceptApp.Pages"
         mc:Ignorable="d"
-        Title="NewIngredient" Height="450" Width="800" SizeToContent="WidthAndHeight">
+        Title="NewIngredient" Height="650" Width="400" SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Paste" Executed="OnPasteExecuted"/>
     </Window.CommandBindings>
@@ -53,8 +53,8 @@
         <CheckBox Grid.Column="0" Grid.Row="7" x:Name="NyIngrediensCheckBoxGramStyck" Content="Gram per styck" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding NyIngrediens.HarStyck}"></CheckBox>
         <TextBox Grid.Column="1" Grid.Row="7" x:Name="NyIngrediensTextBoxGramLiten" Width="30" HorizontalAlignment="Left" PreviewTextInput="KollaSiffor_PreviewTextInput" Text="{Binding NyIngrediens.Styck, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=NyIngrediensCheckBoxGramStyck, Path=IsChecked}" ></TextBox>
 
-        <Button x:Name="ButtonLäggTillIngrediens" Content="OK" Grid.Row="8" Grid.Column="0" Width="50" Margin="3" Padding="3" Height="25" Click="LäggTillIngrediens_Click"></Button>
-        <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Row="8" Grid.Column="1" Margin="3" Height="25" Click="CancelLäggTillIngrediens_Click"></Button>
+        <Button x:Name="ButtonLäggTillIngrediens" Content="OK" Grid.Row="8" Grid.Column="0" Width="70" Margin="8" Padding="3" Click="LäggTillIngrediens_Click"></Button>
+        <Button x:Name="ButtonCancelTillIngrediens" Content="Cancel" Grid.Row="8" Grid.Column="1" Width="70" Margin="3" Click="CancelLäggTillIngrediens_Click"></Button>
 
 
     </Grid>

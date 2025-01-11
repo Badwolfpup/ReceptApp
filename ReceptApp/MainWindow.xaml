@@ -6,9 +6,16 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:ReceptApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="950">
+        Title="MainWindow" Height="800" Width="950">
 
     <Grid x:Name="Maingrid">
+        <Grid.Background>
+            <VisualBrush>
+                <VisualBrush.Visual>
+                    <Border Background="#CCFFFFFF" />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -16,8 +23,35 @@
         <Grid Margin="2">
             <Grid.Resources>
                 <Style TargetType="Button">
-                    <Setter Property="FontSize" Value="16"></Setter>
-                    <Setter Property="FontWeight" Value="DemiBold"></Setter>
+                    <Setter Property="Height" Value="30"></Setter>
+                    <Setter Property="FontSize" Value="14"></Setter>
+                    <Setter Property="FontFamily" Value="Segoe UI Variable"></Setter>
+                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                    <Setter Property="Margin" Value="4"></Setter>
+                    <Setter Property="Padding" Value="4"></Setter>
+                    <Setter Property="Background" Value="#0078D4"></Setter>
+                    <Setter Property="Foreground" Value="White"></Setter>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="20">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="5" Opacity="0.4" />
+                                        </Border.Effect>
+                                    </Border>
+
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="LightBlue" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
@@ -27,10 +61,9 @@
 
 
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Background="LightGoldenrodYellow" Content="Ingrediens" Click="Button_Click_Ingredient"></Button>
-            <Button Grid.Column="1" Background="LightGoldenrodYellow" Content="Recept" Click="Button_Click_Recipe"></Button>
-            <Button Grid.Column="2" Background="LightGoldenrodYellow" Content="Inköpslista" Click="Button_Click_Inköpslista"></Button>
-
+                    <Button Grid.Column="0"  Content="Ingrediens" Click="Button_Click_Ingredient"></Button>
+                    <Button Grid.Column="1"  Content="Recept" Click="Button_Click_Recipe"></Button>
+                    <Button Grid.Column="2"  Content="Inköpslista" Click="Button_Click_Inköpslista"></Button>
         </Grid>
         <Frame Grid.Row="1" x:Name="ContentFrame" NavigationUIVisibility="Hidden"></Frame>
     </Grid>

@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ReceptApp.Pages
 {
@@ -39,7 +30,7 @@ namespace ReceptApp.Pages
             SkapaFiltreradLista(ingredienslista);
             ValdReceptIngrediens = new ReceptIngrediens();
             NyttRecept = new Recept(4);
-            ValdIngrediens = new Ingrediens();  
+            ValdIngrediens = new Ingrediens();
         }
 
         public NewRecipe(Recept nyttRecept, ObservableCollection<Ingrediens> ingredienslista)
@@ -50,7 +41,7 @@ namespace ReceptApp.Pages
             SkapaFiltreradLista(ingredienslista);
         }
 
-       
+
 
         App app = (App)Application.Current;
 
@@ -94,11 +85,11 @@ namespace ReceptApp.Pages
         public ICollectionView FilteredCollectionView { get; set; }
 
 
-        private void SkapaFiltreradLista(ObservableCollection<Ingrediens> ingredienslista) 
+        private void SkapaFiltreradLista(ObservableCollection<Ingrediens> ingredienslista)
         {
             FilteredIngredientList = new ObservableCollection<Ingrediens>(ingredienslista);
             FilteredCollectionView = CollectionViewSource.GetDefaultView(FilteredIngredientList);
-            foreach (var item in FilteredCollectionView) 
+            foreach (var item in FilteredCollectionView)
             {
                 if (item is INotifyPropertyChanged inotify)
                 {
@@ -159,6 +150,7 @@ namespace ReceptApp.Pages
                 }
                 ValdReceptIngrediens.Mått = ValdReceptIngrediens.KonverteraMåttTillText(ComboBoxMått.Text);
                 ValdReceptIngrediens.Ingrediens = ValdIngrediens;
+                ValdReceptIngrediens.BeräknaAntalGram();
                 NyttRecept.ReceptIngredienser.Add(ValdReceptIngrediens);
                 ScrollTillagdaIngredienser.SelectedItem = ValdReceptIngrediens;
                 ValdIngrediens.ÄrTillagdIRecept = true;
