@@ -55,20 +55,38 @@
                           VerticalGridLinesBrush="LightGray"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
                           ItemsSource="{Binding PriserIShoppingList}" 
+                          CellEditEnding="CellEditEnding_CurrentCellChanged"
                           AutoGenerateColumns="False">
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="5"></Setter>
                         <Setter Property="FontSize" Value="14"></Setter>
                         <Setter Property="FontFamily" Value="Roboto"></Setter>
-                        <Setter Property="VerticalContentAlignment" Value="Bottom" />                    </Style>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsEditing" Value="True">
+                                                <Setter Property="Background" Value="#ADD8E6"></Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+ 
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
                 </DataGrid.CellStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Pris" Binding="{Binding Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Jämför" Binding="{Binding JämförelsePris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Pris" IsReadOnly="True" Binding="{Binding Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Jämför" IsReadOnly="True" Binding="{Binding JämförelsePris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
                     <DataGridTextColumn Header="# Prod" Binding="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}"></DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Typ av prod">
+                    <DataGridTemplateColumn Header="Typ av prod" IsReadOnly="True">
                         <!--Typ av produkt-->
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -84,9 +102,9 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Mängd" Binding="{Binding Mängd}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Mått" Binding="{Binding Mått}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Summa" Binding="{Binding Summa, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Mängd" IsReadOnly="True" Binding="{Binding Mängd}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Mått" IsReadOnly="True" Binding="{Binding Mått}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Summa" IsReadOnly="True" Binding="{Binding Summa, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
                     <DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

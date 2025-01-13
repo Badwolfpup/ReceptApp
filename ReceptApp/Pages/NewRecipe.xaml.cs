@@ -31,6 +31,7 @@ namespace ReceptApp.Pages
             ValdReceptIngrediens = new ReceptIngrediens();
             NyttRecept = new Recept(4);
             ValdIngrediens = new Ingrediens();
+
         }
 
         public NewRecipe(Recept nyttRecept, ObservableCollection<Ingrediens> ingredienslista)
@@ -39,9 +40,19 @@ namespace ReceptApp.Pages
             DataContext = this;
             NyttRecept = nyttRecept;
             SkapaFiltreradLista(ingredienslista);
+            KnappText = "Spara ändringar";
         }
 
-
+        private string _knapptext = "Lägg till recept";
+        public string KnappText
+        {
+            get { return _knapptext; }
+            set
+            {
+                _knapptext = value;
+                OnPropertyChanged(nameof(KnappText));
+            }
+        }
 
         App app = (App)Application.Current;
 
@@ -173,7 +184,7 @@ namespace ReceptApp.Pages
                     case "msk": ComboBoxMått.SelectedItem = "Matsked"; break;
                     case "tsk": ComboBoxMått.SelectedItem = "Tesked"; break;
                     case "krm": ComboBoxMått.SelectedItem = "Kryddmått"; break;
-                    case "st": ComboBoxMått.SelectedItem = "Sttycken"; break;
+                    case "st": ComboBoxMått.SelectedItem = "Stycken"; break;
                     case "stora": ComboBoxMått.SelectedItem = "Antal stor"; break;
                     case "stor": ComboBoxMått.SelectedItem = "Antal stor"; break;
                     case "medelstora": ComboBoxMått.SelectedItem = "Antal medel"; break;

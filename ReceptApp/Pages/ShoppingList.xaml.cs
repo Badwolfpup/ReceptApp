@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ReceptApp.Pages
 {
@@ -14,6 +16,7 @@ namespace ReceptApp.Pages
 
         private Priser _valtpris = null;
 
+        public List<bool> HarFleraPriser { get; set; } = new List<bool>();
 
         public ShoppingList()
         {
@@ -87,6 +90,9 @@ namespace ReceptApp.Pages
             {
                 foreach (var item in app.ReceptIngrediensShoppingList)
                 {
+                    if (item.Ingrediens.PrisLista.Count <= 0) break;
+                    if (item.Ingrediens.PrisLista.Count > 1) HarFleraPriser.Add(true);
+                    else HarFleraPriser.Add(false);
                     app.PriserIShoppingList.Add(item.Ingrediens.PrisLista.OrderBy(pris => pris.JämförelsePris).First());
 
                     if (app.PriserIShoppingList.Count > 0)
@@ -109,22 +115,18 @@ namespace ReceptApp.Pages
 
                             if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "g")
                             {
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter = (int)app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
+
                                 app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd / 1000;
                             }
-                            //else if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "dl") 
-                            //{
-                            //    app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd / 10;
-                            //}
                             else if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "st")
                             {
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter = (int)(app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd * item.Ingrediens.Styck);
+
                                 app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd * item.Ingrediens.Styck / 1000);
                             }
                             else
                             {
                                 app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter = (int)(app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd * 1000);
+
                             }
 
 
@@ -136,6 +138,9 @@ namespace ReceptApp.Pages
             {
                 foreach (var item in app.ReceptIngrediensShoppingList)
                 {
+                    if (item.Ingrediens.PrisLista.Count <= 0) break;
+                    if (item.Ingrediens.PrisLista.Count > 1) HarFleraPriser.Add(true);
+                    else HarFleraPriser.Add(false);
                     app.PriserIShoppingList.Add(item.Ingrediens.PrisLista.OrderBy(vikt =>
                     {
                         double? prisvikt = 0;
@@ -162,7 +167,22 @@ namespace ReceptApp.Pages
                             app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].SkaÄndraJmfrPris = false;
                             app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått = item.Mått;
                             app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].SkaÄndraJmfrPris = true;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd / 1000;
+
+                            if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "g")
+                            {
+
+                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd / 1000;
+                            }
+                            else if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "st")
+                            {
+
+                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd * item.Ingrediens.Styck / 1000);
+                            }
+                            else
+                            {
+                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
+
+                            }
                         }
                     }
                 }
@@ -221,7 +241,7 @@ namespace ReceptApp.Pages
             {
                 if (item.AntalProdukter > 0 && (item.Förpackningstyp != "" || item.Förpackningstyp != "lösvikt"))
                 {
-                    clipboard += $"{item.AntalProdukter} {item.Förpackningstyp} {item.Namn.ToLower()} á {item.Mängd}{item.Mått} ({item.Summa:F2}kr) \n";
+                    clipboard += $"{item.AntalProdukter} {item.Förpackningstyp}{(item.Antal > 1 ? $"({item.Antal}st)" : "")} {item.Namn.ToLower()} á {item.Mängd}{item.Mått} ({item.Summa:F2}kr) \n";
                 }
                 else clipboard += $"{item.Mängd}{item.Mått} {item.Namn.ToLower()} ({item.Summa:F2}kr)\n";
 
@@ -337,16 +357,23 @@ namespace ReceptApp.Pages
             return prismängd;
         }
 
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (sender is RadioButton radio)
-            {
-                if (radio.DataContext is Priser pris)
-                {
-                    _valtpris = pris;
 
+        private void CellEditEnding_CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (sender is DataGrid dataGrid)
+            {
+                if (dataGrid.SelectedItem is Priser pris)
+                {
+                    dataGrid.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        if (pris.Förpackningstyp == "lösvikt") pris.Summa = (double)pris.AntalProdukter / 1000 * pris.JämförelsePris;
+                    else pris.Summa = pris.AntalProdukter > 1 ? pris.AntalProdukter * pris.Pris : pris.Pris;
+                    }), System.Windows.Threading.DispatcherPriority.Background);
                 }
+                app.TotalSumma = (double)app.PriserIShoppingList.Sum(x => x.Summa);
             }
         }
+
+
     }
 }

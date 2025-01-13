@@ -87,7 +87,7 @@ namespace ReceptApp
         public AppData appdata { get; set; }
 
         public List<string> PrisMåttLista { get; } = new List<string> { "g", "kg", "dl", "l" };
-        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt (g/kg)", "st", "tub", "påse", "burk", "förp" };
+        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt", "st", "tub", "påse", "burk", "förp" };
 
         private ObservableCollection<Ingrediens>? _ingredienslista;
         public ObservableCollection<Ingrediens> Ingredienslista
@@ -243,8 +243,6 @@ namespace ReceptApp
             }
         }
 
-
-
         private double _totalsumma;
         public double TotalSumma
         {
@@ -379,6 +377,7 @@ namespace ReceptApp
                     case "msk": return "Matsked";
                     case "tsk": return "Tesked";
                     case "krm": return "Kryddmått";
+                    case "st": return "Stycken";
                     //case "stor": return "Antal stor";
                     //case "stora": return "Antal stor";
                     //case "medelstor": return "Antal medel";

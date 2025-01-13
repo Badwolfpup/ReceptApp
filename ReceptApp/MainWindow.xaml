@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:ReceptApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="950">
+        Title="ReceptApp" Height="800" Width="1050">
 
     <Grid x:Name="Maingrid">
         <Grid.Background>

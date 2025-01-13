@@ -8,7 +8,7 @@
         Title="ChangePrice" Height="450" Width="800" SizeToContent="WidthAndHeight">
     <Grid>
         <StackPanel>
-            <DataGrid ItemsSource="{Binding }" AutoGenerateColumns="False" SelectionChanged="DataGrid_SelectionChanged" Loaded="DataGrid_Loaded">
+            <DataGrid ItemsSource="{Binding }" IsReadOnly="True" AutoGenerateColumns="False" SelectionChanged="DataGrid_SelectionChanged" Loaded="DataGrid_Loaded">
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="5"></Setter>

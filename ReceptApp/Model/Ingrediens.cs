@@ -70,6 +70,7 @@ namespace ReceptApp
                         // Attach the event to the new collection
                         _prislista.CollectionChanged += PrisLista_CollectionChanged;
                     }
+
                     OnPropertyChanged(nameof(PrisLista));
                 }
             }

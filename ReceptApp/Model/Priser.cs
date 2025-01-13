@@ -21,7 +21,7 @@ namespace ReceptApp.Model
 
         public bool SkaÄndraJmfrPris { get; set; } = true;
 
-        private double? _jämförelsepris;
+        private double? _jämförelsepris = 0;
         public double? JämförelsePris
         {
             get { return _jämförelsepris; }
@@ -133,8 +133,8 @@ namespace ReceptApp.Model
             }
         }
 
-        private int _antalprodukter;
-        public int AntalProdukter
+        private int? _antalprodukter;
+        public int? AntalProdukter
         {
             get { return _antalprodukter; }
             set
@@ -189,7 +189,6 @@ namespace ReceptApp.Model
                 }
             }
         }
-
 
         public Priser(string namn)
         {

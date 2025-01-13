@@ -60,7 +60,7 @@ namespace ReceptApp.Pages
             {
                 DataGrid dataGrid = sender as DataGrid;
                 dataGrid.SelectedItem = ValtPris;
-                dataGrid.ScrollIntoView(ValtPris);
+                //dataGrid.ScrollIntoView(ValtPris);
             }
         }
 
@@ -105,5 +105,7 @@ namespace ReceptApp.Pages
             else if (app.PriserIShoppingList[index].Mått == "l") { return prismängd *= prislista.Ingrediens.GramPerDl / 100 * 10; }
             return prismängd;
         }
+
+
     }
 }
