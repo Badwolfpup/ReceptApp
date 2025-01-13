@@ -46,6 +46,7 @@ namespace ReceptApp
 
         }
 
+
         private void Ingredienslista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             appdata.SaveAll();
@@ -80,7 +81,6 @@ namespace ReceptApp
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
         }
-
 
 
         #region Properties
