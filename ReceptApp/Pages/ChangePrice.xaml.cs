@@ -20,26 +20,41 @@ namespace ReceptApp.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
-        public ChangePrice(ObservableCollection<Priser> prislista, Priser valtpris)
+        public ChangePrice(ObservableCollection<Vara> varulista, Vara vara, ReceptIngrediens r)
         {
             InitializeComponent();
-            ValtPris = valtpris;
-            DataContext = prislista;
-            _initialtpris = valtpris;
+            ValdVara = vara;
+            ValdIngrediens = r;
+            DataContext = varulista;
+            _initialvara = ValdVara;
         }
 
         App app = (App)Application.Current;
 
-        private Priser _initialtpris; //håller det ursprungliga priset
+        private Vara _initialvara; //håller det ursprungliga priset
 
-        private Priser _valtpris;
-        public Priser ValtPris
+        private Vara _valdvara;
+        public Vara ValdVara
         {
-            get { return _valtpris; }
+            get { return _valdvara; }
             set
             {
-                _valtpris = value;
-                OnPropertyChanged(nameof(ValtPris));
+                _valdvara = value;
+                OnPropertyChanged(nameof(ValdVara));
+            }
+        }
+
+        private ReceptIngrediens _valdingrediens;
+        public ReceptIngrediens ValdIngrediens
+        {
+            get { return _valdingrediens; }
+            set
+            {
+                if (_valdingrediens != value)
+                {
+                    _valdingrediens = value;
+                    OnPropertyChanged(nameof(ValdIngrediens));
+                }
             }
         }
 
@@ -47,48 +62,28 @@ namespace ReceptApp.Pages
         {
             if (sender is DataGrid dataGrid)
             {
-                if (dataGrid.SelectedItem is Priser pris)
+                if (dataGrid.SelectedItem is Vara vara)
                 {
-                    ValtPris = pris;
+                    ValdVara = vara;
                 }
             }
         }
 
         private void DataGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ValtPris != null)
+            if (ValdVara != null)
             {
                 DataGrid dataGrid = sender as DataGrid;
-                dataGrid.SelectedItem = ValtPris;
+                dataGrid.SelectedItem = ValdVara;
                 //dataGrid.ScrollIntoView(ValtPris);
             }
         }
 
         private void VäljNyttPris_Click(object sender, RoutedEventArgs e)
         {
-            if (ValtPris != _initialtpris)
+            if (ValdVara != _initialvara)
             {
-                if (app.PriserIShoppingList.Count >= 0)
-                {
-                    //var olditem = app.PriserIShoppingList.First(x => x.Namn == _valtpris.Namn);
-                    var index = app.PriserIShoppingList.IndexOf(_initialtpris);
-                    app.PriserIShoppingList[index] = ValtPris;
-                    var hittaRecept = app.ShoppingIngredienser.FirstOrDefault(r => r.ReceptIngredienser.Any(x => x.Ingrediens.PrisLista.Contains(_valtpris)));
-                    if (hittaRecept != null)
-                    {
-                        var prislista = hittaRecept.ReceptIngredienser.FirstOrDefault(x => x.Ingrediens.PrisLista.Contains(_valtpris));
-                        if (prislista != null)
-                        {
-                            var receptmängd = prislista.AntalGram * 100;
-                            var prismängd = app.PriserIShoppingList[index].Mängd;
-                            prismängd = KonverteraPrismängd(app.PriserIShoppingList[index].Mått, prismängd, index, prislista);
-
-                            app.PriserIShoppingList[index].AntalProdukter = (int)Math.Ceiling((decimal)(receptmängd / prismängd));
-                            app.PriserIShoppingList[index].Summa = app.PriserIShoppingList[index].AntalProdukter > 1 ? app.PriserIShoppingList[index].AntalProdukter * app.PriserIShoppingList[index].Pris : app.PriserIShoppingList[index].Pris;
-                        }
-                    }
-                    app.TotalSumma = (double)app.PriserIShoppingList.Sum(x => x.Summa);
-                }
+                ValdIngrediens.Vara = ValdVara;
             }
             Close();
         }
@@ -100,9 +95,9 @@ namespace ReceptApp.Pages
 
         private double? KonverteraPrismängd(string mått, double? prismängd, int index, ReceptIngrediens prislista)
         {
-            if (app.PriserIShoppingList[index].Mått == "kg") { return prismängd *= 1000; }
-            else if (app.PriserIShoppingList[index].Mått == "dl") { return prismängd *= prislista.Ingrediens.GramPerDl / 100; }
-            else if (app.PriserIShoppingList[index].Mått == "l") { return prismängd *= prislista.Ingrediens.GramPerDl / 100 * 10; }
+            //if (app.PriserIShoppingList[index].Mått == "kg") { return prismängd *= 1000; }
+            //else if (app.PriserIShoppingList[index].Mått == "dl") { return prismängd *= prislista.Ingrediens.GramPerDl; }
+            //else if (app.PriserIShoppingList[index].Mått == "L") { return prismängd *= prislista.Ingrediens.GramPerDl * 10; }
             return prismängd;
         }
 

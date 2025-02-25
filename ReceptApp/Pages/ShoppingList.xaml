@@ -4,8 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ReceptApp.Pages"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="900"
       Title="ShoppingList">
 
     <Grid Background="#FFFDFDFD">
@@ -42,10 +43,10 @@
                 </ItemsControl>
             </ScrollViewer>
         </StackPanel>
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
+        <!--<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
             <RadioButton x:Name="RadioBilligast" Content="Billigast" IsChecked="True" Margin="0 0 20 0" Checked="SorteringsRadio_Checked"></RadioButton>
             <RadioButton x:Name="RadioStorlek" Content="Närmast i storlek" Checked="SorteringsRadio_Checked"></RadioButton>
-        </StackPanel>
+        </StackPanel>-->
         <StackPanel Grid.Column="1" Grid.Row="1">
             <Border BorderBrush="Transparent" BorderThickness="1" CornerRadius="20">
 
@@ -54,20 +55,48 @@
                           HorizontalGridLinesBrush="LightGray"
                           VerticalGridLinesBrush="LightGray"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          ItemsSource="{Binding PriserIShoppingList}" 
-                          CellEditEnding="CellEditEnding_CurrentCellChanged"
+                          ItemsSource="{Binding ReceptIngrediensShoppingList}" 
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
                           AutoGenerateColumns="False">
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="Padding" Value="5"></Setter>
-                        <Setter Property="FontSize" Value="14"></Setter>
-                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="FontSize" Value="14"></Setter>
+                            <Setter Property="FontFamily" Value="Roboto"></Setter>
+                            <Setter Property="FontWeight" Value="SemiBold"></Setter>
+                            <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Column.ActualWidth}"></Setter>
+                        </Style>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <ToolTip Placement="MousePoint"  Background="Transparent" BorderThickness="0" 
+                                            ToolTipService.ShowDuration="3000" 
+                                            ToolTipService.InitialShowDelay="0">
+                                        <Image Source="{Binding Vara.Bild}" 
+                                            Width="100" Height="100" 
+                                            RenderOptions.BitmapScalingMode="HighQuality"></Image>
+                                    </ToolTip>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="TextBlock" x:Key="DataGridTextBlockStyle">
+                            <Setter Property="Padding" Value="5"></Setter>
+                            <Setter Property="FontSize" Value="14"></Setter>
+                            <Setter Property="FontFamily" Value="Roboto"></Setter>
+                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="5"></Setter>
+                            <Setter Property="FontSize" Value="14"></Setter>
+                            <Setter Property="FontFamily" Value="Roboto"></Setter>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
                                         <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}">
                                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -76,61 +105,103 @@
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
- 
+
                                 </Setter.Value>
                             </Setter>
                         </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}" IsReadOnly="True"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Pris" IsReadOnly="True" Binding="{Binding Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Jämför" IsReadOnly="True" Binding="{Binding JämförelsePris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="# Prod" Binding="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}"></DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Typ av prod" IsReadOnly="True">
-                        <!--Typ av produkt-->
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource KonverteraTypTillPlural}">
-                                            <Binding Path="Förpackningstyp"></Binding>
-                                            <Binding Path="AntalProdukter"></Binding>
-                                            <Binding Path="Antal"></Binding>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Mängd" IsReadOnly="True" Binding="{Binding Mängd}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Mått" IsReadOnly="True" Binding="{Binding Mått}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Summa" IsReadOnly="True" Binding="{Binding Summa, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Width="25" Height="25" Click="EditVara_Click">
-                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE70F;"></TextBlock>
-                                    <Button.ToolTip>
-                                        <TextBlock>Ändra vara eller mängd</TextBlock>
-                                    </Button.ToolTip>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Width="25" Height="25" Click="DeleteIngredient_Click">
-                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
-                                    <Button.ToolTip>
-                                        <TextBlock>Ta bort vara från listan</TextBlock>
-                                    </Button.ToolTip>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Bild" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Vara.Bild, UpdateSourceTrigger=PropertyChanged}" Width="40" Height="40"
+                                            RenderOptions.BitmapScalingMode="HighQuality">
+                                        
+                                    </Image>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Namn" Binding="{Binding Vara.Namn}" ElementStyle="{StaticResource DataGridTextBlockStyle}" IsReadOnly="True"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Pris" IsReadOnly="True" Binding="{Binding Vara.Pris, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LäggTillKr}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
+                        <DataGridTemplateColumn Header="Jmfrpris">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource JmfrprisSomText}">
+                                                <Binding Path="Vara.JämförelsePris"></Binding>
+                                                <Binding Path="Mått"></Binding>
+                                                <Binding Path="Vara.ÄrInteÖvrigVara"></Binding>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Antal">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <xctk:IntegerUpDown x:Name="integerup" Value="{Binding AntalProdukter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ValueChanged="IntegerUpDown_ValueChanged" Visibility="{Binding Vara.ÄrInteLösvikt, Converter={StaticResource BoolToVis}}" ></xctk:IntegerUpDown>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Förpackning" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource KonverteraTypTillPlural}">
+                                                <Binding Path="Vara.Förpackningstyp"></Binding>
+                                                <Binding Path="AntalProdukter"></Binding>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <!--<DataGridTextColumn Header="Mängd" IsReadOnly="True" Binding="{Binding Mängd, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>-->
+                        <DataGridTemplateColumn Header="Mängd" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource MängdSomNull}">
+                                                <Binding Path="Mängd"></Binding>
+                                                <Binding Path="Vara.ÄrInteÖvrigVara"></Binding>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Mått" IsReadOnly="True" Binding="{Binding Mått, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
+                        <DataGridTextColumn Header="Summa" IsReadOnly="True" Binding="{Binding Summa, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LäggTillKr}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Width="25" Height="25" Click="EditVara_Click">
+                                        <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE70F;"></TextBlock>
+                                        <Button.ToolTip>
+                                            <TextBlock>Ändra vara eller mängd</TextBlock>
+                                        </Button.ToolTip>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Width="25" Height="25" Click="DeleteIngredient_Click">
+                                        <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                                        <Button.ToolTip>
+                                            <TextBlock>Ta bort vara från listan</TextBlock>
+                                        </Button.ToolTip>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
                 <Border.Effect>
                     <DropShadowEffect Color="Black" Direction="310" ShadowDepth="7" Opacity="0.3" />
                 </Border.Effect>

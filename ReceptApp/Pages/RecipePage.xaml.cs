@@ -41,22 +41,17 @@ namespace ReceptApp.Pages
 
         private void AddAllToCart_Click(object sender, RoutedEventArgs e)
         {
+            app.HasAddedToShoppingCart = true;
+            Recept temp = app.ValtRecept.Copy();
+            foreach (var item in temp.ReceptIngredienser)
+            {
+                app.ReceptIngrediensShoppingList.Add(item);
+            }
             app.ShoppingIngredienser.Add(app.ValtRecept.Copy());
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             mainWindow.ContentFrame.Navigate(mainWindow.shoppingList);
-            //NavigationService.Navigate(new ShoppingList());
         }
 
-        //private void AddToCart_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (sender is Button button)
-        //    {
-        //        if (button.DataContext is ReceptIngrediens i)
-        //        {
-        //            app.ShoppingIngredienser.Add(i.Copy());
-        //        }
-        //    }
-        //}
 
         private void EditRecept_Click(object sender, RoutedEventArgs e)
         {
@@ -91,5 +86,6 @@ namespace ReceptApp.Pages
                 return false;
             };
         }
+
     }
 }

@@ -9,36 +9,103 @@
     <Grid>
         <StackPanel>
             <DataGrid ItemsSource="{Binding }" IsReadOnly="True" AutoGenerateColumns="False" SelectionChanged="DataGrid_SelectionChanged" Loaded="DataGrid_Loaded">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                        <Setter Property="FontWeight" Value="SemiBold"></Setter>
+                        <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Column.ActualWidth}"></Setter>
+                    </Style>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="ToolTip">
+                            <Setter.Value>
+                                <ToolTip Placement="MousePoint"  Background="Transparent" BorderThickness="0" 
+                                           ToolTipService.ShowDuration="3000" 
+                                           ToolTipService.InitialShowDelay="0">
+                                    <Image Source="{Binding Bild}" 
+                                           Width="100" Height="100" 
+                                           RenderOptions.BitmapScalingMode="HighQuality"></Image>
+                                </ToolTip>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="TextBlock" x:Key="DataGridTextBlockStyle">
+                        <Setter Property="Padding" Value="5"></Setter>
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="FontFamily" Value="Roboto"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                    </Style>
+                </DataGrid.Resources>
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="5"></Setter>
                         <Setter Property="FontSize" Value="14"></Setter>
                         <Setter Property="FontFamily" Value="Roboto"></Setter>
-                        <Setter Property="VerticalContentAlignment" Value="Bottom" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGridCell">
+                                    <Border Background="{TemplateBinding Background}"
+                               BorderBrush="{TemplateBinding BorderBrush}"
+                               BorderThickness="{TemplateBinding BorderThickness}">
+                                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsEditing" Value="True">
+                                            <Setter Property="Background" Value="#ADD8E6"></Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </DataGrid.CellStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Pris" Binding="{Binding Pris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Jämför" Binding="{Binding JämförelsePris, Converter={StaticResource KonverteraTillSvenskDecimal}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="# Prod" Binding="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}"></DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Typ av prod">
+                    <DataGridTemplateColumn Header="Bild" Width="50">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock>
+                                <Image Source="{Binding Bild}" Width="40" Height="40"
+                                           RenderOptions.BitmapScalingMode="HighQuality"></Image>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Namn" Binding="{Binding Namn}" ElementStyle="{StaticResource DataGridTextBlockStyle}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Pris" IsReadOnly="True" Binding="{Binding Pris, Converter={StaticResource LäggTillKr}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Jmfrpris">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
                                     <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource KonverteraTypTillPlural}">
-                                            <Binding Path="Förpackningstyp"></Binding>
-                                            <Binding Path="Antal"></Binding>
-                                            <Binding Path="AntalProdukter"></Binding>
+                                        <MultiBinding Converter="{StaticResource JmfrprisSomText}">
+                                            <Binding Path="JämförelsePris"></Binding>
+                                            <Binding Path="Mått"></Binding>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Mängd" Binding="{Binding Mängd}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Mått" Binding="{Binding Mått}"></DataGridTextColumn>
+                    <!--<DataGridTextColumn Header="Antal" Binding="{Binding AntalProdukter, Converter={StaticResource NullableIntConverter}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>-->
+                    <DataGridTemplateColumn Header="Förpackning" IsReadOnly="True">
+                        <!--Typ av produkt-->
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource KonverteraTypTillPlural}">
+                                            <Binding Path="Förpackningstyp"></Binding>
+                                            <Binding Path="AntalProdukter"></Binding>
+                                            <Binding Path="Antal"></Binding>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Mängd" IsReadOnly="True" Binding="{Binding Mängd}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Mått" IsReadOnly="True" Binding="{Binding Mått}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
+                    <!--<DataGridTextColumn Header="Summa" IsReadOnly="True" Binding="{Binding Summa, Converter={StaticResource LäggTillKr}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>-->
+                    
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Orientation="Horizontal">

@@ -17,12 +17,49 @@
                         Height="320"
                         Margin="0,10,0,0" 
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        ItemsSource="{Binding FilteredCollectionView}" 
+                        ItemsSource="{Binding IngrediensLista}" 
                         SelectionMode="Single" 
-                        SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged">
+                        >
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
+                        <StackPanel>
+                            <Expander Header="{Binding Namn}" IsExpanded="False">
+                                <ListView ItemsSource="{Binding Varor}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged" GotFocus="ListView_GotFocus">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                            <Setter Property="Width" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Grid.Column="0"  Source="{Binding Bild}" Width="25" Height="25" RenderOptions.BitmapScalingMode="HighQuality">
+                                                    <Image.ToolTip>
+                                                        <ToolTip Placement="MousePoint"  Background="Transparent" BorderThickness="0" 
+                                                                    ToolTipService.ShowDuration="3000" 
+                                                                    ToolTipService.InitialShowDelay="0">
+                                                            <Image Source="{Binding Bild}" 
+                                                                Width="100" Height="100" 
+                                                                RenderOptions.BitmapScalingMode="HighQuality">
+                                                            </Image>
+                                                        </ToolTip>
+                                                    </Image.ToolTip>
+                                                </Image>
+                                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                    <TextBlock Grid.Column="1" Text="{Binding Typ}" FontSize="14" FontFamily="Roboto" Margin="10 0 0 0"></TextBlock>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Info}" FontSize="14" FontFamily="Roboto" Margin="10 0 0 0"></TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Expander>
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -48,16 +85,25 @@
                     <ColumnDefinition Width="2*"></ColumnDefinition>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Height="30" VerticalAlignment="Center" Text="{Binding ValdIngrediens.Namn}" Margin="0,10,0,0"></TextBlock>
+                <TextBlock Grid.Column="0" Height="30" VerticalAlignment="Center" Margin="0,10,0,0">
+                    
+                    <Run>
+                        <MultiBinding Converter="{StaticResource LäggTillKomma}">
+                            <Binding Path="ValdVara.Namn"/>
+                            <Binding Path="ValdVara.Info" StringFormat=", {0}"/>
+                        </MultiBinding>
+                    </Run>
 
-                <ComboBox ItemsSource="{Binding ValdIngrediens.ViktMått, Converter={StaticResource KonverteraMåttTillText}}" Name="ComboBoxMått" Grid.Column="1" SelectionChanged="ComboBoxMått_SelectionChanged">
+                </TextBlock>
+
+                <ComboBox ItemsSource="{Binding ValdVara.Naring.ViktMått, Converter={StaticResource KonverteraMåttTillText}}" Name="ComboBoxMått" Grid.Column="1" SelectionChanged="ComboBoxMått_SelectionChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}"></TextBlock>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBox x:Name="TextBoxMått" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding ValdReceptIngrediens.Mängd, UpdateSourceTrigger=PropertyChanged}" Width="50" Height="30" Grid.Column="2" PreviewTextInput="TextBoxMått_PreviewTextInput" KeyDown="TextBoxMått_KeyDown"></TextBox>
+                <TextBox x:Name="TextBoxMått" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding ValdReceptIngrediens.Mängd, Converter={StaticResource KonverteraTillSvenskDecimal}, UpdateSourceTrigger=PropertyChanged}" Width="50" Height="30" Grid.Column="2" PreviewTextInput="TextBoxMått_PreviewTextInput" KeyDown="TextBoxMått_KeyDown"></TextBox>
             </Grid>
             <Button Grid.Row="3" Height="25"  Content="Lägg till ingrediens" Margin="0,10,0,0" Click="AddIngredient_Click" ></Button>
   
@@ -85,11 +131,30 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock FontFamily="Roboto" FontSize="16">
-                                        <Run Text="{Binding Mängd, UpdateSourceTrigger=PropertyChanged}"></Run>                                          
-                                        <Run Text="{Binding Mått, UpdateSourceTrigger=PropertyChanged}"></Run>
-                                        <Run Text="{Binding Ingrediens.Namn, UpdateSourceTrigger=PropertyChanged}"></Run>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Grid.Column="0"  Source="{Binding Vara.Bild}" Margin="0 0 5 0" Width="25" Height="25" RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.ToolTip>
+                                    <ToolTip 
+                                        Placement="MousePoint"  
+                                        Background="Transparent" 
+                                        BorderThickness="0" 
+                                        ToolTipService.ShowDuration="3000" ToolTipService.InitialShowDelay="0">
+                                        <Image 
+                                            Source="{Binding Vara.Bild}" 
+                                            Width="100" Height="100" 
+                                            RenderOptions.BitmapScalingMode="HighQuality">
+                                        </Image>
+                                    </ToolTip>
+                                </Image.ToolTip>
+                            </Image>
+                            <TextBlock FontFamily="Roboto" FontSize="16">
+                                <Run Text="{Binding Mängd, UpdateSourceTrigger=PropertyChanged}"></Run>                                          
+                                <Run Text="{Binding Mått, UpdateSourceTrigger=PropertyChanged}"></Run>
+                                <Run Text="{Binding Vara.Namn, UpdateSourceTrigger=PropertyChanged}"></Run>
+                                <Run Text="{Binding Vara.Typ, UpdateSourceTrigger=PropertyChanged}"></Run>
+                                <Run Text="{Binding Vara.Info, UpdateSourceTrigger=PropertyChanged}"></Run>
+                            </TextBlock>
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -127,10 +192,10 @@
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="Fett"></TextBlock>
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="Protein"></TextBlock>
 
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NyttRecept.PortionKalori, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding NyttRecept.PortionKolhydrat, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding NyttRecept.PortionFett, StringFormat=N2}"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding NyttRecept.PortionProtein, StringFormat=N2}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NyttRecept.PortionKalori, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding NyttRecept.PortionKolhydrat, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding NyttRecept.PortionFett, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding NyttRecept.PortionProtein, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
 
             </Grid>
             <Grid Grid.Row="6">

@@ -1,14 +1,14 @@
-﻿<Page x:Class="ReceptApp.Pages.IngredientPage"
+﻿<Page x:Class="ReceptApp.Pages.OvrigtPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ReceptApp.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="1000"
-      Title="IngredientPage">
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="OvrigtPage">
 
-    <Grid x:Name="Tab1Grid" Background="#FFFDFDFD">
+    <Grid Background="#FFFDFDFD">
 
 
         <Grid.RowDefinitions>
@@ -44,7 +44,7 @@
                 AutoGenerateColumns="False" 
                 HorizontalGridLinesBrush="LightGray"
                 VerticalGridLinesBrush="LightGray"
-                ItemsSource="{Binding Ingredienslista}" 
+                ItemsSource="{Binding Ovrigavaraorlista}" 
                 IsReadOnly="True"
                 RowDetailsVisibilityMode="VisibleWhenSelected">
                 <DataGrid.Resources>
@@ -69,7 +69,7 @@
                                     <Image Source="{Binding Bild}" 
                                            Width="100" Height="100" 
                                            RenderOptions.BitmapScalingMode="HighQuality">
-                                    </Image>      
+                                    </Image>
                                 </ToolTip>
                             </Setter.Value>
                         </Setter>
@@ -79,15 +79,15 @@
 
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ingrediens" Binding="{Binding Namn}" FontFamily="Roboto" FontWeight="Bold" FontSize="16" ElementStyle="{StaticResource DataGridTextBlockStyle}"/>
+                    <DataGridTextColumn Header="Övriga varor" Binding="{Binding Namn}" FontFamily="Roboto" FontWeight="Bold" FontSize="16" ElementStyle="{StaticResource DataGridTextBlockStyle}"/>
                 </DataGrid.Columns>
                 <DataGrid.RowDetailsTemplate>
-                        <DataTemplate>
-                            <DataGrid ItemsSource="{Binding Varor}" 
+                    <DataTemplate>
+                        <DataGrid ItemsSource="{Binding Varor}" 
                                       AutoGenerateColumns="False"
                                       CanUserAddRows="False"
                                       Name="UnderGrid">
-                            
+
                             <DataGrid.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Padding" Value="5"></Setter>
@@ -109,44 +109,8 @@
                                 <DataGridTextColumn Header="Namn" Binding="{Binding Namn}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
                                 <DataGridTextColumn Header="Typ" Binding="{Binding Typ, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource DataGridTextBlockStyle }"></DataGridTextColumn>
                                 <DataGridTextColumn Header="Info" Binding="{Binding Info, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource DataGridTextBlockStyle }"></DataGridTextColumn>
-                                <DataGridTemplateColumn Header="Mängd">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
-                                                <TextBlock.Text>
-                                                    <MultiBinding Converter="{StaticResource KombineraMängdOchMått}">
-                                                        <Binding Path="Mängd"></Binding>
-                                                        <Binding Path="Mått"></Binding>
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Förpackning" Binding="{Binding Förpackningstyp, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
                                 <DataGridTextColumn Header="Pris" Binding="{Binding Pris, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LäggTillKr}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
-                                <!--<DataGridTextColumn Header="Jmfrpris" Binding="{Binding JämförelsePris, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LäggTillKr}}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>-->
-                                <DataGridTemplateColumn Header="Jmfrpris">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Style="{StaticResource DataGridTextBlockStyle}">
-                                                <TextBlock.Text>
-                                                    <MultiBinding Converter="{StaticResource JmfrprisSomText}">
-                                                        <Binding Path="JämförelsePris"></Binding>
-                                                        <Binding Path="Mått"></Binding>
-                                                        <Binding Path="ÄrInteÖvrigVara"></Binding>
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Kalori" Binding="{Binding Naring.Kalori}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
-                                <DataGridTextColumn Header="Kolhydrat" Binding="{Binding Naring.Kolhydrat}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
-                                <DataGridTextColumn Header="Fett" Binding="{Binding Naring.Fett}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
-                                <DataGridTextColumn Header="Protein" Binding="{Binding Naring.Protein}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
-                                <DataGridTextColumn Header="g/dl" Binding="{Binding Naring.GramPerDl}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
-                                <DataGridTextColumn Header="g/st" Binding="{Binding Naring.Styck}" ElementStyle="{StaticResource DataGridTextBlockStyle}"></DataGridTextColumn>
                                 <DataGridTemplateColumn>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -172,16 +136,17 @@
                                 </DataGridTemplateColumn>
 
                             </DataGrid.Columns>
-                            </DataGrid>
-                        </DataTemplate>
-                    </DataGrid.RowDetailsTemplate>
+                        </DataGrid>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
             </DataGrid>
 
-                            
+
             <Border.Effect>
                 <DropShadowEffect Color="Black" Direction="310" ShadowDepth="7" Opacity="0.3" />
             </Border.Effect>
         </Border>
 
     </Grid>
+
 </Page>

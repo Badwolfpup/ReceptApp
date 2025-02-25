@@ -1,5 +1,9 @@
 ﻿Att göra:
-Ändra strukturen med förpacknigstyp etc
+Buggtesta
+
+Lägg in alla ingredienser i databasen igen
 
 
-Lägg till möjlighet att ändra o shoppinglistan
+
+
+

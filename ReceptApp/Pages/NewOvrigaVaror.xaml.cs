@@ -1,22 +1,30 @@
 ﻿using Microsoft.Win32;
 using ReceptApp.Model;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace ReceptApp.Pages
 {
     /// <summary>
-    /// Interaction logic for NewIngredient.xaml
+    /// Interaction logic for NewOvrigaVaror.xaml
     /// </summary>
-    public partial class NewIngredient : Window, INotifyPropertyChanged
+    public partial class NewOvrigaVaror : Window, INotifyPropertyChanged
     {
-
 
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
@@ -26,28 +34,6 @@ namespace ReceptApp.Pages
 
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
-
-        public NewIngredient()
-        {
-            InitializeComponent();
-            DataContext = this;
-            NyVara = new Vara();
-            NyVara.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
-            IngrediensLista = app.Ingredienslista;
-            ÄrNyvara = false;
-        }
-
-        public NewIngredient(Vara vara)
-        {
-            InitializeComponent();
-            DataContext = this;
-            NyVara = vara;
-            IngrediensLista = app.Ingredienslista;
-            ComboBoxNamn.SelectedItem = IngrediensLista.FirstOrDefault(x => x.Varor.Contains(vara));
-            MattCombobox.SelectedItem = vara.Mått;
-            ForpackningsCombobox.SelectedItem = vara.Förpackningstyp;
-            ÄrNyvara = true;
-        }
 
         private Vara _nyvara;
         public Vara NyVara
@@ -62,7 +48,7 @@ namespace ReceptApp.Pages
 
         public App app { get; } = (App)Application.Current;
         private Ingrediens NyIngrediens;
-        public ObservableCollection<Ingrediens> IngrediensLista { get; set; } 
+        public ObservableCollection<Ingrediens> IngrediensLista { get; set; }
         private string _fileextension; //Håller koll på filändelsen på bilden.
         private bool SkaKopieraBild { get; set; } //Styr om bilden ska kopieras eller inte.
         private bool HasAddedImage { get; set; }
@@ -72,9 +58,29 @@ namespace ReceptApp.Pages
         private string NameText { get; set; }
         private string NewIngredintName { get; set; }
         private string _sparadförpackningsTyp = "";
-        private string _sparadMått;
-        public List<string> PrisMåttLista { get; } = new List<string> { "g", "kg", "dl", "L", "st" };
-        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt", "stycken", "flaska", "tub", "påse", "burk", "förpackning" };
+        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "stycken", "flaska", "tub", "påse", "burk", "förpackning" };
+
+        public NewOvrigaVaror()
+        {
+            InitializeComponent();
+            DataContext = this;
+            NyVara = new Vara();
+            NyVara.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
+            IngrediensLista = app.Ovrigavaraorlista;
+            ÄrNyvara = false;
+        }
+
+        public NewOvrigaVaror(Vara vara)
+        {
+            InitializeComponent();
+            DataContext = this;
+            NyVara = vara;
+            IngrediensLista = app.Ovrigavaraorlista;
+            ComboBoxNamn.SelectedItem = IngrediensLista.FirstOrDefault(x => x.Varor.Contains(vara));
+            ForpackningsCombobox.SelectedItem = vara.Förpackningstyp;
+            ÄrNyvara = true;
+        }
+
 
         private void KollaSiffor_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -85,25 +91,15 @@ namespace ReceptApp.Pages
         {
             NameText = NameText.Trim(); //Tar bort mellanslag i början och slutet av namnet.
             NyVara.Namn = NameText;
-            
-            if (ÄrNyvara){
+            NyVara.ÄrInteÖvrigVara = false;
+            NyVara.ÄrInteLösvikt = true;
+            if (ÄrNyvara)
+            {
                 if (SkaKopieraBild) KopieraBild(TempBild, $"{NameText}", _fileextension, HasExtension); //Kopierar bilden
                 Close();
                 return;
             }
-            //Kollar så att alla fält är ifyllda
-            if (string.IsNullOrWhiteSpace(NameText) || string.IsNullOrWhiteSpace(NyKalori.Text)
-                || string.IsNullOrWhiteSpace(NyFett.Text) || string.IsNullOrWhiteSpace(NyKolhydrat.Text)
-                || string.IsNullOrWhiteSpace(NyProtein.Text))
-            {
-                MessageBox.Show("Du måste fylla i alla fält");
-                return;
-            }
-            if (NyVara.Mängd == 0 || NyVara.Mängd == null)
-            {
-                MessageBox.Show("Du måste ange en mängd.");
-                return;
-            }
+
             if (NyVara.Pris == 0 || NyVara.Pris == null)
             {
                 MessageBox.Show("Du måste ange ett pris.");
@@ -114,21 +110,12 @@ namespace ReceptApp.Pages
                 MessageBox.Show("Du behöver ange förpackningstyp.");
                 return;
             }
-            if (NyVara.Mått == "")
-            {
-                MessageBox.Show("Du måste ange ett mått"); return;
-            }
 
-            if ((bool)JmfrprisCheckbox.IsChecked)
-            {
-                NyVara.JämförelsePris = NyVara.Pris;
-                NyVara.PrisSomJmfrPris();
-            }
 
             if (NewIngredintName != "" && NameText != NewIngredintName) IngrediensLista.Remove(NyIngrediens); //Lägger till ingrediensen i listan om det är en ny ingrediens.
-            app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
-            app.appdata.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
-            app.Ingredienslista = app.appdata.Ingredienslista;
+            app.Ovrigavaraorlista[app.Ovrigavaraorlista.IndexOf(app.Ovrigavaraorlista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
+            app.appdata.Ovrigavaraorlista = new ObservableCollection<Ingrediens>(app.Ovrigavaraorlista.OrderBy(item => item.Namn)); //Sorterar listan.
+            app.Ovrigavaraorlista = app.appdata.Ovrigavaraorlista;
             if (HasAddedImage) KopieraBild(TempBild, $"{NameText}", _fileextension, HasExtension); //Kopierar bilden till mappen om man la till en bild .
             Close();
         }
@@ -157,28 +144,6 @@ namespace ReceptApp.Pages
             }
         }
 
-        private void JmfrprisCheckbox_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender != null && sender is CheckBox box)
-            {
-                if ((bool)box.IsChecked)
-                {
-                    _sparadförpackningsTyp = NyVara.Förpackningstyp != null ? NyVara.Förpackningstyp : "";
-                    _sparadMått = NyVara.Mått;
-                    ForpackningsCombobox.SelectedItem = "lösvikt";
-                    NyVara.Mängd = 1;
-                    MattCombobox.SelectedItem = "kg";
-                    NyVara.ÄrInteLösvikt = false;
-                }
-                else
-                {
-                    ForpackningsCombobox.SelectedItem = _sparadförpackningsTyp;
-                    MattCombobox.SelectedItem = _sparadMått;
-                    NyVara.ÄrInteLösvikt = true;
-                }
-            }
-        }
-
         private void Förpackningstyp_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox box && box.SelectedItem.ToString() != null && box.SelectedItem.ToString() != "")
@@ -191,17 +156,17 @@ namespace ReceptApp.Pages
         {
             NamePopupWindow popup = new NamePopupWindow
             {
-                Owner = this 
+                Owner = this
             };
 
             bool? result = popup.ShowDialog();
             NewIngredintName = popup.EnteredName;
-            
+
             if (result == true)
             {
                 if (NyIngrediens != null && IngrediensLista.Any(x => x == NyIngrediens)) IngrediensLista.Remove(NyIngrediens);
-                NyIngrediens = new Ingrediens(NewIngredintName);               
-                app.Ingredienslista.Add(NyIngrediens);
+                NyIngrediens = new Ingrediens(NewIngredintName);
+                app.Ovrigavaraorlista.Add(NyIngrediens);
                 ComboBoxNamn.SelectedItem = NyIngrediens;
             }
         }
@@ -214,6 +179,7 @@ namespace ReceptApp.Pages
                 NameText = selectedItem.Namn;
             }
         }
+
 
         #region Bildhanetering
         private void OnPasteExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -255,7 +221,7 @@ namespace ReceptApp.Pages
 
         private void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (ComboBoxNamn.SelectedItem == null ||ComboBoxNamn.SelectedItem.ToString() == "")
+            if (ComboBoxNamn.SelectedItem == null || ComboBoxNamn.SelectedItem.ToString() == "")
             {
                 MessageBox.Show("Du måste välja en ingrediens först.");
                 return;
@@ -295,7 +261,7 @@ namespace ReceptApp.Pages
         {
             if (!SkaKopieraBild)
             {
-               return;
+                return;
             }
             filnamn += !hasExtension ? ".png" : fileextension;
             string _folderpath = AppDomain.CurrentDomain.BaseDirectory;
@@ -304,7 +270,7 @@ namespace ReceptApp.Pages
 
             string filePath = System.IO.Path.Combine(bildfolder, filnamn);
 
-            if (File.Exists(filePath)) filePath = filePath.Insert(Path.GetExtension(filePath) == ".jpeg" ? filePath.Length - 5 : filePath.Length - 4, Directory.GetFiles(bildfolder).Count().ToString());
+            if (File.Exists(filePath)) filePath = filePath.Insert(System.IO.Path.GetExtension(filePath) == ".jpeg" ? filePath.Length - 5 : filePath.Length - 4, Directory.GetFiles(bildfolder).Count().ToString());
             NyVara.Bild = filePath;
             if (img != null && !string.IsNullOrEmpty(filnamn))
             {
@@ -326,7 +292,5 @@ namespace ReceptApp.Pages
 
         }
         #endregion
-
-
     }
 }

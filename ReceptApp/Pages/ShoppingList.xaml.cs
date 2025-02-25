@@ -2,8 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Xceed.Wpf.Toolkit;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace ReceptApp.Pages
 {
@@ -14,10 +17,6 @@ namespace ReceptApp.Pages
     {
         App app = (App)Application.Current;
 
-        private Priser _valtpris = null;
-
-        public List<bool> HarFleraPriser { get; set; } = new List<bool>();
-
         public ShoppingList()
         {
             InitializeComponent();
@@ -25,225 +24,128 @@ namespace ReceptApp.Pages
             Loaded += ShoppingList_Loaded;
         }
 
+
+
         private void ShoppingList_Loaded(object sender, RoutedEventArgs e)
         {
-            AggregeraRceptIngredienser();
+            if (app.HasAddedToShoppingCart)
+            {
+                AggregeraInitialaReceptIngredienser();
+                app.HasAddedToShoppingCart = false;
+            } else
+            {
+                RäknaAntalProdukter();
+            }
         }
 
-        private void AggregeraRceptIngredienser()
+        private void AggregeraInitialaReceptIngredienser()
         {
-
             //Slår ihop alla ingredienser i shoppinglistan så att varje ingrediens bara förekommer en gång
-            app.ReceptIngrediensShoppingList = new ObservableCollection<ReceptIngrediens>(app.ShoppingIngredienser
-                .SelectMany(r => r.ReceptIngredienser)
-                .GroupBy(item => item.Ingrediens.Namn)
+            var newlist = app.ReceptIngrediensShoppingList
+                .GroupBy(item => new { item.Vara.Namn, item.Vara.Typ, item.Vara.Info })
                 .Select(group =>
                 {
                     string störstmått = group.OrderByDescending(ing => ing.AntalGram).First().Mått;
-                    double totalmängd = group.Sum(ing =>
-                    {
-                        return KonverteraMått(ing.Mått, ing.Mängd, ing.AntalGram, ing.Ingrediens);
-                    });
-
+                    double totalmängd = group.Sum(ing => (double)ing.AntalGram * 100);
 
                     return new ReceptIngrediens
                     {
 
                         Mått = störstmått,
-                        Ingrediens = group.First().Ingrediens,
+                        Vara = group.First().Vara,
                         Mängd = totalmängd,
                         AntalGram = group.First().AntalGram,
+                        AntalProdukter = !group.First().Vara.ÄrInteÖvrigVara ? group.First().AntalProdukter : null,
                     };
                 })
-                .ToList()
-            );
+                .ToList();
+            
+            app.ReceptIngrediensShoppingList.Clear();
+            foreach (var item in newlist)
+            {
+                app.ReceptIngrediensShoppingList.Add(item);
+            }
 
             //Konverterar mängden tillbaka till det mått som är hade mest mängd
             foreach (var item in app.ReceptIngrediensShoppingList)
             {
+                if (!item.Vara.ÄrInteÖvrigVara) continue;
                 if (item.Mått == "st")
                 {
-                    item.Mängd = (double)(item.Mängd / item.Ingrediens.Styck);
+                    item.Mängd = (double)(item.Mängd / item.Vara.Naring.Styck);
                 }
                 else
                 {
                     if (item.Mått == "dl")
                     {
-                        item.Mängd = (double)(item.Mängd / 100 / (item.Ingrediens.GramPerDl / 100));
+                        item.Mängd = (double)(item.Mängd / 100.0 / (item.Vara.Naring.GramPerDl / 100.0));
                     }
                     else if (item.Mått == "msk")
                     {
-                        item.Mängd = (double)(item.Mängd / 100 / (item.Ingrediens.GramPerDl / 100) / 0.15);
+                        item.Mängd = (double)(item.Mängd / 100.0 / (item.Vara.Naring.GramPerDl / 100.0) / 0.15);
                     }
                     else if (item.Mått == "tsk")
                     {
-                        item.Mängd = (double)(item.Mängd / 100 / (item.Ingrediens.GramPerDl / 100) / 0.05);
+                        item.Mängd = (double)(item.Mängd / 100.0 / (item.Vara.Naring.GramPerDl / 100.0) / 0.05);
                     }
                     else if (item.Mått == "krm")
                     {
-                        item.Mängd = (double)(item.Mängd / 100 / (item.Ingrediens.GramPerDl / 100) / 0.01);
+                        item.Mängd = (double)(item.Mängd / 100.0 / (item.Vara.Naring.GramPerDl / 100.0) / 0.01);
                     }
                 }
             }
-            app.PriserIShoppingList.Clear();
-            if (RadioBilligast.IsChecked == true)
-            {
-                foreach (var item in app.ReceptIngrediensShoppingList)
-                {
-                    if (item.Ingrediens.PrisLista.Count <= 0) break;
-                    if (item.Ingrediens.PrisLista.Count > 1) HarFleraPriser.Add(true);
-                    else HarFleraPriser.Add(false);
-                    app.PriserIShoppingList.Add(item.Ingrediens.PrisLista.OrderBy(pris => pris.JämförelsePris).First());
+            RäknaAntalProdukter();
 
-                    if (app.PriserIShoppingList.Count > 0)
-                    {
-                        if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Förpackningstyp != "lösvikt")
-                        {
-                            var receptmängd = item.AntalGram * 100;
-                            var prismängd = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
-                            prismängd = KonverteraPrismängd(app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått, prismängd, app.PriserIShoppingList.Count - 1, item);
-
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter = (int)Math.Ceiling((decimal)(receptmängd / prismängd));
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter > 1 ? app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Pris : app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Pris;
-                        }
-                        else
-                        {
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd = item.Mängd;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].SkaÄndraJmfrPris = false;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått = item.Mått;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].SkaÄndraJmfrPris = true;
-
-                            if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "g")
-                            {
-
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd / 1000;
-                            }
-                            else if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "st")
-                            {
-
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd * item.Ingrediens.Styck / 1000);
-                            }
-                            else
-                            {
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
-
-                            }
-
-
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in app.ReceptIngrediensShoppingList)
-                {
-                    if (item.Ingrediens.PrisLista.Count <= 0) break;
-                    if (item.Ingrediens.PrisLista.Count > 1) HarFleraPriser.Add(true);
-                    else HarFleraPriser.Add(false);
-                    app.PriserIShoppingList.Add(item.Ingrediens.PrisLista.OrderBy(vikt =>
-                    {
-                        double? prisvikt = 0;
-                        if (vikt.Mått == "g") prisvikt = vikt.Mängd;
-                        else if (vikt.Mått == "kg") prisvikt = vikt.Mängd * 1000;
-                        else if (vikt.Mått == "dl") prisvikt = vikt.Mängd * item.Ingrediens.GramPerDl / 100;
-                        else if (vikt.Mått == "l") prisvikt = vikt.Mängd * item.Ingrediens.GramPerDl / 100 * 10;
-                        return item.AntalGram * 100 / prisvikt;
-                    }).First());
-                    if (app.PriserIShoppingList.Count > 0)
-                    {
-                        if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Förpackningstyp != "lösvikt")
-                        {
-                            var receptmängd = item.AntalGram * 100;
-                            var prismängd = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
-                            prismängd = KonverteraPrismängd(app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått, prismängd, app.PriserIShoppingList.Count - 1, item);
-
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter = (int)Math.Ceiling((decimal)(receptmängd / prismängd));
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter > 1 ? app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].AntalProdukter * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Pris : app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Pris;
-                        }
-                        else
-                        {
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd = item.Mängd; //item.AntalGram * 100;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].SkaÄndraJmfrPris = false;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått = item.Mått;
-                            app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].SkaÄndraJmfrPris = true;
-
-                            if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "g")
-                            {
-
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd / 1000;
-                            }
-                            else if (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mått == "st")
-                            {
-
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * (app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd * item.Ingrediens.Styck / 1000);
-                            }
-                            else
-                            {
-                                app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Summa = app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].JämförelsePris * app.PriserIShoppingList[app.PriserIShoppingList.Count - 1].Mängd;
-
-                            }
-                        }
-                    }
-                }
-
-            }
-            if (app.PriserIShoppingList.Count > 0)
-            {
-                app.TotalSumma = (double)app.PriserIShoppingList.Sum(x => x.Summa);
-            }
         }
 
 
-        private double KonverteraMått(string mått, double mängd, double? antalgram, Ingrediens ingrediens)
+        private void RäknaAntalProdukter()
         {
+            foreach (var item in app.ReceptIngrediensShoppingList)
+            {
+                if (!item.Vara.ÄrInteÖvrigVara) continue;
+                if (!item.Vara.ÄrInteLösvikt) continue;
+                switch(item.Mått)
+                {
+                    case "st": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Naring.Styck); break;
+                    case "dl": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); break;
+                    case "msk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 15 / 100 / (double)item.Vara.Mängd); break;
+                    case "tsk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 5 / 100 / (double)item.Vara.Mängd); break;
+                    case "krm": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 1 / 100 / (double)item.Vara.Mängd); break;
+                    default: item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); break;
+                }
+            }
+            RäknaSumma();
+        }
 
-            if (mått == "g")
+        private void RäknaSumma()
+        {
+            foreach (var item in app.ReceptIngrediensShoppingList)
             {
-                return (double)(antalgram * 100);
+                if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
+                {
+                    item.Summa = (double)(item.AntalProdukter * item.Vara.Pris);
+                }
+                else item.Summa = (double)(item.Vara.Pris * item.AntalGram / 10);
             }
-            else if (mått == "st")
-            {
-                return (double)(mängd * ingrediens.Styck);
-            }
-            else
-            {
-                return (double)(antalgram * 100 * (ingrediens.GramPerDl / 100));
-            }
+            app.TotalSumma = (double)app.ReceptIngrediensShoppingList.Sum(x => x.Summa);
         }
 
         private void DeleteIngredient_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button)
-            {
-                if (button.DataContext is Priser i)
-                {
-                    var hittaRecept = app.ShoppingIngredienser.FirstOrDefault(r => r.ReceptIngredienser.Any(x => x.Ingrediens.PrisLista.Contains(i)));
-                    if (hittaRecept != null)
-                    {
-                        var prislista = hittaRecept.ReceptIngredienser.FirstOrDefault(x => x.Ingrediens.PrisLista.Contains(i));
-                        if (prislista != null)
-                        {
-                            hittaRecept.ReceptIngredienser.Remove(prislista);
-                            AggregeraRceptIngredienser();
-                        }
-
-                    }
-
-                }
-            }
+            if (sender is Button button && button.DataContext is ReceptIngrediens vara) app.ReceptIngrediensShoppingList.Remove(vara);
         }
 
         private void AddToClipboard_Click(object sender, RoutedEventArgs e)
         {
             string clipboard = "";
-            foreach (var item in app.PriserIShoppingList)
+            foreach (var item in app.ReceptIngrediensShoppingList)
             {
-                if (item.AntalProdukter > 0 && (item.Förpackningstyp != "" || item.Förpackningstyp != "lösvikt"))
+                if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
                 {
-                    clipboard += $"{item.AntalProdukter} {item.Förpackningstyp}{(item.Antal > 1 ? $"({item.Antal}st)" : "")} {item.Namn.ToLower()} á {item.Mängd}{item.Mått} ({item.Summa:F2}kr) \n";
+                    clipboard += $"{item.AntalProdukter} {KonverteraFörpackningTillPlural(item.AntalProdukter, item.Vara.Förpackningstyp)} {item.Vara.Namn.ToLower()} {(item.Vara.Typ != "" ? item.Vara.Typ : "")} {(item.Vara.Info != "" ? item.Vara.Info : "")} á {item.Mängd}{item.Mått} ({item.Summa:F2}kr) \n";
                 }
-                else clipboard += $"{item.Mängd}{item.Mått} {item.Namn.ToLower()} ({item.Summa:F2}kr)\n";
+                else clipboard += $"{item.Mängd}{(item.Mått == "st" ? " " : "")}{item.Mått} {item.Vara.Namn.ToLower()} {(item.Vara.Typ != "" ? item.Vara.Typ : "")} {(item.Vara.Info != "" ? item.Vara.Info : "")} ({item.Summa:F2}kr)\n";
 
             }
             Clipboard.SetText(clipboard);
@@ -255,8 +157,72 @@ namespace ReceptApp.Pages
             {
                 if (button.DataContext is Recept r)
                 {
+                    foreach (var item in r.ReceptIngredienser)
+                    {
+                        var hittaingrediens = app.ReceptIngrediensShoppingList.FirstOrDefault(x => x.Vara.Namn == item.Vara.Namn && x.Vara.Typ == item.Vara.Typ && x.Vara.Info == item.Vara.Info);
+                        if (hittaingrediens != default)
+                        {
+                            if (item.Mått == hittaingrediens.Mått)
+                            {
+                                hittaingrediens.Mängd -= item.Mängd;
+                            }
+                            else
+                            {
+                                if (item.Mått == "st" && hittaingrediens.Mått == "g")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd * hittaingrediens.Vara.Naring.Styck);
+                                }
+                                else if (item.Mått == "g" && hittaingrediens.Mått == "st")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd / hittaingrediens.Vara.Naring.Styck);
+                                }
+                                else if (item.Mått == "g" && hittaingrediens.Mått == "dl")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd / item.Vara.Naring.GramPerDl);
+                                }
+                                else if (item.Mått == "dl" && hittaingrediens.Mått == "g")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd * item.Vara.Naring.GramPerDl);
+                                }
+                                else if (item.Mått == "g" && hittaingrediens.Mått == "msk")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd / item.Vara.Naring.GramPerDl / 0.15);
+                                }
+                                else if (item.Mått == "msk" && hittaingrediens.Mått == "g")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd * item.Vara.Naring.GramPerDl * 0.15);
+                                }
+                                else if (item.Mått == "g" && hittaingrediens.Mått == "tsk")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd / item.Vara.Naring.GramPerDl / 0.05);
+                                }
+                                else if (item.Mått == "tsk" && hittaingrediens.Mått == "g")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd * item.Vara.Naring.GramPerDl * 0.05);
+                                }
+                                else if (item.Mått == "g" && hittaingrediens.Mått == "krm")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd / item.Vara.Naring.GramPerDl / 0.01);
+                                }
+                                else if (item.Mått == "krm" && hittaingrediens.Mått == "g")
+                                {
+                                    hittaingrediens.Mängd -= (double)(item.Mängd * item.Vara.Naring.GramPerDl * 0.01);
+                                }
+                            }
+                        }
+                    }
+                    RäknaAntalProdukter();
                     app.ShoppingIngredienser.Remove(r);
-                    AggregeraRceptIngredienser();
+                    List<ReceptIngrediens> toRemove = new List<ReceptIngrediens>();
+                    foreach (var item in app.ReceptIngrediensShoppingList)
+                    {
+                        if (!item.Vara.ÄrInteÖvrigVara) continue;
+                        if (!app.ShoppingIngredienser.Any(x => x.ReceptIngredienser.Any(y => y.Vara.Namn == item.Vara.Namn && y.Vara.Typ == item.Vara.Typ && y.Vara.Info == y.Vara.Info))) toRemove.Add(item);
+                    }
+                    foreach (var item in toRemove)
+                    {
+                        app.ReceptIngrediensShoppingList.Remove(item);
+                    }
                 }
             }
         }
@@ -267,113 +233,48 @@ namespace ReceptApp.Pages
             ObservableCollection<Priser> priser = null;
             if (sender is Button button)
             {
-                if (button.DataContext is Priser i)
+                if (button.DataContext is ReceptIngrediens r)
                 {
-
-                    var hittaRecept = app.ShoppingIngredienser.FirstOrDefault(r => r.ReceptIngredienser.Any(x => x.Ingrediens.PrisLista.Contains(i)));
-                    if (hittaRecept != null)
-                    {
-
-                        var prislista = hittaRecept.ReceptIngredienser.FirstOrDefault(x => x.Ingrediens.PrisLista.Contains(i));
-                        if (prislista != null)
-                        {
-                            var receptmängd = prislista.AntalGram * 100;
-
-
-                            priser = prislista.Ingrediens.PrisLista;
-                            foreach (var item in priser)
-                            {
-                                //var prismängd = item.Mängd;
-                                var prismängd = (double)KonverteraPrismängd(item.Mått, item.Mängd, item, prislista);
-                                item.AntalProdukter = (int)Math.Ceiling((decimal)(receptmängd / prismängd));
-                                item.Summa = item.AntalProdukter > 1 ? item.AntalProdukter * item.Pris : item.Pris;
-                            }
-                            _valtpris = i;
-                        }
-                    }
+                    var hittaingrediens = app.Ingredienslista.FirstOrDefault(x => x.Varor.Any(y => x.Namn == r.Vara.Namn && y.Info == r.Vara.Info));
+                    ChangePrice changeprice = new ChangePrice(hittaingrediens.CopyVaror(), r.Vara, r);
+                    MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+                    changeprice.Owner = mainWindow;
+                    changeprice.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+                    changeprice.ShowDialog();
+                    RäknaAntalProdukter();
                 }
             }
-            if (priser == null) return;
-            ChangePrice changeprice = new ChangePrice(priser, _valtpris);
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            changeprice.Owner = mainWindow;
-            changeprice.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            changeprice.ShowDialog();
+
+
 
         }
 
 
-        private void SorteringsRadio_Checked(object sender, RoutedEventArgs e)
+        private string KonverteraFörpackningTillPlural(int? antal, string typ)
         {
-            AggregeraRceptIngredienser();
-        }
-
-
-        //private void ÄndraInköpsLista_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //PriserIShoppingList
-        //    if (sender is Button button) 
-        //    {
-        //        if (app.PriserIShoppingList.Count >= 0) {
-        //            var olditem = app.PriserIShoppingList.First(x => x.Namn == _valtpris.Namn);
-        //            var index = app.PriserIShoppingList.IndexOf(olditem);
-        //            app.PriserIShoppingList[index] = _valtpris;
-        //            var hittaRecept = app.ShoppingIngredienser.FirstOrDefault(r => r.ReceptIngredienser.Any(x => x.Ingrediens.PrisLista.Contains(_valtpris)));
-        //            if (hittaRecept != null)
-        //            {
-        //                var prislista = hittaRecept.ReceptIngredienser.FirstOrDefault(x => x.Ingrediens.PrisLista.Contains(_valtpris));
-        //                if (prislista != null)
-        //                {
-        //                    var receptmängd = prislista.AntalGram * 100;
-        //                    var prismängd = app.PriserIShoppingList[index].Mängd;
-        //                    prismängd = KonverteraPrismängd(app.PriserIShoppingList[index].Mått, prismängd, index, prislista);
-        //                    //if (app.PriserIShoppingList[index].Mått == "kg") { prismängd *= 1000; }
-        //                    //else if (app.PriserIShoppingList[index].Mått == "dl") { prismängd *= prislista.Ingrediens.GramPerDl / 100; }
-        //                    //else if (app.PriserIShoppingList[index].Mått == "l") { prismängd *= prislista.Ingrediens.GramPerDl / 100 * 10; }
-        //                    app.PriserIShoppingList[index].AntalProdukter = (int)Math.Ceiling((decimal)(receptmängd / prismängd));
-        //                    app.PriserIShoppingList[index].Summa = app.PriserIShoppingList[index].AntalProdukter > 1 ? app.PriserIShoppingList[index].AntalProdukter * app.PriserIShoppingList[index].Pris : app.PriserIShoppingList[index].Pris;
-        //                }
-        //            }
-        //            app.TotalSumma = (double)app.PriserIShoppingList.Sum(x => x.Summa);
-
-
-        //         }
-        //    }
-        //}
-
-        private double? KonverteraPrismängd(string mått, double? prismängd, int index, ReceptIngrediens prislista)
-        {
-            if (app.PriserIShoppingList[index].Mått == "kg") { return prismängd *= 1000; }
-            else if (app.PriserIShoppingList[index].Mått == "dl") { return prismängd *= prislista.Ingrediens.GramPerDl / 100; }
-            else if (app.PriserIShoppingList[index].Mått == "l") { return prismängd *= prislista.Ingrediens.GramPerDl / 100 * 10; }
-            return prismängd;
-        }
-
-        private double? KonverteraPrismängd(string mått, double? prismängd, Priser pris, ReceptIngrediens prislista)
-        {
-            if (pris.Mått == "kg") { return prismängd *= 1000; }
-            else if (pris.Mått == "dl") { return prismängd *= prislista.Ingrediens.GramPerDl / 100; }
-            else if (pris.Mått == "l") { return prismängd *= prislista.Ingrediens.GramPerDl / 100 * 10; }
-            return prismängd;
-        }
-
-
-        private void CellEditEnding_CurrentCellChanged(object sender, EventArgs e)
-        {
-            if (sender is DataGrid dataGrid)
+            if (antal == null) return typ;
+            if (antal > 1)
             {
-                if (dataGrid.SelectedItem is Priser pris)
+                switch (typ)
                 {
-                    dataGrid.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        if (pris.Förpackningstyp == "lösvikt") pris.Summa = (double)pris.AntalProdukter / 1000 * pris.JämförelsePris;
-                    else pris.Summa = pris.AntalProdukter > 1 ? pris.AntalProdukter * pris.Pris : pris.Pris;
-                    }), System.Windows.Threading.DispatcherPriority.Background);
+                    case "påse": return "påsar";
+                    case "burk": return "burkar";
+                    case "förp": return "förpackningar";
+                    case "tub": return "tuber";
+                    case "flaska": return "flaskor";
+                    default: return typ;
                 }
-                app.TotalSumma = (double)app.PriserIShoppingList.Sum(x => x.Summa);
             }
+            else return typ;
         }
 
-
+        private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (sender is IntegerUpDown integerUpDown && integerUpDown.DataContext is ReceptIngrediens vara)
+            {
+                vara.AntalProdukter = (int)integerUpDown.Value;
+                RäknaSumma();
+            }
+        }
     }
 }

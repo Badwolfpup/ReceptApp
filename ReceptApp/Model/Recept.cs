@@ -80,7 +80,7 @@ namespace ReceptApp
                 {
                     _tidigareantalportioner = _antalportioner;
                     _antalportioner = value;
-                    //BeräknaIngrediensMängd();
+                    BeräknaIngrediensMängd();
                     BeräknaVärden();
                     OnPropertyChanged(nameof(Antalportioner));
                 }
@@ -195,23 +195,23 @@ namespace ReceptApp
 
         public void BeräknaVärden()
         {
-            PortionKalori = 0; PortionProtein = 0; PortionFett = 0; PortionKolhydrat = 0; ;
+            PortionKalori = 0; PortionProtein = 0; PortionFett = 0; PortionKolhydrat = 0; 
             foreach (var item in ReceptIngredienser)
             {
 
-                PortionKalori += item.Ingrediens.Kalori * item.AntalGram / Antalportioner;
-                PortionKolhydrat += item.Ingrediens.Kolhydrat * item.AntalGram / Antalportioner;
-                PortionFett += item.Ingrediens.Fett * item.AntalGram / Antalportioner;
-                PortionProtein += item.Ingrediens.Protein * item.AntalGram / Antalportioner;
+                PortionKalori += item.Vara.Naring.Kalori * item.AntalGram / Antalportioner;
+                PortionKolhydrat += item.Vara.Naring.Kolhydrat * item.AntalGram / Antalportioner;
+                PortionFett += item.Vara.Naring.Fett * item.AntalGram / Antalportioner;
+                PortionProtein += item.Vara.Naring.Protein * item.AntalGram / Antalportioner;
 
             }
         }
 
         private void BeräknaIngrediensMängd()
         {
-            foreach (var ingrediens in ReceptIngredienser)
+            foreach (var vara in ReceptIngredienser)
             {
-                ingrediens.Mängd = ingrediens.Mängd / _tidigareantalportioner * _antalportioner;
+                vara.Mängd = vara.Mängd / _tidigareantalportioner * _antalportioner;
             }
         }
 

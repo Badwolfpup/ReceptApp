@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:ReceptApp"
         mc:Ignorable="d"
-        Title="ReceptApp" Height="800" Width="1050">
+        Title="ReceptApp" Height="900" Width="1200">
 
     <Grid x:Name="Maingrid">
         <Grid.Background>
@@ -58,12 +58,13 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-
+                <ColumnDefinition></ColumnDefinition>
 
             </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0"  Content="Ingrediens" Click="Button_Click_Ingredient"></Button>
-                    <Button Grid.Column="1"  Content="Recept" Click="Button_Click_Recipe"></Button>
-                    <Button Grid.Column="2"  Content="Inköpslista" Click="Button_Click_Inköpslista"></Button>
+            <Button Grid.Column="0"  Content="Ingrediens" Click="Button_Click_Ingredient"></Button>
+            <Button Grid.Column="1"  Content="Övriga varor" Click="Button_Click_Övrigt"></Button>
+            <Button Grid.Column="2"  Content="Recept" Click="Button_Click_Recipe"></Button>
+            <Button Grid.Column="3"  Content="Inköpslista" Click="Button_Click_Inköpslista"></Button>
         </Grid>
         <Frame Grid.Row="1" x:Name="ContentFrame" NavigationUIVisibility="Hidden"></Frame>
     </Grid>

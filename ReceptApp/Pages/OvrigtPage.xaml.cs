@@ -1,23 +1,30 @@
 ﻿using ReceptApp.Model;
-using System.Collections.ObjectModel;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace ReceptApp.Pages
 {
     /// <summary>
-    /// Interaction logic for IngredientPage.xaml
+    /// Interaction logic for OvrigtPage.xaml
     /// </summary>
-    public partial class IngredientPage : Page
+    public partial class OvrigtPage : Page
     {
         App app = (App)Application.Current;
 
-        public IngredientPage()
+        public OvrigtPage()
         {
             InitializeComponent();
             DataContext = app;
@@ -25,7 +32,7 @@ namespace ReceptApp.Pages
 
         private void LäggTillNyVara_Click(object sender, RoutedEventArgs e)
         {
-            NewIngredient newIngredient = new NewIngredient();
+            NewOvrigaVaror newIngredient = new NewOvrigaVaror();
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             newIngredient.Owner = mainWindow;
             newIngredient.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -57,7 +64,7 @@ namespace ReceptApp.Pages
                 if (row != null)
                 {
                     var rowDataContext = row.DataContext as Vara;
-                    NewIngredient newing = new NewIngredient(rowDataContext);
+                    NewOvrigaVaror newing = new NewOvrigaVaror(rowDataContext);
                     MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
                     newing.Owner = mainWindow;
                     newing.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -94,10 +101,10 @@ namespace ReceptApp.Pages
             {
                 if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
                 {
-                    AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0));
+                    AddSingleOvrigVara popup = new AddSingleOvrigVara(new ReceptIngrediens(vara, "", 0));
                     popup.Owner = Application.Current.MainWindow;
                     bool? result = popup.ShowDialog();
-                    if (result  == true)
+                    if (result == true)
                     {
                         app.ReceptIngrediensShoppingList.Add(popup.Recept);
                     }

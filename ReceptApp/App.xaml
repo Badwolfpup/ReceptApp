@@ -11,6 +11,13 @@
         <local:KonverteraTillSvenskDecimal x:Key="KonverteraTillSvenskDecimal"></local:KonverteraTillSvenskDecimal>
         <local:NullableIntConverter x:Key="NullableIntConverter"></local:NullableIntConverter>
         <local:KonverteraTypTillPlural x:Key="KonverteraTypTillPlural"></local:KonverteraTypTillPlural>
+        <local:KombineraMängdOchMått x:Key="KombineraMängdOchMått"></local:KombineraMängdOchMått>
+        <local:LäggTillKr x:Key="LäggTillKr"></local:LäggTillKr>
+        <local:JmfrprisSomText x:Key="JmfrprisSomText"></local:JmfrprisSomText>
+        <local:LäggTillKomma x:Key="LäggTillKomma"></local:LäggTillKomma>
+        <local:OmvändBool x:Key="OmvändBool"></local:OmvändBool>
+        <local:MängdSomNull x:Key="MängdSomNull"></local:MängdSomNull>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"></BooleanToVisibilityConverter>
 
         <!--<CollectionViewSource x:Key="FilreradIngrediensLista" Source="{Binding IngrediensLista}"></CollectionViewSource>-->
         

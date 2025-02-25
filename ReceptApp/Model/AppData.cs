@@ -7,6 +7,7 @@ namespace ReceptApp.Model
     public class AppData
     {
         public ObservableCollection<Ingrediens> Ingredienslista { get; set; } = new ObservableCollection<Ingrediens>();
+        public ObservableCollection<Ingrediens> Ovrigavaraorlista { get; set; } = new ObservableCollection<Ingrediens>();
         public ObservableCollection<Recept> ReceptLista { get; set; } = new ObservableCollection<Recept>();
 
 
@@ -18,7 +19,7 @@ namespace ReceptApp.Model
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                PreserveReferencesHandling = PreserveReferencesHandling.All,
                 Formatting = Formatting.Indented
 
             };
@@ -41,11 +42,11 @@ namespace ReceptApp.Model
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                PreserveReferencesHandling = PreserveReferencesHandling.All
             };
 
             string file = File.ReadAllText(_filepath);
-            return JsonConvert.DeserializeObject<AppData>(file, settings);
+            return !string.IsNullOrWhiteSpace(file) ? JsonConvert.DeserializeObject<AppData>(file, settings) : new AppData();
         }
     }
 }

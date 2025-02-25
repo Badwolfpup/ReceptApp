@@ -1,11 +1,14 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ReceptApp.Model
 {
-
-    public class Priser : INotifyPropertyChanged
+    public class Vara: INotifyPropertyChanged
     {
         #region InotifyPropertyChanged
         protected virtual void OnPropertyChanged(string propertyName)
@@ -14,14 +17,40 @@ namespace ReceptApp.Model
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        //public event NotifyCollectionChangedEventHandler? CollectionChanged;
         #endregion
+        private string? _bild; //Genväg till bild
+        public string? Bild
+        {
+            get { return _bild; }
+            set
+            {
+                if (_bild != value)
+                {
+                    _bild = value;
 
-        App app = (App)Application.Current;
+                    OnPropertyChanged(nameof(Bild));
+                }
+            }
+        }
 
         public bool SkaÄndraJmfrPris { get; set; } = true;
 
-        private double? _jämförelsepris = 0;
+        private string _namn = ""; //Ingrediensens namn
+        public string Namn
+        {
+            get { return _namn; }
+            set
+            {
+                if (_namn != value)
+                {
+                    _namn = value;
+                    OnPropertyChanged(nameof(Namn));
+                }
+            }
+        }
+
+        private double? _jämförelsepris;
         public double? JämförelsePris
         {
             get { return _jämförelsepris; }
@@ -31,48 +60,6 @@ namespace ReceptApp.Model
                 {
                     _jämförelsepris = value;
                     OnPropertyChanged(nameof(JämförelsePris));
-                }
-            }
-        }
-
-        private double? _prisPerKg = 0;
-        public double? PrisPerKg
-        {
-            get { return _prisPerKg; }
-            set
-            {
-                if (_prisPerKg != value)
-                {
-                    _prisPerKg = value;
-                    OnPropertyChanged(nameof(PrisPerKg));
-                }
-            }
-        }
-
-        private double? _prisPerLiter = 0;
-        public double? PrisPerLiter
-        {
-            get { return _prisPerLiter; }
-            set
-            {
-                if (_prisPerLiter != value)
-                {
-                    _prisPerLiter = value;
-                    OnPropertyChanged(nameof(PrisPerLiter));
-                }
-            }
-        }
-
-        private double? _prisPerSt = 0;
-        public double? PrisPerSt
-        {
-            get { return _prisPerSt; }
-            set
-            {
-                if (_prisPerSt != value)
-                {
-                    _prisPerSt = value;
-                    OnPropertyChanged(nameof(PrisPerSt));
                 }
             }
         }
@@ -105,58 +92,58 @@ namespace ReceptApp.Model
             }
         }
 
-        private double? _summa;
-        public double? Summa
+        private string? _info;
+        public string? Info
         {
-            get { return _summa; }
+            get { return _info; }
             set
             {
-                if (_summa != value)
+                if (_info != value)
                 {
-                    _summa = value;
-                    OnPropertyChanged(nameof(Summa));
+                    _info = value;
+                    OnPropertyChanged(nameof(Info));
                 }
             }
         }
 
-        private string _namn = "";
-        public string Namn
+        private string? _typ;
+        public string? Typ
         {
-            get { return _namn; }
+            get { return _typ; }
             set
             {
-                if (_namn != value)
+                if (_typ != value)
                 {
-                    _namn = value;
-                    OnPropertyChanged(nameof(Namn));
+                    _typ = value;
+                    OnPropertyChanged(nameof(Typ));
                 }
             }
         }
 
-        private int? _antalprodukter;
-        public int? AntalProdukter
+        private bool _ärintelösvikt = true;
+        public bool ÄrInteLösvikt
         {
-            get { return _antalprodukter; }
+            get { return _ärintelösvikt; }
             set
             {
-                if (_antalprodukter != value)
+                if (_ärintelösvikt != value)
                 {
-                    _antalprodukter = value;
-                    OnPropertyChanged(nameof(AntalProdukter));
+                    _ärintelösvikt = value;
+                    OnPropertyChanged(nameof(ÄrInteLösvikt));
                 }
             }
         }
 
-        private int? _antal;
-        public int? Antal
+        private bool _ärovrigvara = true;
+        public bool ÄrInteÖvrigVara
         {
-            get { return _antal; }
+            get { return _ärovrigvara; }
             set
             {
-                if (_antal != value)
+                if (_ärovrigvara != value)
                 {
-                    _antal = value;
-                    OnPropertyChanged(nameof(Antal));
+                    _ärovrigvara = value;
+                    OnPropertyChanged(nameof(ÄrInteÖvrigVara));
                 }
             }
         }
@@ -190,9 +177,26 @@ namespace ReceptApp.Model
             }
         }
 
-        public Priser(string namn)
+        private bool _ärTillagdIRecept = false; //Om ingrediensen är tillagd i ett recept (medans man håller på att skapa recept)
+        [JsonIgnore]
+        public bool ÄrTillagdIRecept
         {
-            Namn = namn;
+            get => _ärTillagdIRecept;
+            set
+            {
+                if (_ärTillagdIRecept != value)
+                {
+                    _ärTillagdIRecept = value;
+                    OnPropertyChanged(nameof(ÄrTillagdIRecept));
+                }
+            }
+        }
+
+        public Naringsvarde Naring { get; set; }
+
+        public Vara()
+        {
+            Naring = new Naringsvarde();
         }
 
         public void JämförelsePriser()
@@ -205,7 +209,7 @@ namespace ReceptApp.Model
             {
                 JämförelsePris = Pris / Mängd;
             }
-            else if (Mått == "l")
+            else if (Mått == "L")
             {
                 JämförelsePris = Pris / Mängd;
             }
@@ -225,7 +229,7 @@ namespace ReceptApp.Model
             {
                 Pris = Mängd / 1000 * JämförelsePris;
             }
-            else if (Mått == "kg")
+            else if (Mått == "dl")
             {
                 Pris = Mängd / 10 * JämförelsePris;
             }
@@ -233,6 +237,17 @@ namespace ReceptApp.Model
             {
                 Pris = Mängd * JämförelsePris;
             }
+        }
+
+        public Vara Copy()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            };
+            var json = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<Vara>(json, settings);
         }
     }
 }

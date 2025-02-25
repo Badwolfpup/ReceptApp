@@ -25,8 +25,8 @@ namespace ReceptApp
 
         IngredientPage ingredientPage;
         RecipePage recipepage;
+        OvrigtPage ovrigtPage;
         public ShoppingList shoppingList { get; set; }
-        private DispatcherTimer _timer;
 
 
         public MainWindow()
@@ -35,33 +35,32 @@ namespace ReceptApp
             ingredientPage = new IngredientPage();
             recipepage = new RecipePage();
             shoppingList = new ShoppingList();
+            ovrigtPage = new OvrigtPage();
             ContentFrame.Navigate(ingredientPage);
-            //_timer = new DispatcherTimer();
-            //_timer.Interval = TimeSpan.FromSeconds(5);
-            //_timer.Tick += Timer_Tick;
-            //_timer.Start();
+
         }
 
-        //private void Timer_Tick(object? sender, EventArgs e)
-        //{
-        //    if (app.HasChangedData)
-        //    {
-        //        app.HasChangedData = false;
-        //        SaveLoad.SaveIngrediens("Ingredienser", app.Ingredienslista);
-        //        SaveLoad.SaveRecept("Recept", app.ReceptLista);
-        //        _timer.Stop();
-        //        _timer.Start();
-        //    }
-        //}
 
         private void Button_Click_Ingredient(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(ingredientPage);
         }
 
+        private void Button_Click_Övrigt(object sender, RoutedEventArgs e)
+        {
+            ContentFrame.Navigate(ovrigtPage);
+
+        }
+
         private void Button_Click_Recipe(object sender, RoutedEventArgs e)
         {
-            // ContentFrame.Navigate(recipepage);
+            if (app.ReceptLista.Count > 0)
+            {
+               foreach(var item in app.ReceptLista)
+                {
+                    item.BeräknaVärden();
+                }
+            }
             ContentFrame.Navigate(recipepage);
         }
 

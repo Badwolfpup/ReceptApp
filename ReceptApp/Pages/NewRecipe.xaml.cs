@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using ReceptApp.Model;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -22,24 +23,29 @@ namespace ReceptApp.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
+        public ObservableCollection<Ingrediens> IngrediensLista { get; set; }
 
         public NewRecipe(ObservableCollection<Ingrediens> ingredienslista)
         {
             InitializeComponent();
             DataContext = this;
-            SkapaFiltreradLista(ingredienslista);
+            IngrediensLista = ingredienslista;
+            //SkapaFiltreradLista(ingredienslista);
+
             ValdReceptIngrediens = new ReceptIngrediens();
             NyttRecept = new Recept(4);
-            ValdIngrediens = new Ingrediens();
+            //ValdIngrediens = new Ingrediens();
 
         }
+
 
         public NewRecipe(Recept nyttRecept, ObservableCollection<Ingrediens> ingredienslista)
         {
             InitializeComponent();
             DataContext = this;
             NyttRecept = nyttRecept;
-            SkapaFiltreradLista(ingredienslista);
+            IngrediensLista = ingredienslista;
+            //SkapaFiltreradLista(ingredienslista);
             KnappText = "Spara ändringar";
         }
 
@@ -57,7 +63,7 @@ namespace ReceptApp.Pages
         App app = (App)Application.Current;
 
         private bool _valtreceptingrediens = true;
-
+        private ListView _lastSelectedListView;
         private Recept _nyttrecept;
         public Recept NyttRecept
         {
@@ -69,14 +75,14 @@ namespace ReceptApp.Pages
             }
         }
 
-        private Ingrediens _valdingrediens;
-        public Ingrediens ValdIngrediens
+        private Vara _valdvara;
+        public Vara ValdVara
         {
-            get { return _valdingrediens; }
+            get { return _valdvara; }
             set
             {
-                _valdingrediens = value;
-                OnPropertyChanged(nameof(ValdIngrediens));
+                _valdvara = value;
+                OnPropertyChanged(nameof(ValdVara));
             }
         }
 
@@ -91,43 +97,43 @@ namespace ReceptApp.Pages
             }
         }
 
-        ObservableCollection<Ingrediens> FilteredIngredientList;
+        //ObservableCollection<Ingrediens> FilteredIngredientList;
 
-        public ICollectionView FilteredCollectionView { get; set; }
-
-
-        private void SkapaFiltreradLista(ObservableCollection<Ingrediens> ingredienslista)
-        {
-            FilteredIngredientList = new ObservableCollection<Ingrediens>(ingredienslista);
-            FilteredCollectionView = CollectionViewSource.GetDefaultView(FilteredIngredientList);
-            foreach (var item in FilteredCollectionView)
-            {
-                if (item is INotifyPropertyChanged inotify)
-                {
-                    inotify.PropertyChanged += (s, e) => FilteredCollectionView.Refresh();
-                }
-            }
-            FilteredCollectionView.Filter = FilterPredicate;
-        }
+        //public ICollectionView FilteredCollectionView { get; set; }
 
 
-        private bool FilterPredicate(object obj)
-        {
-            if (obj is Ingrediens ingrediens)
-            {
-                return !ingrediens.ÄrTillagdIRecept;
-            }
-            return false;
-        }
+        //private void SkapaFiltreradLista(ObservableCollection<Ingrediens> ingredienslista)
+        //{
+        //    FilteredIngredientList = new ObservableCollection<Ingrediens>(ingredienslista);
+        //    FilteredCollectionView = CollectionViewSource.GetDefaultView(FilteredIngredientList);
+        //    foreach (var item in FilteredCollectionView)
+        //    {
+        //        if (item is INotifyPropertyChanged inotify)
+        //        {
+        //            inotify.PropertyChanged += (s, e) => FilteredCollectionView.Refresh();
+        //        }
+        //    }
+        //    FilteredCollectionView.Filter = FilterPredicate;
+        //}
+
+
+        //private bool FilterPredicate(object obj)
+        //{
+        //    if (obj is Ingrediens ingrediens)
+        //    {
+        //        //return !ingrediens.ÄrTillagdIRecept;
+        //    }
+        //    return false;
+        //}
 
         private void ScrollIngrediensNyttRecept_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            if (sender is ListView listview && listview.SelectedItem is Ingrediens i)
+            if (sender is ListView listview && listview.SelectedItem is Vara i)
             {
                 if (_valtreceptingrediens) ValdReceptIngrediens = new ReceptIngrediens();
                 _valtreceptingrediens = false;
-                ValdIngrediens = i;
+                ValdVara = i;
                 ComboBoxMått.SelectedIndex = 0;
             }
         }
@@ -138,7 +144,7 @@ namespace ReceptApp.Pages
             {
                 string newText = box.Text.Insert(box.SelectionStart, e.Text);
 
-                e.Handled = !Regex.IsMatch(newText, @"^\d+(\,\d{0,1})?$");
+                e.Handled = !Regex.IsMatch(newText, @"^\d+(\,\d{0,2})?$");
             }
         }
 
@@ -155,16 +161,16 @@ namespace ReceptApp.Pages
             int.TryParse(TextBoxMått.Text, out int mängd);
             if (mängd > 0)
             {
-                if (ScrollIngrediensNyttRecept.SelectedItem is not Ingrediens i || app.ValtRecept.ReceptIngredienser.Any(x => x.Ingrediens.Namn == ValdIngrediens.Namn))
+                if (_lastSelectedListView.SelectedItem is not Vara i || NyttRecept.ReceptIngredienser.Any(x => x.Vara.Namn == ValdVara.Namn))
                 {
-                    MessageBox.Show("Du har inte valt en ingrediens eller försöker du lägga till en dublett"); return;
+                    MessageBox.Show("Du har inte valt en vara eller försöker du lägga till en dublett"); return;
                 }
                 ValdReceptIngrediens.Mått = ValdReceptIngrediens.KonverteraMåttTillText(ComboBoxMått.Text);
-                ValdReceptIngrediens.Ingrediens = ValdIngrediens;
+                ValdReceptIngrediens.Vara = ValdVara;
                 ValdReceptIngrediens.BeräknaAntalGram();
                 NyttRecept.ReceptIngredienser.Add(ValdReceptIngrediens);
                 ScrollTillagdaIngredienser.SelectedItem = ValdReceptIngrediens;
-                ValdIngrediens.ÄrTillagdIRecept = true;
+                //ValdIngrediens.ÄrTillagdIRecept = true;
                 _valtreceptingrediens = true;
             }
             else MessageBox.Show("Du behöver ange hur mycket");
@@ -176,7 +182,7 @@ namespace ReceptApp.Pages
             {
                 _valtreceptingrediens = true;
                 ValdReceptIngrediens = i;
-                ValdIngrediens = i.Ingrediens;
+                ValdVara = i.Vara;
                 switch (i.Mått)
                 {
                     case "g": ComboBoxMått.SelectedItem = "Gram"; break;
@@ -209,7 +215,7 @@ namespace ReceptApp.Pages
         {
             ReceptIngrediens i = ScrollTillagdaIngredienser.SelectedItem as ReceptIngrediens;
             if (i == null) return;
-            i.Ingrediens.ÄrTillagdIRecept = false;
+            //i.Ingrediens.vaÄrTillagdIRecept = false;
             int index = NyttRecept.ReceptIngredienser.IndexOf(i);
             if (index >= 0) NyttRecept.ReceptIngredienser.Remove(i);
             ValdReceptIngrediens = NyttRecept.ReceptIngredienser.Count == 0 ? ValdReceptIngrediens = new ReceptIngrediens() : (index >= NyttRecept.ReceptIngredienser.Count ? NyttRecept.ReceptIngredienser[NyttRecept.ReceptIngredienser.Count - 1] : NyttRecept.ReceptIngredienser[index]);
@@ -256,7 +262,7 @@ namespace ReceptApp.Pages
 
         private void FilterTextboxNyttRecept_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(FilteredCollectionView);
+            ICollectionView view = CollectionViewSource.GetDefaultView(IngrediensLista);
             view.Filter = obj =>
             {
                 if (obj is Ingrediens ingrediens)
@@ -265,6 +271,15 @@ namespace ReceptApp.Pages
                 }
                 return false;
             };
+        }
+
+        private void ListView_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (_lastSelectedListView != null && _lastSelectedListView != sender)
+            {
+                _lastSelectedListView.SelectedItem = null;
+            }
+            _lastSelectedListView = sender as ListView;
         }
     }
 }

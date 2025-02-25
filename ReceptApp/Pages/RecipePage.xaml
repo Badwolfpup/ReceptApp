@@ -99,7 +99,9 @@
                                             <MultiBinding Converter="{StaticResource MåttOchMängd}">
                                                 <Binding Path="Mängd"></Binding>
                                                 <Binding Path="Mått"></Binding>
-                                                <Binding Path="Ingrediens.Namn"></Binding>
+                                                <Binding Path="Vara.Namn"></Binding>
+                                                <Binding Path="Vara.Typ"></Binding>
+                                                <Binding Path="Vara.Info"></Binding>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>

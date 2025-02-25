@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using ReceptApp.Model;
+using System.ComponentModel;
 
 namespace ReceptApp
 {
@@ -15,7 +16,19 @@ namespace ReceptApp
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
-        public Ingrediens Ingrediens { get; set; }
+        private Vara _vara;
+        public Vara Vara
+        {
+            get { return _vara; }
+            set
+            {
+                if (_vara != value)
+                {
+                    _vara = value;
+                    OnPropertyChanged(nameof(Vara));
+                }
+            }
+        }
 
         private double _mängd = 0;
         public double Mängd
@@ -48,11 +61,39 @@ namespace ReceptApp
             }
         }
 
+        private int? _antalprodukter;
+        public int? AntalProdukter
+        {
+            get { return _antalprodukter; }
+            set
+            {
+                if (_antalprodukter != value)
+                {
+                    _antalprodukter = value;
+                    OnPropertyChanged(nameof(AntalProdukter));
+                }
+            }
+        }
+
+        private double? _summa;
+        public double? Summa
+        {
+            get { return _summa; }
+            set
+            {
+                if (_summa != value)
+                {
+                    _summa = value;
+                    OnPropertyChanged(nameof(Summa));
+                }
+            }
+        }
+
         public double? AntalGram { get; set; }
 
-        public ReceptIngrediens(Ingrediens ingrediens, string mått, double mängd)
+        public ReceptIngrediens(Vara varan, string mått, double mängd)
         {
-            Ingrediens = ingrediens;
+            Vara = varan;
             Mängd = mängd;
             Mått = mått;
             BeräknaAntalGram(); //Relativt till 100g, ex 125g = 1,25
@@ -60,15 +101,15 @@ namespace ReceptApp
 
         public ReceptIngrediens()
         {
-            Ingrediens = new Ingrediens();
+            Vara = new Vara();
             Mängd = 0;
             Mått = "";
             AntalGram = 0;
         }
 
-        public void LäggTillInfo(Ingrediens ingrediens, string mått, double mängd)
+        public void LäggTillInfo(Vara varan, string mått, double mängd)
         {
-            Ingrediens = ingrediens;
+            Vara = varan;
             Mängd = mängd;
             Mått = mått;
             BeräknaAntalGram(); //Relativt till 100g, ex 125g = 1,25
@@ -81,17 +122,13 @@ namespace ReceptApp
             switch (Mått)
             {
                 case "g": AntalGram = Mängd / 100.0; break;
-                case "st": AntalGram = Mängd * Ingrediens.Styck / 100; break;
-                case "dl": AntalGram = (Ingrediens.GramPerDl * Mängd) / 100.0; break;
-                case "msk": AntalGram = (Ingrediens.GramPerDl * Mängd * 15 / 100) / 100.0; break;
-                case "tsk": AntalGram = (Ingrediens.GramPerDl * Mängd * 5 / 100) / 100.0; break;
-                case "krm": AntalGram = (Ingrediens.GramPerDl * Mängd / 100) / 100.0; break;
-                //case "liten": AntalGram = (Ingrediens.Liten * Mängd) / 100.0; break;
-                //case "små": AntalGram = (Ingrediens.Liten * Mängd) / 100.0; break;
-                //case "medelstor": AntalGram = (Ingrediens.Medel * Mängd) / 100.0; break;
-                //case "medelstora": AntalGram = (Ingrediens.Medel * Mängd) / 100.0; break;
-                //case "stor": AntalGram = (Ingrediens.Stor * Mängd) / 100.0; break;
-                //case "stora": AntalGram = (Ingrediens.Stor * Mängd) / 100.0; break;
+                case "kg": AntalGram = Mängd * 10; break;
+                case "st": AntalGram = Mängd * Vara.Naring.Styck / 100; break;
+                case "dl": AntalGram = (Vara.Naring.GramPerDl * Mängd) / 100.0; break;
+                case "msk": AntalGram = (Vara.Naring.GramPerDl * Mängd * 15 / 100) / 100.0; break;
+                case "tsk": AntalGram = (Vara.Naring.GramPerDl * Mängd * 5 / 100) / 100.0; break;
+                case "krm": AntalGram = (Vara.Naring.GramPerDl * Mängd / 100) / 100.0; break;
+
                 default: AntalGram = 0; break;
             }
         }

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 //using static System.Net.Mime.MediaTypeNames;
 
 namespace ReceptApp
@@ -32,17 +33,18 @@ namespace ReceptApp
         {
             appdata = AppData.Load();
             Ingredienslista = appdata.Ingredienslista;
+            Ovrigavaraorlista = appdata.Ovrigavaraorlista;
             ReceptLista = appdata.ReceptLista;
 
             FilteredIngredienslista = new ObservableCollection<Ingrediens>(Ingredienslista);
             ShoppingIngredienser = new ObservableCollection<Recept>();
             PriserIShoppingList = new ObservableCollection<Priser>();
             ValtPris = new Priser("");
-            if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); }
+           // if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); }
             if (ReceptLista != null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(4);
             FilteredIngredientList = CollectionViewSource.GetDefaultView(FilteredIngredienslista);
             FilteredIngredientList.Filter = FilterPredicate;
-
+            ReceptIngrediensShoppingList = new ObservableCollection<ReceptIngrediens>();
 
         }
 
@@ -52,25 +54,16 @@ namespace ReceptApp
             appdata.SaveAll();
         }
 
+        private void Ovrigavarorlista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            appdata.SaveAll();
+        }
+
         private void ReceptLista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             appdata.SaveAll();
         }
 
-        //public event NotifyCollectionChangedEventHandler? CollectionChanged
-        //{
-        //    add
-        //    {
-        //        ((INotifyCollectionChanged)Ingredienslista).CollectionChanged += value;
-        //        ((INotifyCollectionChanged)ReceptLista).CollectionChanged += value;
-        //    }
-
-        //    remove
-        //    {
-        //        ((INotifyCollectionChanged)Ingredienslista).CollectionChanged -= value;
-        //        ((INotifyCollectionChanged)ReceptLista).CollectionChanged -= value;
-        //    }
-        //}
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -86,8 +79,7 @@ namespace ReceptApp
         #region Properties
         public AppData appdata { get; set; }
 
-        public List<string> PrisMåttLista { get; } = new List<string> { "g", "kg", "dl", "l" };
-        public List<string> PrisFörpackningstypLista { get; } = new List<string> { "", "lösvikt", "st", "tub", "påse", "burk", "förp" };
+
 
         private ObservableCollection<Ingrediens>? _ingredienslista;
         public ObservableCollection<Ingrediens> Ingredienslista
@@ -112,6 +104,33 @@ namespace ReceptApp
                     }
                     if (!ReferenceEquals(_ingredienslista, appdata.Ingredienslista)) MessageBox.Show("Listorna är desynchade igen");
                     OnPropertyChanged(nameof(Ingredienslista));
+                }
+            }
+        }
+
+        private ObservableCollection<Ingrediens>? _ovrigavarorlista;
+        public ObservableCollection<Ingrediens> Ovrigavaraorlista
+        {
+            get { return _ovrigavarorlista; }
+            set
+            {
+                if (value != _ovrigavarorlista)
+                {
+                    if (_ovrigavarorlista != null)
+                    {
+                        // Detach the event from the old collection
+                        _ovrigavarorlista.CollectionChanged -= Ovrigavarorlista_CollectionChanged;
+                    }
+
+                    _ovrigavarorlista = value;
+
+                    if (_ovrigavarorlista != null)
+                    {
+                        // Attach the event to the new collection
+                        _ovrigavarorlista.CollectionChanged += Ovrigavarorlista_CollectionChanged;
+                    }
+                    if (!ReferenceEquals(_ovrigavarorlista, appdata.Ovrigavaraorlista)) MessageBox.Show("Listorna är desynchade igen 1");
+                    OnPropertyChanged(nameof(Ovrigavaraorlista));
                 }
             }
         }
@@ -257,6 +276,7 @@ namespace ReceptApp
             }
         }
 
+        public bool HasAddedToShoppingCart { get; set; }
 
         #endregion
 
@@ -267,7 +287,7 @@ namespace ReceptApp
         {
             if (obj is Ingrediens ingrediens)
             {
-                return !ingrediens.ÄrTillagdIRecept;
+                //return !ingrediens.ÄrTillagdIRecept;
             }
             return false;
         }
@@ -326,8 +346,10 @@ namespace ReceptApp
             double mängd = values[0] is double ? (double)values[0] : 0;
             string mått = values[1] is string ? (string)values[1] : "";
             string namn = values[2] is string ? (string)values[2] : "";
+            string typ = values[3] is string ? (string)values[3] : "";
+            string info = values[4] is string ? (string)values[4] : "";
             string mängditext = mängd % 1 != 0 && mått != "g" ? (Math.Round(mängd * 2, MidpointRounding.AwayFromZero) / 2).ToString("0.0", culture) : mängd.ToString("0", culture);
-            return $"{mängditext} {mått} {namn}";
+            return $"{mängditext} {mått} {namn} {typ} {info}";
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -423,6 +445,20 @@ namespace ReceptApp
                 {
                     if (doubleValue.ToString().Split('.')[1].Length > 1) return doubleValue.ToString("F2", new CultureInfo("sv-SE"));
                     else return doubleValue.ToString("F1", new CultureInfo("sv-SE"));
+                } 
+                else
+                {
+                    if (doubleValue % 1 == 0) return doubleValue.ToString("F0", new CultureInfo("sv-SE"));
+                    else
+                    {
+                        string numStr = doubleValue.ToString(CultureInfo.InvariantCulture);
+                        int decimalIndex = numStr.IndexOf('.');
+                        if (decimalIndex == -1) return doubleValue.ToString("F0", new CultureInfo("sv-SE"));
+                        if (numStr.Length - decimalIndex > 2) return doubleValue.ToString("F2", new CultureInfo("sv-SE"));
+                        else return doubleValue.ToString("F1", new CultureInfo("sv-SE"));
+                    }
+                        
+                        return doubleValue.ToString("F2", new CultureInfo("sv-SE"));
                 }
                 return doubleValue.ToString(doubleValue % 1 == 0 ? "F0" : "F2", new CultureInfo("sv-SE"));
             }
@@ -471,17 +507,17 @@ namespace ReceptApp
         {
             string typ = values[0] is string ? (string)values[0] : "";
             int antal = values[1] is int ? (int)values[1] : 0;
-            int antalipack = values[2] is int ? (int)values[2] : 0;
             if (typ != "")
             {
                 if (antal > 1)
                 {
                     switch (typ)
                     {
-                        case "påse": return antalipack > 1 ? $"{antalipack}-pack påsar" : "påsar";
-                        case "burk": return antalipack > 1 ? $"{antalipack}-pack burkar" : "burkar";
-                        case "förp": return antalipack > 1 ? $"{antalipack}-pack förpackningar" : "förpackningar";
-                        case "tub": return antalipack > 1 ? $"{antalipack}-pack tuber" : "tuber";
+                        case "påse": return antal > 1 ? $"påsar" : "påse";
+                        case "burk": return antal > 1 ? $"burkar" : "burk";
+                        case "förp": return antal > 1 ? $"förpackningar" : "förpackning";
+                        case "tub": return antal > 1 ? $"tuber" : "tub";
+                        case "flaska": return antal > 1 ? $"flaskor" : "flaska";
                         default: return typ;
                     }
                 }
@@ -495,5 +531,125 @@ namespace ReceptApp
             throw new NotImplementedException();
         }
     }
-    #endregion
+
+    public class KombineraMängdOchMått : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            double mängd = values[0] is double ? (double)values[0] : 0;
+            string mått = values[1] is string ? (string)values[1] : "";
+
+            return $"{mängd.ToString()}{mått}";
+        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
+
+    public class LäggTillKr : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is double doubleValue)
+            {
+                return $"{doubleValue.ToString("0.00", culture)}kr";
+            }
+            return value;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string stringValue)
+            {
+                if (stringValue.EndsWith(" kr"))
+                {
+                    stringValue = stringValue.Replace("kr", "");
+                }
+                if (double.TryParse(stringValue, NumberStyles.Any, new CultureInfo("sv-SE"), out var result))
+                {
+                    return result;
+                }
+            }
+            return DependencyProperty.UnsetValue;
+        }
+    }
+
+    public class JmfrprisSomText : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            double pris = values[0] is double ? (double)values[0] : 0;
+            string mått = values[1] is string ? (string)values[1] : "";
+            bool ovrigvara = values[2] is bool ? (bool)values[2] : false;
+
+            if (!ovrigvara) return null;
+
+            switch (mått)
+            {
+                case "g": return $"{pris.ToString("0.00", culture)}kr/kg";
+                case "kg": return $"{pris.ToString("0.00", culture)}kr/kg";
+                case "dl": return $"{pris.ToString("0.00", culture)}kr/L";
+                case "msk": return $"{pris.ToString("0.00", culture)}kr/L";
+                case "tsk": return $"{pris.ToString("0.00", culture)}kr/L";
+                case "krm": return $"{pris.ToString("0.00", culture)}kr/L";
+                case "st": return $"{pris.ToString("0.00", culture)}kr/st";
+                default: return $"{pris.ToString("0.00", culture)} kr";
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class LäggTillKomma : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            string namn = values[0] is string ? (string)values[0] : "";
+            string info = values[1] is string ? (string)values[1] : "";
+
+            if (!string.IsNullOrEmpty(namn) && !string.IsNullOrEmpty(info))return $"{namn}, {info}"; 
+            
+            return namn ?? info ?? string.Empty;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class OmvändBool : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool boolValue = value is bool ? (bool)value : false;
+            return !boolValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool boolValue = value is bool ? (bool)value : false;
+            return !boolValue;
+        }
+    }
+
+    public class MängdSomNull : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            double mängd = values[0] is double ? (double)values[0] : 0;
+            bool ovrig = values[1] is bool ? (bool)values[1] : false;
+
+            return !ovrig ? null : mängd.ToString();
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
