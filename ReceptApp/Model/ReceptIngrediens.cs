@@ -1,5 +1,6 @@
 ﻿using ReceptApp.Model;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace ReceptApp
 {
@@ -150,11 +151,11 @@ namespace ReceptApp
             }
         }
 
-        //public ReceptIngrediens Copy()
-        //{
-        //    var json = JsonConvert.SerializeObject(this);
-        //    return JsonConvert.DeserializeObject<ReceptIngrediens>(json);
-        //}
+        public ReceptIngrediens Copy()
+        {
+            var json = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<ReceptIngrediens>(json);
+        }
 
     }
 }

@@ -21,7 +21,7 @@
         <StackPanel Grid.RowSpan="2">
             <TextBlock FontWeight="Black" HorizontalAlignment="Center" Margin="5" Text="Tillagda recept"></TextBlock>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="20 0 20 0">
-                <ItemsControl ItemsSource="{Binding ShoppingIngredienser}">
+                <ItemsControl ItemsSource="{Binding TillagdaReceptShoppingList}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -55,7 +55,7 @@
                           HorizontalGridLinesBrush="LightGray"
                           VerticalGridLinesBrush="LightGray"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          ItemsSource="{Binding ReceptIngrediensShoppingList}" 
+                          ItemsSource="{Binding TillagdaVarorShoppingList}" 
                           IsReadOnly="True"
                           CanUserAddRows="False"
                           AutoGenerateColumns="False">
@@ -131,7 +131,7 @@
                                             <MultiBinding UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource JmfrprisSomText}">
                                                 <Binding Path="Vara.JämförelsePris"></Binding>
                                                 <Binding Path="Mått"></Binding>
-                                                <Binding Path="Vara.ÄrInteÖvrigVara"></Binding>
+                                                <Binding Path="Vara.ÄrÖvrigVara"></Binding>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -167,7 +167,7 @@
                                         <TextBlock.Text>
                                             <MultiBinding UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource MängdSomNull}">
                                                 <Binding Path="Mängd"></Binding>
-                                                <Binding Path="Vara.ÄrInteÖvrigVara"></Binding>
+                                                <Binding Path="Vara.ÄrÖvrigVara"></Binding>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>

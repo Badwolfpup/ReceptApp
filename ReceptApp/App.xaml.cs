@@ -37,14 +37,13 @@ namespace ReceptApp
             ReceptLista = appdata.ReceptLista;
 
             FilteredIngredienslista = new ObservableCollection<Ingrediens>(Ingredienslista);
-            ShoppingIngredienser = new ObservableCollection<Recept>();
-            PriserIShoppingList = new ObservableCollection<Priser>();
+            TillagdaReceptShoppingList = new ObservableCollection<Recept>();
             ValtPris = new Priser("");
            // if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); }
             if (ReceptLista != null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(4);
             FilteredIngredientList = CollectionViewSource.GetDefaultView(FilteredIngredienslista);
             FilteredIngredientList.Filter = FilterPredicate;
-            ReceptIngrediensShoppingList = new ObservableCollection<ReceptIngrediens>();
+            TillagdaVarorShoppingList = new ObservableCollection<ReceptIngrediens>();
 
         }
 
@@ -177,44 +176,30 @@ namespace ReceptApp
             }
         }
 
-        private ObservableCollection<Recept>? _shoppingingredienser;
-        public ObservableCollection<Recept> ShoppingIngredienser
+        private ObservableCollection<Recept>? _tillagdareceptshoppinglist;
+        public ObservableCollection<Recept> TillagdaReceptShoppingList
         {
-            get => _shoppingingredienser;
+            get => _tillagdareceptshoppinglist;
             set
             {
-                if (_shoppingingredienser != value)
+                if (_tillagdareceptshoppinglist != value)
                 {
-                    _shoppingingredienser = value;
-                    OnPropertyChanged(nameof(ShoppingIngredienser));
+                    _tillagdareceptshoppinglist = value;
+                    OnPropertyChanged(nameof(TillagdaReceptShoppingList));
                 }
             }
         }
 
-        private ObservableCollection<ReceptIngrediens> _receptingrediensshoppinglist;
-        public ObservableCollection<ReceptIngrediens> ReceptIngrediensShoppingList
+        private ObservableCollection<ReceptIngrediens> _tillagdavarorshoppinglist;
+        public ObservableCollection<ReceptIngrediens> TillagdaVarorShoppingList
         {
-            get { return _receptingrediensshoppinglist; }
+            get { return _tillagdavarorshoppinglist; }
             set
             {
-                if (_receptingrediensshoppinglist != value)
+                if (_tillagdavarorshoppinglist != value)
                 {
-                    _receptingrediensshoppinglist = value;
-                    OnPropertyChanged(nameof(ReceptIngrediensShoppingList));
-                }
-            }
-        }
-
-        private ObservableCollection<Priser>? _priserishoppinglist;
-        public ObservableCollection<Priser> PriserIShoppingList
-        {
-            get { return _priserishoppinglist; }
-            set
-            {
-                if (_priserishoppinglist != value)
-                {
-                    _priserishoppinglist = value;
-                    OnPropertyChanged(nameof(PriserIShoppingList));
+                    _tillagdavarorshoppinglist = value;
+                    OnPropertyChanged(nameof(TillagdaVarorShoppingList));
                 }
             }
         }
@@ -275,8 +260,6 @@ namespace ReceptApp
                 }
             }
         }
-
-        public bool HasAddedToShoppingCart { get; set; }
 
         #endregion
 
@@ -583,7 +566,7 @@ namespace ReceptApp
             string mått = values[1] is string ? (string)values[1] : "";
             bool ovrigvara = values[2] is bool ? (bool)values[2] : false;
 
-            if (!ovrigvara) return null;
+            if (ovrigvara) return null;
 
             switch (mått)
             {
@@ -644,7 +627,7 @@ namespace ReceptApp
             double mängd = values[0] is double ? (double)values[0] : 0;
             bool ovrig = values[1] is bool ? (bool)values[1] : false;
 
-            return !ovrig ? null : mängd.ToString();
+            return ovrig ? null : mängd.ToString();
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

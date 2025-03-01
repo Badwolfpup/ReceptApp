@@ -41,13 +41,11 @@ namespace ReceptApp.Pages
 
         private void AddAllToCart_Click(object sender, RoutedEventArgs e)
         {
-            app.HasAddedToShoppingCart = true;
-            Recept temp = app.ValtRecept.Copy();
-            foreach (var item in temp.ReceptIngredienser)
+            foreach (var item in app.ValtRecept.ReceptIngredienser)
             {
-                app.ReceptIngrediensShoppingList.Add(item);
+                app.TillagdaVarorShoppingList.Add(item.Copy());
             }
-            app.ShoppingIngredienser.Add(app.ValtRecept.Copy());
+            app.TillagdaReceptShoppingList.Add(app.ValtRecept.Copy());
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             mainWindow.ContentFrame.Navigate(mainWindow.shoppingList);
         }

@@ -10,23 +10,37 @@
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight">
     <Grid>
-        <StackPanel Margin="10" Orientation="Horizontal">
-            <TextBlock Margin="0,0,10,0">
-                <Run Text="{Binding Vara.Namn}"/>
-                <Run Text="{Binding Vara.Typ}"/>
-                <Run Text="{Binding Vara.Info}"/>
-            </TextBlock>
-            <ComboBox x:Name="ComboBoxMåttNamn" Width="70"  ItemsSource="{Binding Vara.Naring.ViktMått, Converter={StaticResource KonverteraMåttTillText}}" Margin="0,0,10,0">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}"></TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBox Width="70" Text="{Binding Mängd}" Margin="0,0,10,0" PreviewTextInput="KollaSiffor_PreviewTextInput"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="OK" Width="75" Margin="0,0,10,0" Click="Button_Click"/>
-                <Button Content="Cancel" Width="75" Click="Button_Click_1"/>
+        <StackPanel>
+            <StackPanel Margin="10" Orientation="Horizontal" Visibility="{Binding VisaLösVikt, Converter={StaticResource BoolToVis} }">
+                <TextBlock Margin="0,0,10,0">
+                    <Run Text="{Binding Vara.Namn}"/>
+                    <Run Text="{Binding Vara.Typ}"/>
+                    <Run Text="{Binding Vara.Info}"/>
+                </TextBlock>
+                <ComboBox x:Name="ComboBoxMåttNamn" Width="70"  ItemsSource="{Binding Recept.Vara.Naring.ViktMått, Converter={StaticResource KonverteraMåttTillText}}" Margin="0,0,10,0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox x:Name="TextBoxMängd" Width="70" Text="{Binding Recept.Mängd}" Margin="0,0,10,0" PreviewTextInput="KollaSiffor_PreviewTextInput"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="OK" Width="75" Margin="0,0,10,0" Click="Button_Click"/>
+                    <Button Content="Cancel" Width="75" Click="Button_Click_1"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="10" Orientation="Horizontal" Visibility="{Binding VisaSingleVara, Converter={StaticResource BoolToVis}}">
+                <TextBlock Margin="0,0,10,0">
+                <Run Text="{Binding Recept.Vara.Namn}"/>
+                <Run Text="{Binding Recept.Vara.Typ}"/>
+                <Run Text="{Binding Recept.Vara.Info}"/>
+                </TextBlock>
+                <TextBox x:Name="TextBoxAntal" Width="70" Text="{Binding Recept.AntalProdukter}" Margin="0,0,10,0" PreviewTextInput="KollaSiffor_PreviewTextInput"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="OK" Width="75" Margin="0,0,10,0" Click="Button_Click"/>
+                    <Button Content="Cancel" Width="75" Click="Button_Click_1"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

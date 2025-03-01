@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
     <StackPanel Margin="10">
-        <TextBox x:Name="NameTextBox" Margin="0,0,0,10" 
+        <TextBox x:Name="NameTextBox" Text="{Binding EnteredName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" 
                  FontSize="14" 
                  
                  />

@@ -91,7 +91,7 @@ namespace ReceptApp.Pages
         {
             NameText = NameText.Trim(); //Tar bort mellanslag i början och slutet av namnet.
             NyVara.Namn = NameText;
-            NyVara.ÄrInteÖvrigVara = false;
+            NyVara.ÄrÖvrigVara = false;
             NyVara.ÄrInteLösvikt = true;
             if (ÄrNyvara)
             {
@@ -112,7 +112,7 @@ namespace ReceptApp.Pages
             }
 
 
-            if (NewIngredintName != "" && NameText != NewIngredintName) IngrediensLista.Remove(NyIngrediens); //Lägger till ingrediensen i listan om det är en ny ingrediens.
+            if (NewIngredintName != "" && NameText != NewIngredintName) app.Ingredienslista.Remove(app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NewIngredintName))]); //Tar bort nytillagd ingredienstyp, om den inte användes
             app.Ovrigavaraorlista[app.Ovrigavaraorlista.IndexOf(app.Ovrigavaraorlista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
             app.appdata.Ovrigavaraorlista = new ObservableCollection<Ingrediens>(app.Ovrigavaraorlista.OrderBy(item => item.Namn)); //Sorterar listan.
             app.Ovrigavaraorlista = app.appdata.Ovrigavaraorlista;
@@ -176,6 +176,11 @@ namespace ReceptApp.Pages
             if (sender is ComboBox box && box.SelectedItem != null && box.SelectedItem.ToString() != "")
             {
                 var selectedItem = box.SelectedItem as Ingrediens;
+                if (ÄrNyvara)
+                {
+                    app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Varor.Any(x => x.Namn == NyVara.Namn && x.Typ == NyVara.Typ && x.Info == NyVara.Info)))].Varor.Remove(NyVara);
+                    NyIngrediens.Varor.Add(NyVara);
+                }
                 NameText = selectedItem.Namn;
             }
         }

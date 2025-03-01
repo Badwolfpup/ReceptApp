@@ -125,7 +125,7 @@ namespace ReceptApp.Pages
                 NyVara.PrisSomJmfrPris();
             }
 
-            if (NewIngredintName != "" && NameText != NewIngredintName) IngrediensLista.Remove(NyIngrediens); //Lägger till ingrediensen i listan om det är en ny ingrediens.
+            if (NewIngredintName != "" && NameText != NewIngredintName) app.Ingredienslista.Remove(app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NewIngredintName))]); //Tar bort nytillagd ingredienstyp, om den inte användes
             app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
             app.appdata.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
             app.Ingredienslista = app.appdata.Ingredienslista;
@@ -202,7 +202,7 @@ namespace ReceptApp.Pages
                 if (NyIngrediens != null && IngrediensLista.Any(x => x == NyIngrediens)) IngrediensLista.Remove(NyIngrediens);
                 NyIngrediens = new Ingrediens(NewIngredintName);               
                 app.Ingredienslista.Add(NyIngrediens);
-                ComboBoxNamn.SelectedItem = NyIngrediens;
+                ComboBoxNamn.SelectedItem = NyIngrediens.Namn;
             }
         }
 
@@ -211,6 +211,12 @@ namespace ReceptApp.Pages
             if (sender is ComboBox box && box.SelectedItem != null && box.SelectedItem.ToString() != "")
             {
                 var selectedItem = box.SelectedItem as Ingrediens;
+                NyIngrediens = selectedItem;
+                if (ÄrNyvara)
+                {
+                    app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Varor.Any(x => x.Namn == NyVara.Namn && x.Typ == NyVara.Typ &&  x.Info == NyVara.Info)))].Varor.Remove(NyVara);
+                    NyIngrediens.Varor.Add(NyVara);
+                }
                 NameText = selectedItem.Namn;
             }
         }
@@ -325,8 +331,27 @@ namespace ReceptApp.Pages
             }
 
         }
+
         #endregion
 
-
+        private void EditIngrediens_Click(object sender, RoutedEventArgs e)
+        {
+            if (NyIngrediens != null)
+            {
+                NamePopupWindow popup = new NamePopupWindow
+                {
+                    Owner = this
+                };
+                popup.EnteredName = NyIngrediens.Namn;
+                bool? result = popup.ShowDialog();
+                NewIngredintName = popup.EnteredName;
+                if (result == true)
+                {
+                    NyIngrediens.Namn = NewIngredintName;
+                    IngrediensLista = new ObservableCollection<Ingrediens>(IngrediensLista.OrderBy(item => item.Namn));
+                    ComboBoxNamn.SelectedItem = NyIngrediens;
+                }
+            }
+        }
     }
 }

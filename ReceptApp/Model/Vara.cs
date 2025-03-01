@@ -134,16 +134,16 @@ namespace ReceptApp.Model
             }
         }
 
-        private bool _ärovrigvara = true;
-        public bool ÄrInteÖvrigVara
+        private bool _ärovrigvara;
+        public bool ÄrÖvrigVara
         {
             get { return _ärovrigvara; }
             set
             {
                 if (_ärovrigvara != value)
                 {
-                    _ärovrigvara = value;
-                    OnPropertyChanged(nameof(ÄrInteÖvrigVara));
+					_ärovrigvara = value;
+                    OnPropertyChanged(nameof(ÄrÖvrigVara));
                 }
             }
         }

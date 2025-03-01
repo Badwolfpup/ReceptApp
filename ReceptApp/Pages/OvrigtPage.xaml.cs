@@ -101,12 +101,12 @@ namespace ReceptApp.Pages
             {
                 if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
                 {
-                    AddSingleOvrigVara popup = new AddSingleOvrigVara(new ReceptIngrediens(vara, "", 0));
+                    AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0), false, false);
                     popup.Owner = Application.Current.MainWindow;
                     bool? result = popup.ShowDialog();
                     if (result == true)
                     {
-                        app.ReceptIngrediensShoppingList.Add(popup.Recept);
+                        app.TillagdaVarorShoppingList.Add(popup.Recept);
                     }
                 }
             }

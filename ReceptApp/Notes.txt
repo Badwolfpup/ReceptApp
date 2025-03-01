@@ -1,9 +1,21 @@
 ﻿Att göra:
-Buggtesta
+ 
+
+
+
+
+Skriva dokumentation
+
 
 Lägg in alla ingredienser i databasen igen
+Ta bort ingrediens
+Ändra ingrediens
+Fokus på ny ingredienspopup
+Göra om strukturen så att ingredienser från recept sparas i en lista och enskilt tillagda ingredienser sparas i en annan lista. (dela upp i två listor???? borde inte behövas)) 
+	Lägg ihop listorna i shoppinglist
+	Ändra mängd så att det visar det totala inköpta, inte från recept
 
 
-
-
-
+Buggtesta
+	felaktigt jmfrpris vid annan vikt än g? - När man lägger till dirent från varuvyn så har inte receptigredienses mått ch varans mått harmoniserats
+	tokigt pris om man bockat i jmfrpris och sedan tar bort den.

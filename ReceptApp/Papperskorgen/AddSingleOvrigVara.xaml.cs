@@ -20,17 +20,19 @@ namespace ReceptApp.Pages
     /// </summary>
     public partial class AddSingleOvrigVara : Window
     {
-        public AddSingleOvrigVara(ReceptIngrediens r)
+        public AddSingleOvrigVara(ReceptIngrediens r, bool arovrig)
         {
             InitializeComponent();
             Recept = r;
             DataContext = Recept;
+            _ärövrig = arovrig;
+            this.Loaded += (s, e) => TextBoxMängd.Focus();
         }
 
 
         public string EnteredName { get; private set; }
         public ReceptIngrediens Recept { get; set; }
-
+        private bool _ärövrig;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
@@ -38,6 +40,12 @@ namespace ReceptApp.Pages
             {
                 MessageBox.Show("Du behöver ange antal produkter");
                 return;
+            }
+            if (!_ärövrig)
+            {
+                Recept.Mått = Recept.Vara.Mått;
+                Recept.Mängd = (double)(Recept.AntalProdukter * Recept.Vara.Mängd);
+                
             }
             DialogResult = true; // Closes the dialog with a positive result.
             Close();

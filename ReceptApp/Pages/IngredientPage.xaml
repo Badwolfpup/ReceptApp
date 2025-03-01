@@ -80,6 +80,18 @@
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ingrediens" Binding="{Binding Namn}" FontFamily="Roboto" FontWeight="Bold" FontSize="16" ElementStyle="{StaticResource DataGridTextBlockStyle}"/>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Width="25" Height="25" Click="Delete_ingrediens_Click">
+                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                                    <Button.ToolTip>
+                                        <TextBlock>Ta bort vara från listan</TextBlock>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <DataGrid.RowDetailsTemplate>
                         <DataTemplate>
@@ -134,7 +146,7 @@
                                                     <MultiBinding Converter="{StaticResource JmfrprisSomText}">
                                                         <Binding Path="JämförelsePris"></Binding>
                                                         <Binding Path="Mått"></Binding>
-                                                        <Binding Path="ÄrInteÖvrigVara"></Binding>
+                                                        <Binding Path="ÄrÖvrigVara"></Binding>
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>

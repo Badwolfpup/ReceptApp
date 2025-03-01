@@ -28,48 +28,39 @@ namespace ReceptApp.Pages
 
         private void ShoppingList_Loaded(object sender, RoutedEventArgs e)
         {
-            if (app.HasAddedToShoppingCart)
-            {
-                AggregeraInitialaReceptIngredienser();
-                app.HasAddedToShoppingCart = false;
-            } else
-            {
-                RäknaAntalProdukter();
-            }
+            AggregeraInitialaReceptIngredienser();
         }
 
         private void AggregeraInitialaReceptIngredienser()
         {
             //Slår ihop alla ingredienser i shoppinglistan så att varje ingrediens bara förekommer en gång
-            var newlist = app.ReceptIngrediensShoppingList
+            var newlist = app.TillagdaVarorShoppingList
                 .GroupBy(item => new { item.Vara.Namn, item.Vara.Typ, item.Vara.Info })
                 .Select(group =>
                 {
                     string störstmått = group.OrderByDescending(ing => ing.AntalGram).First().Mått;
                     double totalmängd = group.Sum(ing => (double)ing.AntalGram * 100);
-
                     return new ReceptIngrediens
                     {
-
                         Mått = störstmått,
-                        Vara = group.First().Vara,
+                        Vara = group.First().Vara,                       
                         Mängd = totalmängd,
-                        AntalGram = group.First().AntalGram,
-                        AntalProdukter = !group.First().Vara.ÄrInteÖvrigVara ? group.First().AntalProdukter : null,
+                        AntalGram = group.First().AntalGram,                       
+                        AntalProdukter = group.First().Vara.ÄrÖvrigVara ? group.First().AntalProdukter : null,
                     };
                 })
                 .ToList();
             
-            app.ReceptIngrediensShoppingList.Clear();
+            app.TillagdaVarorShoppingList.Clear();
             foreach (var item in newlist)
             {
-                app.ReceptIngrediensShoppingList.Add(item);
+                app.TillagdaVarorShoppingList.Add(item);
             }
 
             //Konverterar mängden tillbaka till det mått som är hade mest mängd
-            foreach (var item in app.ReceptIngrediensShoppingList)
+            foreach (var item in app.TillagdaVarorShoppingList)
             {
-                if (!item.Vara.ÄrInteÖvrigVara) continue;
+                if (item.Vara.ÄrÖvrigVara) continue;
                 if (item.Mått == "st")
                 {
                     item.Mängd = (double)(item.Mängd / item.Vara.Naring.Styck);
@@ -96,31 +87,33 @@ namespace ReceptApp.Pages
             }
             RäknaAntalProdukter();
 
+
         }
 
 
         private void RäknaAntalProdukter()
         {
-            foreach (var item in app.ReceptIngrediensShoppingList)
+            foreach (var item in app.TillagdaVarorShoppingList)
             {
-                if (!item.Vara.ÄrInteÖvrigVara) continue;
+                if (item.Vara.ÄrÖvrigVara) continue;
                 if (!item.Vara.ÄrInteLösvikt) continue;
                 switch(item.Mått)
                 {
-                    case "st": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Naring.Styck); break;
-                    case "dl": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); break;
-                    case "msk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 15 / 100 / (double)item.Vara.Mängd); break;
-                    case "tsk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 5 / 100 / (double)item.Vara.Mängd); break;
-                    case "krm": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 1 / 100 / (double)item.Vara.Mängd); break;
-                    default: item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); break;
+                    case "st": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Naring.Styck); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break; 
+                    case "dl": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
+                    case "msk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 15 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
+                    case "tsk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 5 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
+                    case "krm": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 1 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
+                    default: item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
                 }
             }
             RäknaSumma();
         }
 
+
         private void RäknaSumma()
         {
-            foreach (var item in app.ReceptIngrediensShoppingList)
+            foreach (var item in app.TillagdaVarorShoppingList)
             {
                 if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
                 {
@@ -128,18 +121,18 @@ namespace ReceptApp.Pages
                 }
                 else item.Summa = (double)(item.Vara.Pris * item.AntalGram / 10);
             }
-            app.TotalSumma = (double)app.ReceptIngrediensShoppingList.Sum(x => x.Summa);
+            app.TotalSumma = (double)app.TillagdaVarorShoppingList.Sum(x => x.Summa);
         }
 
         private void DeleteIngredient_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is ReceptIngrediens vara) app.ReceptIngrediensShoppingList.Remove(vara);
+            if (sender is Button button && button.DataContext is ReceptIngrediens vara) app.TillagdaVarorShoppingList.Remove(vara);
         }
 
         private void AddToClipboard_Click(object sender, RoutedEventArgs e)
         {
             string clipboard = "";
-            foreach (var item in app.ReceptIngrediensShoppingList)
+            foreach (var item in app.TillagdaVarorShoppingList)
             {
                 if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
                 {
@@ -159,7 +152,7 @@ namespace ReceptApp.Pages
                 {
                     foreach (var item in r.ReceptIngredienser)
                     {
-                        var hittaingrediens = app.ReceptIngrediensShoppingList.FirstOrDefault(x => x.Vara.Namn == item.Vara.Namn && x.Vara.Typ == item.Vara.Typ && x.Vara.Info == item.Vara.Info);
+                        var hittaingrediens = app.TillagdaVarorShoppingList.FirstOrDefault(x => x.Vara.Namn == item.Vara.Namn && x.Vara.Typ == item.Vara.Typ && x.Vara.Info == item.Vara.Info);
                         if (hittaingrediens != default)
                         {
                             if (item.Mått == hittaingrediens.Mått)
@@ -212,16 +205,16 @@ namespace ReceptApp.Pages
                         }
                     }
                     RäknaAntalProdukter();
-                    app.ShoppingIngredienser.Remove(r);
+                    app.TillagdaReceptShoppingList.Remove(r);
                     List<ReceptIngrediens> toRemove = new List<ReceptIngrediens>();
-                    foreach (var item in app.ReceptIngrediensShoppingList)
+                    foreach (var item in app.TillagdaVarorShoppingList)
                     {
-                        if (!item.Vara.ÄrInteÖvrigVara) continue;
-                        if (!app.ShoppingIngredienser.Any(x => x.ReceptIngredienser.Any(y => y.Vara.Namn == item.Vara.Namn && y.Vara.Typ == item.Vara.Typ && y.Vara.Info == y.Vara.Info))) toRemove.Add(item);
+                        if (!item.Vara.ÄrÖvrigVara) continue;
+                        if (!app.TillagdaReceptShoppingList.Any(x => x.ReceptIngredienser.Any(y => y.Vara.Namn == item.Vara.Namn && y.Vara.Typ == item.Vara.Typ && y.Vara.Info == y.Vara.Info))) toRemove.Add(item);
                     }
                     foreach (var item in toRemove)
                     {
-                        app.ReceptIngrediensShoppingList.Remove(item);
+                        app.TillagdaVarorShoppingList.Remove(item);
                     }
                 }
             }
@@ -273,7 +266,8 @@ namespace ReceptApp.Pages
             if (sender is IntegerUpDown integerUpDown && integerUpDown.DataContext is ReceptIngrediens vara)
             {
                 vara.AntalProdukter = (int)integerUpDown.Value;
-                RäknaSumma();
+                if (!vara.Vara.ÄrÖvrigVara) vara.Mängd = (double)(vara.AntalProdukter * vara.Vara.Mängd);
+				RäknaSumma();
             }
         }
     }

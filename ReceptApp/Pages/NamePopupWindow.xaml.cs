@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,14 +18,38 @@ namespace ReceptApp.Pages
     /// <summary>
     /// Interaction logic for NamePopupWindow.xaml
     /// </summary>
-    public partial class NamePopupWindow : Window
+    public partial class NamePopupWindow : Window, INotifyPropertyChanged
     {
+        #region InotifyPropertyChanged
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        #endregion
+
+
         public NamePopupWindow()
         {
             InitializeComponent();
+            DataContext = this;
+            this.Loaded += (s,e) => NameTextBox.Focus();
         }
 
-        public string EnteredName { get; private set; }
+        private string _enteredName;
+        public string EnteredName
+        {
+            get => _enteredName;
+            set
+            {
+                if (_enteredName != value)
+                {
+                    _enteredName = value;
+                    OnPropertyChanged(nameof(EnteredName));
+                }
+            }
+        }
 
 
         private void OkButton_Click(object sender, RoutedEventArgs e)

@@ -46,15 +46,23 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Typ av ingrediens: " Grid.Column="0"></TextBlock>
+                    <TextBlock Text="Ingrediens: " Grid.Column="0"></TextBlock>
                     <Button Content="Ny" Width="30" Click="NyTypAvIngrediens_Click"></Button>
+                    <Button Width="30" Height="30" Click="EditIngrediens_Click">
+                        <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE70F;"></TextBlock>
+                        <Button.ToolTip>
+                            <TextBlock>Ändra vara eller mängd</TextBlock>
+                        </Button.ToolTip>
+                    </Button>
                 </StackPanel>
                 <TextBlock Text="Kalorier: " Grid.Column="0" Grid.Row="2"></TextBlock>
                 <TextBlock Text="Kolhydrater: " Grid.Column="0" Grid.Row="3"></TextBlock>
                 <TextBlock Text="Fett: " Grid.Column="0" Grid.Row="4"></TextBlock>
                 <TextBlock Text="Protein: " Grid.Column="0" Grid.Row="5"></TextBlock>
 
-                <ComboBox x:Name="ComboBoxNamn" Grid.Column="1" ItemsSource="{Binding IngrediensLista}" Margin="0 0 10 0" SelectionChanged="ComboBoxNamn_SelectionChanged">
+                <ComboBox x:Name="ComboBoxNamn" Grid.Column="1" ItemsSource="{Binding IngrediensLista}" Margin="0 0 10 0" 
+                          SelectionChanged="ComboBoxNamn_SelectionChanged"
+                          MaxDropDownHeight="150">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Namn}"></TextBlock>

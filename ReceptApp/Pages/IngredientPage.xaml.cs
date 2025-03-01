@@ -88,19 +88,34 @@ namespace ReceptApp.Pages
             }
         }
 
+        private void Delete_ingrediens_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Ingrediens ing)
+            {
+                if (ing.Varor.Count == 0)
+                {                
+                    app.Ingredienslista.Remove(ing);
+                } else
+                {
+                    MessageBox.Show("Du kan inte ta bort en ingrediens som har varor kopplade till sig.\nRadera alla vara först.");
+                }
+            }
+        }
+
         private void AddVaraToCart_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
             {
                 if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
                 {
-                    AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0));
-                    popup.Owner = Application.Current.MainWindow;
-                    bool? result = popup.ShowDialog();
-                    if (result  == true)
-                    {
-                        app.ReceptIngrediensShoppingList.Add(popup.Recept);
-                    }
+
+                        AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0), vara.ÄrInteLösvikt ? false : true, true);
+                        popup.Owner = Application.Current.MainWindow;
+                        bool? result = popup.ShowDialog();
+                        if (result == true)
+                        {
+                            app.TillagdaVarorShoppingList.Add(popup.Recept);
+                        }
                 }
             }
         }

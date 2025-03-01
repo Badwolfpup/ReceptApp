@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,14 +19,56 @@ namespace ReceptApp.Pages
     /// <summary>
     /// Interaction logic for AddSingleVara.xaml
     /// </summary>
-    public partial class AddSingleVara : Window
+    public partial class AddSingleVara : Window, INotifyPropertyChanged
     {
+        #region InotifyPropertyChanged
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-        public AddSingleVara(ReceptIngrediens r)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        //public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        #endregion
+        private bool ÄrIngrediens { get; set; }
+        private bool _visaLösVikt;
+        private bool _visaSingleVara;
+        public bool VisaLösVikt
+        {
+            get { return _visaLösVikt; }
+            set
+            {
+                if (_visaLösVikt != value)
+                {
+                    _visaLösVikt = value;
+                    OnPropertyChanged(nameof(VisaLösVikt));
+                }
+            }
+        }
+        public bool VisaSingleVara
+        {
+            get { return _visaSingleVara; }
+            set
+            {
+                if (_visaSingleVara != value)
+                {
+                    _visaSingleVara = value;
+                    OnPropertyChanged(nameof(VisaSingleVara));
+                }
+            }
+        }
+
+        public AddSingleVara(ReceptIngrediens r,  bool ärlösvikt, bool äringrediens)
         {
             InitializeComponent();
             Recept = r;
-            DataContext = Recept;
+            DataContext = this;
+            ÄrIngrediens = äringrediens;
+            VisaLösVikt = ärlösvikt;
+            VisaSingleVara = !ärlösvikt;
+            r.Vara.ÄrÖvrigVara = !ÄrIngrediens;
+            if (VisaLösVikt) this.Loaded += (s, e) =>  TextBoxMängd.Focus();
+            else this.Loaded += (s, e) => TextBoxAntal.Focus();
         }
 
 
@@ -34,18 +77,34 @@ namespace ReceptApp.Pages
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (ComboBoxMåttNamn.SelectedItem == null || ComboBoxMåttNamn.SelectedItem.ToString() == "")
+            if (VisaLösVikt)
             {
-                MessageBox.Show("Du behöver välja ett mått");
-                return;
-            }
+                if (VisaLösVikt && ComboBoxMåttNamn.SelectedItem == null || ComboBoxMåttNamn.SelectedItem.ToString() == "")
+                {
+                    MessageBox.Show("Du behöver välja ett mått");
+                    return;
+                }
 
-            if (Recept.Mängd == null || Recept.Mängd <= 0)
-            {
-                MessageBox.Show("Du behöver ange mängd");
-                return;
+                if (VisaLösVikt && Recept.Mängd == null || Recept.Mängd <= 0)
+                {
+                    MessageBox.Show("Du behöver ange mängd");
+                    return;
+                }
+                Recept.Mått = Recept.KonverteraMåttTillText(ComboBoxMåttNamn.Text);
             }
-            Recept.Mått = Recept.KonverteraMåttTillText(ComboBoxMåttNamn.Text);
+            else
+            {
+                if (VisaSingleVara && Recept.AntalProdukter == null || Recept.AntalProdukter <= 0)
+                {
+                    MessageBox.Show("Du behöver ange antal produkter");
+                    return;
+                }
+                if (!Recept.Vara.ÄrÖvrigVara)
+                {
+                    Recept.Mått = Recept.Vara.Mått;
+                    Recept.Mängd = (double)(Recept.AntalProdukter * Recept.Vara.Mängd);
+                }
+            }
             DialogResult = true; // Closes the dialog with a positive result.
             Close();
         }
