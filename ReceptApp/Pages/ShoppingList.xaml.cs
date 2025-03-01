@@ -99,12 +99,13 @@ namespace ReceptApp.Pages
                 if (!item.Vara.ÄrInteLösvikt) continue;
                 switch(item.Mått)
                 {
-                    case "st": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Naring.Styck); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break; 
-                    case "dl": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
-                    case "msk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 15 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
-                    case "tsk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 5 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
-                    case "krm": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 1 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
-                    default: item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); break;
+                    case "kg": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd / 1000.0); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break;
+					case "st": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Naring.Styck); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break; 
+                    case "dl": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break;
+                    case "msk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 15 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break;
+                    case "tsk": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 5 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break;
+                    case "krm": item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd * 1 / 100 / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break;
+                    default: item.AntalProdukter = (int)Math.Ceiling((double)item.Mängd / (double)item.Vara.Mängd); item.Mängd = (double)(item.AntalProdukter * item.Vara.Mängd); item.Mått = item.Vara.Mått; break;
                 }
             }
             RäknaSumma();
@@ -136,7 +137,7 @@ namespace ReceptApp.Pages
             {
                 if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
                 {
-                    clipboard += $"{item.AntalProdukter} {KonverteraFörpackningTillPlural(item.AntalProdukter, item.Vara.Förpackningstyp)} {item.Vara.Namn.ToLower()} {(item.Vara.Typ != "" ? item.Vara.Typ : "")} {(item.Vara.Info != "" ? item.Vara.Info : "")} á {item.Mängd}{item.Mått} ({item.Summa:F2}kr) \n";
+                    clipboard += $"{item.AntalProdukter} {KonverteraFörpackningTillPlural(item.AntalProdukter, item.Vara.Förpackningstyp)} {item.Vara.Namn.ToLower()} {(item.Vara.Typ != "" ? item.Vara.Typ : "")} {(item.Vara.Info != "" ? item.Vara.Info : "")} {(!item.Vara.ÄrÖvrigVara ? $"á {item.Mängd}{item.Mått}" : "")} ({item.Summa:F2}kr) \n";
                 }
                 else clipboard += $"{item.Mängd}{(item.Mått == "st" ? " " : "")}{item.Mått} {item.Vara.Namn.ToLower()} {(item.Vara.Typ != "" ? item.Vara.Typ : "")} {(item.Vara.Info != "" ? item.Vara.Info : "")} ({item.Summa:F2}kr)\n";
 
@@ -209,7 +210,7 @@ namespace ReceptApp.Pages
                     List<ReceptIngrediens> toRemove = new List<ReceptIngrediens>();
                     foreach (var item in app.TillagdaVarorShoppingList)
                     {
-                        if (!item.Vara.ÄrÖvrigVara) continue;
+                        if (item.Vara.ÄrÖvrigVara) continue;
                         if (!app.TillagdaReceptShoppingList.Any(x => x.ReceptIngredienser.Any(y => y.Vara.Namn == item.Vara.Namn && y.Vara.Typ == item.Vara.Typ && y.Vara.Info == y.Vara.Info))) toRemove.Add(item);
                     }
                     foreach (var item in toRemove)

@@ -94,6 +94,17 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
+                                    <StackPanel.ToolTip>
+                                        <ToolTip Placement="MousePoint"  Background="Transparent" BorderThickness="0" 
+                                                                    ToolTipService.ShowDuration="3000" 
+                                                                    ToolTipService.InitialShowDelay="0">
+                                            <Image Source="{Binding Vara.Bild}" 
+                                                                Width="100" Height="100" 
+                                                                RenderOptions.BitmapScalingMode="HighQuality">
+                                            </Image>
+                                        </ToolTip>
+                                    </StackPanel.ToolTip>
+                                    <Image Grid.Column="0"  Source="{Binding Vara.Bild}" Width="25" Height="25" RenderOptions.BitmapScalingMode="HighQuality"></Image>
                                     <TextBlock FontFamily="Roboto" FontSize="16">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource MåttOchMängd}">

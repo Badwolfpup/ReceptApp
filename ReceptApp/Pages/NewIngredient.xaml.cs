@@ -125,7 +125,7 @@ namespace ReceptApp.Pages
                 NyVara.PrisSomJmfrPris();
             }
 
-            if (NewIngredintName != "" && NameText != NewIngredintName) app.Ingredienslista.Remove(app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NewIngredintName))]); //Tar bort nytillagd ingredienstyp, om den inte användes
+            if (NewIngredintName != null && NewIngredintName != "" && NameText != NewIngredintName) app.Ingredienslista.Remove(app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NewIngredintName))]); //Tar bort nytillagd ingredienstyp, om den inte användes
             app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
             app.appdata.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
             app.Ingredienslista = app.appdata.Ingredienslista;
@@ -202,7 +202,7 @@ namespace ReceptApp.Pages
                 if (NyIngrediens != null && IngrediensLista.Any(x => x == NyIngrediens)) IngrediensLista.Remove(NyIngrediens);
                 NyIngrediens = new Ingrediens(NewIngredintName);               
                 app.Ingredienslista.Add(NyIngrediens);
-                ComboBoxNamn.SelectedItem = NyIngrediens.Namn;
+                ComboBoxNamn.SelectedItem = NyIngrediens;
             }
         }
 

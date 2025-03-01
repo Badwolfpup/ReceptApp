@@ -5,6 +5,7 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <local:RoundedNumber x:Key="RoundedNumber"></local:RoundedNumber>
+        <local:Round2Decimal x:Key="Round2Decimal"></local:Round2Decimal>
         <local:MåttOchMängd x:Key="MåttOchMängd"></local:MåttOchMängd>
         <local:KonverteraMått x:Key="KonverteraMått"></local:KonverteraMått>
         <local:KonverteraMåttTillText x:Key="KonverteraMåttTillText"></local:KonverteraMåttTillText>

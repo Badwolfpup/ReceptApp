@@ -21,6 +21,7 @@ namespace ReceptApp.Pages
         {
             InitializeComponent();
             DataContext = app;
+            Loaded += (s, e) => { FilterTextbox.Clear(); FilterTextbox.Focus(); };
         }
 
         private void LäggTillNyVara_Click(object sender, RoutedEventArgs e)
@@ -108,7 +109,6 @@ namespace ReceptApp.Pages
             {
                 if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
                 {
-
                         AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0), vara.ÄrInteLösvikt ? false : true, true);
                         popup.Owner = Application.Current.MainWindow;
                         bool? result = popup.ShowDialog();

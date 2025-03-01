@@ -130,7 +130,7 @@
                                         <TextBlock.Text>
                                             <MultiBinding UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource JmfrprisSomText}">
                                                 <Binding Path="Vara.JämförelsePris"></Binding>
-                                                <Binding Path="Mått"></Binding>
+                                                <Binding Path="Vara.Mått"></Binding>
                                                 <Binding Path="Vara.ÄrÖvrigVara"></Binding>
                                             </MultiBinding>
                                         </TextBlock.Text>

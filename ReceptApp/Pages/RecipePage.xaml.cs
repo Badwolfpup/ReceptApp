@@ -17,6 +17,8 @@ namespace ReceptApp.Pages
         {
             InitializeComponent();
             DataContext = app;
+            Loaded += (s, e) => { FilterTextboxRecept.Clear(); FilterTextboxRecept.Focus(); };
+
         }
 
 

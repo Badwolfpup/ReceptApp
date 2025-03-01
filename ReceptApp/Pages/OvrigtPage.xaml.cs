@@ -28,6 +28,7 @@ namespace ReceptApp.Pages
         {
             InitializeComponent();
             DataContext = app;
+            Loaded += (s, e) => { FilterTextbox.Clear(); FilterTextbox.Focus(); };
         }
 
         private void LäggTillNyVara_Click(object sender, RoutedEventArgs e)
@@ -42,7 +43,7 @@ namespace ReceptApp.Pages
 
         private void FilterTextbox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
+            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ovrigavaraorlista);
             view.Filter = obj =>
             {
                 if (obj is Ingrediens ingrediens)

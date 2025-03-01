@@ -148,7 +148,7 @@
                                 </Image.ToolTip>
                             </Image>
                             <TextBlock FontFamily="Roboto" FontSize="16">
-                                <Run Text="{Binding Mängd, UpdateSourceTrigger=PropertyChanged}"></Run>                                          
+                                <Run Text="{Binding Mängd, Converter={StaticResource Round2Decimal}, UpdateSourceTrigger=PropertyChanged}"></Run>                                          
                                 <Run Text="{Binding Mått, UpdateSourceTrigger=PropertyChanged}"></Run>
                                 <Run Text="{Binding Vara.Namn, UpdateSourceTrigger=PropertyChanged}"></Run>
                                 <Run Text="{Binding Vara.Typ, UpdateSourceTrigger=PropertyChanged}"></Run>

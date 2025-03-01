@@ -311,11 +311,28 @@ namespace ReceptApp
         {
             if (value is double Number)
             {
-                return Math.Round(Number).ToString("0", culture);
+                return  Math.Round(Number).ToString("0", culture);
             }
             return value;
         }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Round2Decimal : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is double Number)
+            {
+                culture = new CultureInfo("sv-SE");
+                return Math.Floor(Number) != Number ? Math.Round(Number, 2).ToString("0.00", culture) : Math.Round(Number, 2).ToString("0", culture);
+            }
+            return value;
+        }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
