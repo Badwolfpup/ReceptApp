@@ -1,5 +1,6 @@
 ﻿using ReceptApp.Model;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,18 +14,40 @@ namespace ReceptApp.Pages
     /// <summary>
     /// Interaction logic for ShoppingList.xaml
     /// </summary>
-    public partial class ShoppingList : Page
+    public partial class ShoppingList : Page, INotifyPropertyChanged
     {
-        App app = (App)Application.Current;
+        #region InotifyPropertyChanged
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        #endregion
+
+        public ObservableCollection<ReceptIngrediens> ShoppingListaIngredienser => AppData.Instance.ShoppingListaIngredienser;
+        public ObservableCollection<Recept> ShoppingListaRecept => AppData.Instance.ShoppingListaRecept;
 
         public ShoppingList()
         {
             InitializeComponent();
-            DataContext = app;
+            DataContext = this;
             Loaded += ShoppingList_Loaded;
         }
 
-
+        private double _totalsumma;
+        public double TotalSumma
+        {
+            get => _totalsumma;
+            set
+            {
+                if (_totalsumma != value)
+                {
+                    _totalsumma = value;
+                    OnPropertyChanged(nameof(TotalSumma));
+                }
+            }
+        }
 
         private void ShoppingList_Loaded(object sender, RoutedEventArgs e)
         {
@@ -34,7 +57,7 @@ namespace ReceptApp.Pages
         private void AggregeraInitialaReceptIngredienser()
         {
             //Slår ihop alla ingredienser i shoppinglistan så att varje ingrediens bara förekommer en gång
-            var newlist = app.TillagdaVarorShoppingList
+            var newlist = ShoppingListaIngredienser
                 .GroupBy(item => new { item.Vara.Namn, item.Vara.Typ, item.Vara.Info })
                 .Select(group =>
                 {
@@ -51,14 +74,14 @@ namespace ReceptApp.Pages
                 })
                 .ToList();
             
-            app.TillagdaVarorShoppingList.Clear();
+            ShoppingListaIngredienser.Clear();
             foreach (var item in newlist)
             {
-                app.TillagdaVarorShoppingList.Add(item);
+                ShoppingListaIngredienser.Add(item);
             }
 
             //Konverterar mängden tillbaka till det mått som är hade mest mängd
-            foreach (var item in app.TillagdaVarorShoppingList)
+            foreach (var item in ShoppingListaIngredienser)
             {
                 if (item.Vara.ÄrÖvrigVara) continue;
                 if (item.Mått == "st")
@@ -93,7 +116,7 @@ namespace ReceptApp.Pages
 
         private void RäknaAntalProdukter()
         {
-            foreach (var item in app.TillagdaVarorShoppingList)
+            foreach (var item in ShoppingListaIngredienser)
             {
                 if (item.Vara.ÄrÖvrigVara) continue;
                 if (!item.Vara.ÄrInteLösvikt) continue;
@@ -114,7 +137,7 @@ namespace ReceptApp.Pages
 
         private void RäknaSumma()
         {
-            foreach (var item in app.TillagdaVarorShoppingList)
+            foreach (var item in ShoppingListaIngredienser)
             {
                 if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
                 {
@@ -122,18 +145,18 @@ namespace ReceptApp.Pages
                 }
                 else item.Summa = (double)(item.Vara.Pris * item.AntalGram / 10);
             }
-            app.TotalSumma = (double)app.TillagdaVarorShoppingList.Sum(x => x.Summa);
+            TotalSumma = (double)ShoppingListaIngredienser.Sum(x => x.Summa);
         }
 
         private void DeleteIngredient_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is ReceptIngrediens vara) app.TillagdaVarorShoppingList.Remove(vara);
+            if (sender is Button button && button.DataContext is ReceptIngrediens vara) ShoppingListaIngredienser.Remove(vara);
         }
 
         private void AddToClipboard_Click(object sender, RoutedEventArgs e)
         {
             string clipboard = "";
-            foreach (var item in app.TillagdaVarorShoppingList)
+            foreach (var item in ShoppingListaIngredienser)
             {
                 if (item.AntalProdukter > 0 && (item.Vara.Förpackningstyp != "" || item.Vara.Förpackningstyp != "lösvikt"))
                 {
@@ -153,7 +176,7 @@ namespace ReceptApp.Pages
                 {
                     foreach (var item in r.ReceptIngredienser)
                     {
-                        var hittaingrediens = app.TillagdaVarorShoppingList.FirstOrDefault(x => x.Vara.Namn == item.Vara.Namn && x.Vara.Typ == item.Vara.Typ && x.Vara.Info == item.Vara.Info);
+                        var hittaingrediens = ShoppingListaIngredienser.FirstOrDefault(x => x.Vara.Namn == item.Vara.Namn && x.Vara.Typ == item.Vara.Typ && x.Vara.Info == item.Vara.Info);
                         if (hittaingrediens != default)
                         {
                             if (item.Mått == hittaingrediens.Mått)
@@ -206,16 +229,16 @@ namespace ReceptApp.Pages
                         }
                     }
                     RäknaAntalProdukter();
-                    app.TillagdaReceptShoppingList.Remove(r);
+                    AppData.Instance.ShoppingListaRecept.Remove(r);
                     List<ReceptIngrediens> toRemove = new List<ReceptIngrediens>();
-                    foreach (var item in app.TillagdaVarorShoppingList)
+                    foreach (var item in ShoppingListaIngredienser)
                     {
                         if (item.Vara.ÄrÖvrigVara) continue;
-                        if (!app.TillagdaReceptShoppingList.Any(x => x.ReceptIngredienser.Any(y => y.Vara.Namn == item.Vara.Namn && y.Vara.Typ == item.Vara.Typ && y.Vara.Info == y.Vara.Info))) toRemove.Add(item);
+                        if (!AppData.Instance.ShoppingListaRecept.Any(x => x.ReceptIngredienser.Any(y => y.Vara.Namn == item.Vara.Namn && y.Vara.Typ == item.Vara.Typ && y.Vara.Info == y.Vara.Info))) toRemove.Add(item);
                     }
                     foreach (var item in toRemove)
                     {
-                        app.TillagdaVarorShoppingList.Remove(item);
+                        ShoppingListaIngredienser.Remove(item);
                     }
                 }
             }
@@ -224,12 +247,12 @@ namespace ReceptApp.Pages
         private void EditVara_Click(object sender, RoutedEventArgs e)
         {
 
-            ObservableCollection<Priser> priser = null;
+
             if (sender is Button button)
             {
                 if (button.DataContext is ReceptIngrediens r)
                 {
-                    var hittaingrediens = app.Ingredienslista.FirstOrDefault(x => x.Varor.Any(y => x.Namn == r.Vara.Namn && y.Info == r.Vara.Info));
+                    var hittaingrediens = AppData.Instance.IngrediensLista.FirstOrDefault(x => x.Varor.Any(y => x.Namn == r.Vara.Namn && y.Info == r.Vara.Info));
                     ChangePrice changeprice = new ChangePrice(hittaingrediens.CopyVaror(), r.Vara, r);
                     MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
                     changeprice.Owner = mainWindow;
@@ -270,6 +293,11 @@ namespace ReceptApp.Pages
                 if (!vara.Vara.ÄrÖvrigVara) vara.Mängd = (double)(vara.AntalProdukter * vara.Vara.Mängd);
 				RäknaSumma();
             }
+        }
+
+        private void SaveList_Click(object sender, RoutedEventArgs e)
+        {
+            AppData.Instance.SaveAll();
         }
     }
 }

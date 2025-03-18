@@ -1,4 +1,5 @@
 ﻿using ReceptApp.Model;
+using ReceptApp.ViewModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -15,37 +16,19 @@ namespace ReceptApp.Pages
     /// </summary>
     public partial class IngredientPage : Page
     {
-        App app = (App)Application.Current;
+
+        public ObservableCollection<Ingrediens> IngrediensLista => AppData.Instance.IngrediensLista;
+
+
 
         public IngredientPage()
         {
             InitializeComponent();
-            DataContext = app;
+            DataContext = new VMIngredientPage();
             Loaded += (s, e) => { FilterTextbox.Clear(); FilterTextbox.Focus(); };
         }
 
-        private void LäggTillNyVara_Click(object sender, RoutedEventArgs e)
-        {
-            NewIngredient newIngredient = new NewIngredient();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            newIngredient.Owner = mainWindow;
-            newIngredient.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            newIngredient.ShowDialog();
-        }
 
-
-        private void FilterTextbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ingredienslista);
-            view.Filter = obj =>
-            {
-                if (obj is Ingrediens ingrediens)
-                {
-                    return ingrediens.Namn.Contains(FilterTextbox.Text, StringComparison.OrdinalIgnoreCase);
-                }
-                return false;
-            };
-        }
 
         private void DataGridCell_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -78,46 +61,10 @@ namespace ReceptApp.Pages
             return parent as T;
         }
 
-        private void Delete_price_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button)
-            {
-                if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
-                {
-                    ing.Varor.Remove(vara);
-                }
-            }
-        }
 
-        private void Delete_ingrediens_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is Ingrediens ing)
-            {
-                if (ing.Varor.Count == 0)
-                {                
-                    app.Ingredienslista.Remove(ing);
-                } else
-                {
-                    MessageBox.Show("Du kan inte ta bort en ingrediens som har varor kopplade till sig.\nRadera alla vara först.");
-                }
-            }
-        }
 
-        private void AddVaraToCart_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button)
-            {
-                if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
-                {
-                        AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0), vara.ÄrInteLösvikt ? false : true, true);
-                        popup.Owner = Application.Current.MainWindow;
-                        bool? result = popup.ShowDialog();
-                        if (result == true)
-                        {
-                            app.TillagdaVarorShoppingList.Add(popup.Recept);
-                        }
-                }
-            }
-        }
+
+
+
     }
 }

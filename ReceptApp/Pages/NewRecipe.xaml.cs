@@ -1,6 +1,9 @@
 ﻿using ReceptApp.Model;
+using ReceptApp.ViewModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Common;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,33 +26,32 @@ namespace ReceptApp.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
-        public ObservableCollection<Ingrediens> IngrediensLista { get; set; }
-
-        public NewRecipe(ObservableCollection<Ingrediens> ingredienslista)
+        public NewRecipe(bool nyttrecept, Recept recept)
         {
             InitializeComponent();
+            NyttRecept = recept;
+
+            KnappText = nyttrecept ? "Lägg till recept" : "Spara ändringar";
             DataContext = this;
-            IngrediensLista = ingredienslista;
-            //SkapaFiltreradLista(ingredienslista);
-
-            ValdReceptIngrediens = new ReceptIngrediens();
-            NyttRecept = new Recept(4);
-            //ValdIngrediens = new Ingrediens();
-
         }
 
-
-        public NewRecipe(Recept nyttRecept, ObservableCollection<Ingrediens> ingredienslista)
+        private Recept _nyttrecept;
+        public Recept NyttRecept
         {
-            InitializeComponent();
-            DataContext = this;
-            NyttRecept = nyttRecept;
-            IngrediensLista = ingredienslista;
-            //SkapaFiltreradLista(ingredienslista);
-            KnappText = "Spara ändringar";
+            get { return _nyttrecept; }
+            set
+            {
+                if (_nyttrecept != value)
+                {
+                    _nyttrecept = value;
+                    OnPropertyChanged(nameof(NyttRecept));
+                }
+            }
         }
 
-        private string _knapptext = "Lägg till recept";
+        public ObservableCollection<Ingrediens> IngrediensLista => AppData.Instance.IngrediensLista;
+
+        private string _knapptext;
         public string KnappText
         {
             get { return _knapptext; }
@@ -60,20 +62,10 @@ namespace ReceptApp.Pages
             }
         }
 
-        App app = (App)Application.Current;
 
         private bool _valtreceptingrediens = true;
         private ListView _lastSelectedListView;
-        private Recept _nyttrecept;
-        public Recept NyttRecept
-        {
-            get { return _nyttrecept; }
-            set
-            {
-                _nyttrecept = value;
-                OnPropertyChanged(nameof(NyttRecept));
-            }
-        }
+
 
         private Vara _valdvara;
         public Vara ValdVara
@@ -97,34 +89,6 @@ namespace ReceptApp.Pages
             }
         }
 
-        //ObservableCollection<Ingrediens> FilteredIngredientList;
-
-        //public ICollectionView FilteredCollectionView { get; set; }
-
-
-        //private void SkapaFiltreradLista(ObservableCollection<Ingrediens> ingredienslista)
-        //{
-        //    FilteredIngredientList = new ObservableCollection<Ingrediens>(ingredienslista);
-        //    FilteredCollectionView = CollectionViewSource.GetDefaultView(FilteredIngredientList);
-        //    foreach (var item in FilteredCollectionView)
-        //    {
-        //        if (item is INotifyPropertyChanged inotify)
-        //        {
-        //            inotify.PropertyChanged += (s, e) => FilteredCollectionView.Refresh();
-        //        }
-        //    }
-        //    FilteredCollectionView.Filter = FilterPredicate;
-        //}
-
-
-        //private bool FilterPredicate(object obj)
-        //{
-        //    if (obj is Ingrediens ingrediens)
-        //    {
-        //        //return !ingrediens.ÄrTillagdIRecept;
-        //    }
-        //    return false;
-        //}
 
         private void ScrollIngrediensNyttRecept_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -134,7 +98,10 @@ namespace ReceptApp.Pages
                 if (_valtreceptingrediens) ValdReceptIngrediens = new ReceptIngrediens();
                 _valtreceptingrediens = false;
                 ValdVara = i;
-                ComboBoxMått.SelectedIndex = 0;
+                //if (comb is ComboBox ComboBoxMått)
+                //{
+                    ComboBoxMått.SelectedIndex = 0;
+                //}
             }
         }
 
@@ -152,29 +119,11 @@ namespace ReceptApp.Pages
         {
             if (e.Key == Key.Enter)
             {
-                AddIngredient_Click(sender, e);
+                AddIngredient_Click(sender, null);
             }
         }
 
-        private void AddIngredient_Click(object sender, RoutedEventArgs e)
-        {
-            int.TryParse(TextBoxMått.Text, out int mängd);
-            if (mängd > 0)
-            {
-                if (_lastSelectedListView.SelectedItem is not Vara i || NyttRecept.ReceptIngredienser.Any(x => x.Vara.Namn == ValdVara.Namn))
-                {
-                    MessageBox.Show("Du har inte valt en vara eller försöker du lägga till en dublett"); return;
-                }
-                ValdReceptIngrediens.Mått = ValdReceptIngrediens.KonverteraMåttTillText(ComboBoxMått.Text);
-                ValdReceptIngrediens.Vara = ValdVara;
-                ValdReceptIngrediens.BeräknaAntalGram();
-                NyttRecept.ReceptIngredienser.Add(ValdReceptIngrediens);
-                ScrollTillagdaIngredienser.SelectedItem = ValdReceptIngrediens;
-                //ValdIngrediens.ÄrTillagdIRecept = true;
-                _valtreceptingrediens = true;
-            }
-            else MessageBox.Show("Du behöver ange hur mycket");
-        }
+
 
         private void ScrollTillagdaIngredienser_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -183,21 +132,24 @@ namespace ReceptApp.Pages
                 _valtreceptingrediens = true;
                 ValdReceptIngrediens = i;
                 ValdVara = i.Vara;
-                switch (i.Mått)
-                {
-                    case "g": ComboBoxMått.SelectedItem = "Gram"; break;
-                    case "dl": ComboBoxMått.SelectedItem = "Deciliter"; break;
-                    case "msk": ComboBoxMått.SelectedItem = "Matsked"; break;
-                    case "tsk": ComboBoxMått.SelectedItem = "Tesked"; break;
-                    case "krm": ComboBoxMått.SelectedItem = "Kryddmått"; break;
-                    case "st": ComboBoxMått.SelectedItem = "Stycken"; break;
-                    case "stora": ComboBoxMått.SelectedItem = "Antal stor"; break;
-                    case "stor": ComboBoxMått.SelectedItem = "Antal stor"; break;
-                    case "medelstora": ComboBoxMått.SelectedItem = "Antal medel"; break;
-                    case "medelstor": ComboBoxMått.SelectedItem = "Antal medel"; break;
-                    case "små": ComboBoxMått.SelectedItem = "Antal liten"; break;
-                    case "liten": ComboBoxMått.SelectedItem = "Antal liten"; break;
-                }
+                //if ( is ComboBox ComboBoxMått)
+                //{
+                    switch (i.Mått)
+                    {
+                        case "g": ComboBoxMått.SelectedItem = "Gram"; break;
+                        case "dl": ComboBoxMått.SelectedItem = "Deciliter"; break;
+                        case "msk": ComboBoxMått.SelectedItem = "Matsked"; break;
+                        case "tsk": ComboBoxMått.SelectedItem = "Tesked"; break;
+                        case "krm": ComboBoxMått.SelectedItem = "Kryddmått"; break;
+                        case "st": ComboBoxMått.SelectedItem = "Stycken"; break;
+                        case "stora": ComboBoxMått.SelectedItem = "Antal stor"; break;
+                        case "stor": ComboBoxMått.SelectedItem = "Antal stor"; break;
+                        case "medelstora": ComboBoxMått.SelectedItem = "Antal medel"; break;
+                        case "medelstor": ComboBoxMått.SelectedItem = "Antal medel"; break;
+                        case "små": ComboBoxMått.SelectedItem = "Antal liten"; break;
+                        case "liten": ComboBoxMått.SelectedItem = "Antal liten"; break;
+                    }
+                //}
 
             }
         }
@@ -211,11 +163,32 @@ namespace ReceptApp.Pages
             }
         }
 
+        private void AddIngredient_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == null) return;
+
+            int.TryParse(TextBoxMått.Text, out int mängd);
+            if (mängd > 0)
+            {
+                if (_lastSelectedListView.SelectedItem is not Vara i || NyttRecept.ReceptIngredienser.Any(x => x.Vara.Namn == ValdVara.Namn))
+                {
+                    MessageBox.Show("Du har inte valt en vara eller försöker du lägga till en dublett"); return;
+                }
+                ValdReceptIngrediens.Mått = ValdReceptIngrediens.KonverteraMåttTillText(ComboBoxMått.Text);
+                ValdReceptIngrediens.Vara = ValdVara;
+                ValdReceptIngrediens.BeräknaAntalGram();
+                NyttRecept.ReceptIngredienser.Add(ValdReceptIngrediens);
+                ScrollTillagdaIngredienser.SelectedItem = ValdReceptIngrediens;
+                _valtreceptingrediens = true;
+            }
+            else MessageBox.Show("Du behöver ange hur mycket");
+        }
+
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             ReceptIngrediens i = ScrollTillagdaIngredienser.SelectedItem as ReceptIngrediens;
             if (i == null) return;
-            //i.Ingrediens.vaÄrTillagdIRecept = false;
+            //i.Vara.ÄrTillagdIRecept = false;
             int index = NyttRecept.ReceptIngredienser.IndexOf(i);
             if (index >= 0) NyttRecept.ReceptIngredienser.Remove(i);
             ValdReceptIngrediens = NyttRecept.ReceptIngredienser.Count == 0 ? ValdReceptIngrediens = new ReceptIngrediens() : (index >= NyttRecept.ReceptIngredienser.Count ? NyttRecept.ReceptIngredienser[NyttRecept.ReceptIngredienser.Count - 1] : NyttRecept.ReceptIngredienser[index]);
@@ -243,11 +216,15 @@ namespace ReceptApp.Pages
         {
             if (!string.IsNullOrWhiteSpace(TextBoxNyReceptNamn.Text))
             {
-                if (!app.ReceptLista.Contains(NyttRecept))
+                if (!AppData.Instance.ReceptLista.Contains(NyttRecept))
                 {
-                    app.ReceptLista.Add(NyttRecept);
-                    app.appdata.ReceptLista = new ObservableCollection<Recept>(app.ReceptLista.OrderBy(item => item.Namn)); //Sorterar listan.
-                    app.ReceptLista = app.appdata.ReceptLista;
+                    AppData.Instance.ReceptLista.Add(NyttRecept);
+                    var sorted = new ObservableCollection<Recept>(AppData.Instance.ReceptLista.OrderBy(item => item.Namn)); //Sorterar listan.
+                    AppData.Instance.ReceptLista.Clear();
+                    foreach (var item in sorted)
+                    {
+                        AppData.Instance.ReceptLista.Add(item);
+                    }
                 }
                 Close();
 
@@ -275,11 +252,14 @@ namespace ReceptApp.Pages
 
         private void ListView_GotFocus(object sender, RoutedEventArgs e)
         {
+
             if (_lastSelectedListView != null && _lastSelectedListView != sender)
             {
                 _lastSelectedListView.SelectedItem = null;
             }
             _lastSelectedListView = sender as ListView;
         }
+
+
     }
 }

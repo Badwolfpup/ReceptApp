@@ -1,6 +1,8 @@
 ﻿using ReceptApp.Model;
+using ReceptApp.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -22,37 +24,20 @@ namespace ReceptApp.Pages
     /// </summary>
     public partial class OvrigtPage : Page
     {
-        App app = (App)Application.Current;
+       
 
         public OvrigtPage()
         {
+            
             InitializeComponent();
-            DataContext = app;
+            DataContext = new VMOvrigtPage();
             Loaded += (s, e) => { FilterTextbox.Clear(); FilterTextbox.Focus(); };
         }
 
-        private void LäggTillNyVara_Click(object sender, RoutedEventArgs e)
-        {
-            NewOvrigaVaror newIngredient = new NewOvrigaVaror();
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            newIngredient.Owner = mainWindow;
-            newIngredient.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            newIngredient.ShowDialog();
-        }
 
 
-        private void FilterTextbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ICollectionView view = CollectionViewSource.GetDefaultView(app.Ovrigavaraorlista);
-            view.Filter = obj =>
-            {
-                if (obj is Ingrediens ingrediens)
-                {
-                    return ingrediens.Namn.Contains(FilterTextbox.Text, StringComparison.OrdinalIgnoreCase);
-                }
-                return false;
-            };
-        }
+
+
 
         private void DataGridCell_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -85,32 +70,8 @@ namespace ReceptApp.Pages
             return parent as T;
         }
 
-        private void Delete_price_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button)
-            {
-                if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
-                {
-                    ing.Varor.Remove(vara);
-                }
-            }
-        }
+        
 
-        private void AddVaraToCart_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button)
-            {
-                if (button.Tag is Ingrediens ing && button.DataContext is Vara vara)
-                {
-                    AddSingleVara popup = new AddSingleVara(new ReceptIngrediens(vara, "", 0), false, false);
-                    popup.Owner = Application.Current.MainWindow;
-                    bool? result = popup.ShowDialog();
-                    if (result == true)
-                    {
-                        app.TillagdaVarorShoppingList.Add(popup.Recept);
-                    }
-                }
-            }
-        }
+
     }
 }

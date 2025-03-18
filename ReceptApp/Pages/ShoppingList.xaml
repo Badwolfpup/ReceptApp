@@ -21,7 +21,7 @@
         <StackPanel Grid.RowSpan="2">
             <TextBlock FontWeight="Black" HorizontalAlignment="Center" Margin="5" Text="Tillagda recept"></TextBlock>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="20 0 20 0">
-                <ItemsControl ItemsSource="{Binding TillagdaReceptShoppingList}">
+                <ItemsControl ItemsSource="{Binding ShoppingListaRecept}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -55,7 +55,7 @@
                           HorizontalGridLinesBrush="LightGray"
                           VerticalGridLinesBrush="LightGray"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          ItemsSource="{Binding TillagdaVarorShoppingList}" 
+                          ItemsSource="{Binding ShoppingListaIngredienser}" 
                           IsReadOnly="True"
                           CanUserAddRows="False"
                           AutoGenerateColumns="False">
@@ -208,14 +208,21 @@
             </Border>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button 
-                    Height="40" Width="40"
-                    
+                    Height="40" Width="40"                    
+                    Click="SaveList_Click" >
+                    <TextBlock FontSize="26" FontFamily="Segoe MDL2 Assets" Text="&#xE74E;"></TextBlock>
+                    <Button.ToolTip>
+                        <TextBlock>Spara shopppinglistan</TextBlock>
+                    </Button.ToolTip>
+                </Button>
+                <Button 
+                    Height="40" Width="40"                    
                     Click="AddToClipboard_Click" >
-                <TextBlock FontSize="26" FontFamily="Segoe MDL2 Assets" Text="&#xF0E3;"></TextBlock>
-                <Button.ToolTip>
-                    <TextBlock>Kopiera till urklipp</TextBlock>
-                </Button.ToolTip>
-            </Button>
+                    <TextBlock FontSize="26" FontFamily="Segoe MDL2 Assets" Text="&#xF0E3;"></TextBlock>
+                    <Button.ToolTip>
+                        <TextBlock>Kopiera till urklipp</TextBlock>
+                    </Button.ToolTip>
+                </Button>
             <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="LightGray" Margin="10">
                 <Run Text="Totalt: "></Run>
                 <Run Text="{Binding TotalSumma, Converter={StaticResource KonverteraTillSvenskDecimal}}"></Run>

@@ -33,7 +33,7 @@ namespace ReceptApp.Pages
             DataContext = this;
             NyVara = new Vara();
             NyVara.Bild = "pack://application:,,,/ReceptApp;component/Bilder/dummybild.png";
-            IngrediensLista = app.Ingredienslista;
+            //IngrediensLista = IngrediensLista;
             ÄrNyvara = false;
         }
 
@@ -42,7 +42,7 @@ namespace ReceptApp.Pages
             InitializeComponent();
             DataContext = this;
             NyVara = vara;
-            IngrediensLista = app.Ingredienslista;
+            
             ComboBoxNamn.SelectedItem = IngrediensLista.FirstOrDefault(x => x.Varor.Contains(vara));
             MattCombobox.SelectedItem = vara.Mått;
             ForpackningsCombobox.SelectedItem = vara.Förpackningstyp;
@@ -60,9 +60,9 @@ namespace ReceptApp.Pages
             }
         }
 
-        public App app { get; } = (App)Application.Current;
+        //public App app { get; } = (App)Application.Current;
         private Ingrediens NyIngrediens;
-        public ObservableCollection<Ingrediens> IngrediensLista { get; set; } 
+        public ObservableCollection<Ingrediens> IngrediensLista => AppData.Instance.IngrediensLista;
         private string _fileextension; //Håller koll på filändelsen på bilden.
         private bool SkaKopieraBild { get; set; } //Styr om bilden ska kopieras eller inte.
         private bool HasAddedImage { get; set; }
@@ -125,10 +125,14 @@ namespace ReceptApp.Pages
                 NyVara.PrisSomJmfrPris();
             }
 
-            if (NewIngredintName != null && NewIngredintName != "" && NameText != NewIngredintName) app.Ingredienslista.Remove(app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NewIngredintName))]); //Tar bort nytillagd ingredienstyp, om den inte användes
-            app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
-            app.appdata.Ingredienslista = new ObservableCollection<Ingrediens>(app.Ingredienslista.OrderBy(item => item.Namn)); //Sorterar listan.
-            app.Ingredienslista = app.appdata.Ingredienslista;
+            if (NewIngredintName != null && NewIngredintName != "" && NameText != NewIngredintName) IngrediensLista.Remove(IngrediensLista[IngrediensLista.IndexOf(IngrediensLista.FirstOrDefault(i => i.Namn == NewIngredintName))]); //Tar bort nytillagd ingredienstyp, om den inte användes
+            IngrediensLista[IngrediensLista.IndexOf(IngrediensLista.FirstOrDefault(i => i.Namn == NameText))].Varor.Add(NyVara); //Lägger till ingrediensen i listan.
+            var sorted  = new ObservableCollection<Ingrediens>(IngrediensLista.OrderBy(item => item.Namn)); //Sorterar listan.
+            IngrediensLista.Clear();
+            foreach (var item in sorted)
+            {
+                IngrediensLista.Add(item);
+            }
             if (HasAddedImage) KopieraBild(TempBild, $"{NameText}", _fileextension, HasExtension); //Kopierar bilden till mappen om man la till en bild .
             Close();
         }
@@ -201,7 +205,7 @@ namespace ReceptApp.Pages
             {
                 if (NyIngrediens != null && IngrediensLista.Any(x => x == NyIngrediens)) IngrediensLista.Remove(NyIngrediens);
                 NyIngrediens = new Ingrediens(NewIngredintName);               
-                app.Ingredienslista.Add(NyIngrediens);
+                IngrediensLista.Add(NyIngrediens);
                 ComboBoxNamn.SelectedItem = NyIngrediens;
             }
         }
@@ -214,7 +218,7 @@ namespace ReceptApp.Pages
                 NyIngrediens = selectedItem;
                 if (ÄrNyvara)
                 {
-                    app.Ingredienslista[app.Ingredienslista.IndexOf(app.Ingredienslista.FirstOrDefault(i => i.Varor.Any(x => x.Namn == NyVara.Namn && x.Typ == NyVara.Typ &&  x.Info == NyVara.Info)))].Varor.Remove(NyVara);
+                    IngrediensLista[IngrediensLista.IndexOf(IngrediensLista.FirstOrDefault(i => i.Varor.Any(x => x.Namn == NyVara.Namn && x.Typ == NyVara.Typ &&  x.Info == NyVara.Info)))].Varor.Remove(NyVara);
                     NyIngrediens.Varor.Add(NyVara);
                 }
                 NameText = selectedItem.Namn;
@@ -348,7 +352,12 @@ namespace ReceptApp.Pages
                 if (result == true)
                 {
                     NyIngrediens.Namn = NewIngredintName;
-                    IngrediensLista = new ObservableCollection<Ingrediens>(IngrediensLista.OrderBy(item => item.Namn));
+                    var sortedList = new ObservableCollection<Ingrediens>(IngrediensLista.OrderBy(item => item.Namn));
+                    IngrediensLista.Clear();
+                    foreach (var item in sortedList)
+                    {
+                        IngrediensLista.Add(item);
+                    }
                     ComboBoxNamn.SelectedItem = NyIngrediens;
                 }
             }

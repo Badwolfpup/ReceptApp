@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:ReceptApp.Pages"
+      xmlns:local="clr-namespace:ReceptApp.Other"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="704"
       Title="RecipePage">
@@ -17,7 +17,8 @@
         </Grid.ColumnDefinitions>
         
         <StackPanel Width="300" HorizontalAlignment="Left" Margin="18,20,0,0" Grid.Column="0" >
-            <TextBox Height="25" x:Name="FilterTextboxRecept" Text="" TextChanged="FilterTextboxRecept_TextChanged"/>
+            <TextBox Height="25" x:Name="FilterTextboxRecept" Text="" 
+                     local:DependencyHelper.FilterTextCommand="{Binding FilterText}"/>
             <Border BorderBrush="Transparent" BorderThickness="1" CornerRadius="20">
                 <ListView x:Name="ScrollRecept"
                             Margin="0,10,0,0"
@@ -25,22 +26,26 @@
                             BorderBrush="Transparent" BorderThickness="0"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
                             ItemsSource="{Binding ReceptLista}" 
-                            SelectionMode="Single" SelectedItem="{Binding ValtRecept}" 
+                            SelectionMode="Single"  
                             SelectedIndex="0">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel HorizontalAlignment="Stretch">
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Radera" Click="MenuItem_Click"></MenuItem>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>
-                            </StackPanel>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
+
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="250"></ColumnDefinition>
+                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Namn}" FontSize="16" FontFamily="Roboto"></TextBlock>
+                                <Button Grid.Column="1" Width="25" Height="25" 
+                                                    Command="{Binding DataContext.TaBortRecept, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                                    <Button.ToolTip>
+                                        <TextBlock>Ta bort recept från listan</TextBlock>
+                                    </Button.ToolTip>
+                                </Button>
+                            </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
@@ -48,7 +53,10 @@
                     <DropShadowEffect Color="Black" Direction="310" ShadowDepth="7" Opacity="0.3" />
                 </Border.Effect>
             </Border>
-            <Button Content="Lägg till nytt recept" Margin="0 15 0 0" Click="LäggTillNyttRecept_Click"></Button>
+            <Button Content="Lägg till nytt recept" Margin="0 15 0 0" 
+                Command="{Binding LäggTillNyttRecept}"
+                CommandParameter="{Binding ElementName=ScrollRecept}">
+            </Button>
         </StackPanel>
         <Grid Grid.Column="2" Margin="5,0,0,0">
             <Grid.RowDefinitions>
@@ -63,10 +71,10 @@
                     <RowDefinition Height="auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBlock Text="{Binding ValtRecept.Namn}" Grid.Row="0" FontSize="18" FontWeight="Bold"></TextBlock>
+                <TextBlock Text="{Binding ElementName=ScrollRecept, Path=SelectedItem.Namn}" Grid.Row="0" FontSize="18" FontWeight="Bold"></TextBlock>
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,5,0,0">
                     <TextBlock  Text="Antal portioner:" VerticalAlignment="Center"></TextBlock>
-                    <ComboBox  Width="40" Height="25" Margin="10,0,0,0" SelectedValue="{Binding ValtRecept.Antalportioner}" 
+                    <ComboBox  Width="40" Height="25" Margin="10,0,0,0" SelectedValue="{Binding ElementName=ScrollRecept, Path=SelectedItem.Antalportioner}" 
                         SelectedValuePath="Content"  >
 
                         <ComboBoxItem>1</ComboBoxItem>
@@ -76,16 +84,20 @@
                         <ComboBoxItem>5</ComboBoxItem>
                         <ComboBoxItem>6</ComboBoxItem>
                     </ComboBox>
-                    <Button Margin="10 0 0 0" Width="40" Click="AddAllToCart_Click">
+                    <Button Margin="10 0 0 0" Width="40" 
+                            Command="{Binding AddAllToCart}"
+                            CommandParameter="{Binding ElementName=ScrollRecept}">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;" />
                     </Button>
-                    <Button Margin="10 0 0 0" Width="40" Click="EditRecept_Click">
+                    <Button Margin="10 0 0 0" Width="40" 
+                            Command="{Binding EditRecept}"
+                            CommandParameter="{Binding ElementName=ScrollRecept}">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70F;" />
                     </Button>
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" Margin="0,5,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" BorderBrush="Transparent" BorderThickness="0">
-                    
-                    <ItemsControl ItemsSource="{Binding ValtRecept.ReceptIngredienser}">
+
+                    <ItemsControl ItemsSource="{Binding ElementName=ScrollRecept, Path=SelectedItem.ReceptIngredienser}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical"></StackPanel>
@@ -149,16 +161,16 @@
 
 
                     <TextBlock Grid.Column="0" Grid.Row="1" Text="Kalorier:"></TextBlock>
-                    <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding ValtRecept.PortionKalori, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                    <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=ScrollRecept, Path=SelectedItem.PortionKalori, Converter={StaticResource RoundedNumber}}"></TextBlock>
 
                     <TextBlock Grid.Column="0" Grid.Row="2" Text="Kolhydrater:"></TextBlock>
-                    <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding ValtRecept.PortionKolhydrat, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                    <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding ElementName=ScrollRecept, Path=SelectedItem.PortionKolhydrat, Converter={StaticResource RoundedNumber}}"></TextBlock>
 
                     <TextBlock Grid.Column="0" Grid.Row="3" Text="Fett:"></TextBlock>
-                    <TextBlock Grid.Column="2" Grid.Row="3" Text="{Binding ValtRecept.PortionFett, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                    <TextBlock Grid.Column="2" Grid.Row="3" Text="{Binding ElementName=ScrollRecept, Path=SelectedItem.PortionFett, Converter={StaticResource RoundedNumber}}"></TextBlock>
 
                     <TextBlock Grid.Column="0" Grid.Row="4" Text="Protein:"></TextBlock>
-                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding ValtRecept.PortionProtein, Converter={StaticResource RoundedNumber}}"></TextBlock>
+                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding ElementName=ScrollRecept, Path=SelectedItem.PortionProtein, Converter={StaticResource RoundedNumber}}"></TextBlock>
 
                 </Grid>
             </Border>

@@ -18,6 +18,7 @@
         <local:LäggTillKomma x:Key="LäggTillKomma"></local:LäggTillKomma>
         <local:OmvändBool x:Key="OmvändBool"></local:OmvändBool>
         <local:MängdSomNull x:Key="MängdSomNull"></local:MängdSomNull>
+        <local:ReturneraSomArray x:Key="ReturneraSomArray"></local:ReturneraSomArray>
         <BooleanToVisibilityConverter x:Key="BoolToVis"></BooleanToVisibilityConverter>
 
         <!--<CollectionViewSource x:Key="FilreradIngrediensLista" Source="{Binding IngrediensLista}"></CollectionViewSource>-->

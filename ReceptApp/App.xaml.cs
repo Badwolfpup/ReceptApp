@@ -17,52 +17,13 @@ namespace ReceptApp
     /// </summary>
     /// 
 
-    public partial class App : Application, INotifyPropertyChanged, INotifyCollectionChanged
+    public partial class App : Application
     {
-        #region InotifyPropertyChanged
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
-        #endregion
 
         public App()
         {
-            appdata = AppData.Load();
-            Ingredienslista = appdata.Ingredienslista;
-            Ovrigavaraorlista = appdata.Ovrigavaraorlista;
-            ReceptLista = appdata.ReceptLista;
-
-            FilteredIngredienslista = new ObservableCollection<Ingrediens>(Ingredienslista);
-            TillagdaReceptShoppingList = new ObservableCollection<Recept>();
-            ValtPris = new Priser("");
-           // if (Ingredienslista != null && Ingredienslista.Count != 0) ValdIngrediens = Ingredienslista[0]; else { ValdIngrediens = new Ingrediens(); }
-            if (ReceptLista != null && ReceptLista.Count > 0) ValtRecept = ReceptLista[0]; else ValtRecept = new Recept(4);
-            FilteredIngredientList = CollectionViewSource.GetDefaultView(FilteredIngredienslista);
-            FilteredIngredientList.Filter = FilterPredicate;
-            TillagdaVarorShoppingList = new ObservableCollection<ReceptIngrediens>();
-
         }
-
-
-        private void Ingredienslista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            appdata.SaveAll();
-        }
-
-        private void Ovrigavarorlista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            appdata.SaveAll();
-        }
-
-        private void ReceptLista_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            appdata.SaveAll();
-        }
-
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -73,198 +34,6 @@ namespace ReceptApp
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
         }
-
-
-        #region Properties
-        public AppData appdata { get; set; }
-
-
-
-        private ObservableCollection<Ingrediens>? _ingredienslista;
-        public ObservableCollection<Ingrediens> Ingredienslista
-        {
-            get { return _ingredienslista; }
-            set
-            {
-                if (value != _ingredienslista)
-                {
-                    if (_ingredienslista != null)
-                    {
-                        // Detach the event from the old collection
-                        _ingredienslista.CollectionChanged -= Ingredienslista_CollectionChanged;
-                    }
-
-                    _ingredienslista = value;
-
-                    if (_ingredienslista != null)
-                    {
-                        // Attach the event to the new collection
-                        _ingredienslista.CollectionChanged += Ingredienslista_CollectionChanged;
-                    }
-                    if (!ReferenceEquals(_ingredienslista, appdata.Ingredienslista)) MessageBox.Show("Listorna är desynchade igen");
-                    OnPropertyChanged(nameof(Ingredienslista));
-                }
-            }
-        }
-
-        private ObservableCollection<Ingrediens>? _ovrigavarorlista;
-        public ObservableCollection<Ingrediens> Ovrigavaraorlista
-        {
-            get { return _ovrigavarorlista; }
-            set
-            {
-                if (value != _ovrigavarorlista)
-                {
-                    if (_ovrigavarorlista != null)
-                    {
-                        // Detach the event from the old collection
-                        _ovrigavarorlista.CollectionChanged -= Ovrigavarorlista_CollectionChanged;
-                    }
-
-                    _ovrigavarorlista = value;
-
-                    if (_ovrigavarorlista != null)
-                    {
-                        // Attach the event to the new collection
-                        _ovrigavarorlista.CollectionChanged += Ovrigavarorlista_CollectionChanged;
-                    }
-                    if (!ReferenceEquals(_ovrigavarorlista, appdata.Ovrigavaraorlista)) MessageBox.Show("Listorna är desynchade igen 1");
-                    OnPropertyChanged(nameof(Ovrigavaraorlista));
-                }
-            }
-        }
-
-        private ObservableCollection<Ingrediens>? _filteredIngredienslista;
-        public ObservableCollection<Ingrediens> FilteredIngredienslista
-        {
-            get { return _filteredIngredienslista; }
-            set
-            {
-                if (value != _filteredIngredienslista)
-                {
-                    _filteredIngredienslista = value;
-                    OnPropertyChanged(nameof(FilteredIngredienslista));
-                }
-            }
-        }
-
-        public ICollectionView FilteredIngredientList { get; set; }
-
-        private ObservableCollection<Recept>? _receptlista;
-        public ObservableCollection<Recept> ReceptLista
-        {
-            get { return _receptlista; }
-            set
-            {
-                if (value != _receptlista)
-                {
-                    if (_receptlista != null)
-                    {
-                        // Detach the event from the old collection
-                        _receptlista.CollectionChanged -= Ingredienslista_CollectionChanged;
-                    }
-
-                    _receptlista = value;
-
-                    if (_receptlista != null)
-                    {
-                        // Attach the event to the new collection
-                        _receptlista.CollectionChanged += Ingredienslista_CollectionChanged;
-                    }
-                    OnPropertyChanged(nameof(ReceptLista));
-                }
-            }
-        }
-
-        private ObservableCollection<Recept>? _tillagdareceptshoppinglist;
-        public ObservableCollection<Recept> TillagdaReceptShoppingList
-        {
-            get => _tillagdareceptshoppinglist;
-            set
-            {
-                if (_tillagdareceptshoppinglist != value)
-                {
-                    _tillagdareceptshoppinglist = value;
-                    OnPropertyChanged(nameof(TillagdaReceptShoppingList));
-                }
-            }
-        }
-
-        private ObservableCollection<ReceptIngrediens> _tillagdavarorshoppinglist;
-        public ObservableCollection<ReceptIngrediens> TillagdaVarorShoppingList
-        {
-            get { return _tillagdavarorshoppinglist; }
-            set
-            {
-                if (_tillagdavarorshoppinglist != value)
-                {
-                    _tillagdavarorshoppinglist = value;
-                    OnPropertyChanged(nameof(TillagdaVarorShoppingList));
-                }
-            }
-        }
-
-        private Ingrediens _valdingrediens;
-        public Ingrediens ValdIngrediens
-        {
-            get { return _valdingrediens; }
-            set
-            {
-                if (_valdingrediens != value)
-                {
-                    _valdingrediens = value;
-                    OnPropertyChanged(nameof(ValdIngrediens));
-                }
-            }
-        }
-
-
-        private Recept _valtrecept;
-        public Recept ValtRecept
-        {
-            get { return _valtrecept; }
-            set
-            {
-                if (_valtrecept != value)
-                {
-                    _valtrecept = value;
-                    OnPropertyChanged(nameof(ValtRecept));
-                }
-            }
-        }
-
-        private Priser _valtpris;
-        public Priser ValtPris
-        {
-            get { return _valtpris; }
-            set
-            {
-                if (_valtpris != value)
-                {
-                    _valtpris = value;
-                    OnPropertyChanged(nameof(ValtPris));
-                }
-            }
-        }
-
-        private double _totalsumma;
-        public double TotalSumma
-        {
-            get => _totalsumma;
-            set
-            {
-                if (_totalsumma != value)
-                {
-                    _totalsumma = value;
-                    OnPropertyChanged(nameof(TotalSumma));
-                }
-            }
-        }
-
-        #endregion
-
-
-        public bool HasChangedData { get; set; }
 
         private bool FilterPredicate(object obj)
         {
@@ -300,7 +69,7 @@ namespace ReceptApp
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (appdata != null) appdata.SaveAll();
+            AppData.Instance.SaveAll();
         }
     }
 
@@ -545,7 +314,7 @@ namespace ReceptApp
         {
             throw new NotImplementedException();
         }
-        #endregion
+        
     }
 
     public class LäggTillKr : IValueConverter
@@ -652,4 +421,24 @@ namespace ReceptApp
             throw new NotImplementedException();
         }
     }
+
+    public class ReturneraSomArray : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ( values.Length ==3 )
+            {
+                var item1 = values[0];
+                var item2 = values[1];
+                var item3 = values[2];
+                return new Tuple<object, object, object>(item1, item2, item3);
+            }
+            return values;
+        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    #endregion
 }

@@ -1,4 +1,5 @@
-﻿using ReceptApp.Pages;
+﻿using ReceptApp.Model;
+using ReceptApp.Pages;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Threading;
@@ -21,7 +22,6 @@ namespace ReceptApp
 
         #endregion
 
-        App app = (App)Application.Current;
 
         IngredientPage ingredientPage;
         RecipePage recipepage;
@@ -54,9 +54,9 @@ namespace ReceptApp
 
         private void Button_Click_Recipe(object sender, RoutedEventArgs e)
         {
-            if (app.ReceptLista.Count > 0)
+            if (AppData.Instance.ReceptLista.Count > 0)
             {
-               foreach(var item in app.ReceptLista)
+               foreach(var item in AppData.Instance.ReceptLista)
                 {
                     item.BeräknaVärden();
                 }

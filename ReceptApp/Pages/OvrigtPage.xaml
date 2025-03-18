@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:ReceptApp.Pages"
+      xmlns:local="clr-namespace:ReceptApp.Other"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="OvrigtPage">
@@ -20,10 +20,11 @@
                     Margin="30,20,0,0" 
                     Orientation="Horizontal"
                     Grid.Column="0" Grid.Row="0">
-            <TextBox x:Name="FilterTextbox" Height="25" Width="200" Text="" TextChanged="FilterTextbox_TextChanged"/>
+            <TextBox x:Name="FilterTextbox" Height="25" Width="200" Text="" 
+                     local:DependencyHelper.FilterTextCommand="{Binding FilterText}"/>
             <Button 
                Width="30" Height="35" 
-               Click="LäggTillNyVara_Click" 
+               Command="{Binding LäggTillNyVara}" 
                BorderBrush="Transparent" BorderThickness="1">
                 <Button.Content>
                     <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xF8AA;"></TextBlock>
@@ -44,7 +45,7 @@
                 AutoGenerateColumns="False" 
                 HorizontalGridLinesBrush="LightGray"
                 VerticalGridLinesBrush="LightGray"
-                ItemsSource="{Binding Ovrigavaraorlista}" 
+                ItemsSource="{Binding OvrigavarorLista}" 
                 IsReadOnly="True"
                 RowDetailsVisibilityMode="VisibleWhenSelected">
                 <DataGrid.Resources>
@@ -80,6 +81,23 @@
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Övriga varor" Binding="{Binding Namn}" FontFamily="Roboto" FontWeight="Bold" FontSize="16" ElementStyle="{StaticResource DataGridTextBlockStyle}"/>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontWeight="Bold"></TextBlock>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Width="25" Height="25" Visibility="{Binding HarVaror, Converter={StaticResource BoolToVis}}"
+                                    Command="{Binding DataContext.TaBortIngrediens, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                    <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                                    <Button.ToolTip>
+                                        <TextBlock>Ta bort vara från listan</TextBlock>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
@@ -114,7 +132,9 @@
                                 <DataGridTemplateColumn>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Width="25" Height="25" Click="AddVaraToCart_Click"
+                                            <Button Width="25" Height="25" 
+                                                    Command="{Binding DataContext.AddVaraToCart, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                                                     Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}, AncestorLevel=2}}">
                                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7BF;" />
                                             </Button>
@@ -124,7 +144,9 @@
                                 <DataGridTemplateColumn>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Width="25" Height="25" Click="Delete_price_Click"
+                                            <Button Width="25" Height="25"                                                     
+                                                    Command="{Binding DataContext.TaBortVara, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                                                     Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}, AncestorLevel=2}}">
                                                 <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
                                                 <Button.ToolTip>

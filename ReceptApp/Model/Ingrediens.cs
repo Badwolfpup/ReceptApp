@@ -67,15 +67,15 @@ namespace ReceptApp
                 }
             }
         }
-
+        public bool HarVaror => Varor.Count < 1;
         private void Varor_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            app.appdata.SaveAll();
+            AppData.Instance.SaveAll();
         }
 
         private void Varor_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            app.appdata.SaveAll();
+            AppData.Instance.SaveAll();
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReceptApp.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -19,100 +20,33 @@ namespace ReceptApp.Pages
     /// <summary>
     /// Interaction logic for AddSingleVara.xaml
     /// </summary>
-    public partial class AddSingleVara : Window, INotifyPropertyChanged
+    public partial class AddSingleVara : Window
     {
-        #region InotifyPropertyChanged
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public readonly VMAddSingleVara _vmAddSingleVara;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        //public event NotifyCollectionChangedEventHandler? CollectionChanged;
-        #endregion
-        private bool ÄrIngrediens { get; set; }
-        private bool _visaLösVikt;
-        private bool _visaSingleVara;
-        public bool VisaLösVikt
-        {
-            get { return _visaLösVikt; }
-            set
-            {
-                if (_visaLösVikt != value)
-                {
-                    _visaLösVikt = value;
-                    OnPropertyChanged(nameof(VisaLösVikt));
-                }
-            }
-        }
-        public bool VisaSingleVara
-        {
-            get { return _visaSingleVara; }
-            set
-            {
-                if (_visaSingleVara != value)
-                {
-                    _visaSingleVara = value;
-                    OnPropertyChanged(nameof(VisaSingleVara));
-                }
-            }
-        }
+        public ReceptIngrediens ReceptIng => _vmAddSingleVara.ReceptIng;
+        public bool VisaLösVikt => _vmAddSingleVara.VisaLösVikt;
 
         public AddSingleVara(ReceptIngrediens r,  bool ärlösvikt, bool äringrediens)
         {
             InitializeComponent();
-            Recept = r;
-            DataContext = this;
-            ÄrIngrediens = äringrediens;
-            VisaLösVikt = ärlösvikt;
-            VisaSingleVara = !ärlösvikt;
-            r.Vara.ÄrÖvrigVara = !ÄrIngrediens;
-            if (VisaLösVikt) this.Loaded += (s, e) =>  TextBoxMängd.Focus();
+            _vmAddSingleVara = new VMAddSingleVara(r, ärlösvikt, äringrediens);
+            DataContext = _vmAddSingleVara;
+
+            _vmAddSingleVara.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(_vmAddSingleVara.DialogResult) && _vmAddSingleVara.DialogResult.HasValue)
+                {
+                    // Set the dialog result and close the window
+                    DialogResult = _vmAddSingleVara.DialogResult;
+                    Close();
+                }
+            };
+
+            if (VisaLösVikt) this.Loaded += (s, e) => TextBoxMängd.Focus();
             else this.Loaded += (s, e) => TextBoxAntal.Focus();
         }
 
-
-        public string EnteredName { get; private set; }
-        public ReceptIngrediens Recept { get; set; }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (VisaLösVikt)
-            {
-                if (VisaLösVikt && ComboBoxMåttNamn.SelectedItem == null || ComboBoxMåttNamn.SelectedItem.ToString() == "")
-                {
-                    MessageBox.Show("Du behöver välja ett mått");
-                    return;
-                }
-
-                if (VisaLösVikt && Recept.Mängd == null || Recept.Mängd <= 0)
-                {
-                    MessageBox.Show("Du behöver ange mängd");
-                    return;
-                }
-                Recept.Mått = Recept.KonverteraMåttTillText(ComboBoxMåttNamn.Text);
-            }
-            else
-            {
-                if (VisaSingleVara && Recept.AntalProdukter == null || Recept.AntalProdukter <= 0)
-                {
-                    MessageBox.Show("Du behöver ange antal produkter");
-                    return;
-                }
-                if (!Recept.Vara.ÄrÖvrigVara)
-                {
-                    Recept.Mått = Recept.Vara.Mått;
-                    Recept.Mängd = (double)(Recept.AntalProdukter * Recept.Vara.Mängd);
-                }
-            }
-            DialogResult = true; // Closes the dialog with a positive result.
-            Close();
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
 
         private void KollaSiffor_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ReceptApp.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -167,7 +168,7 @@ namespace ReceptApp
         {
 
             BeräknaVärden();
-            app.appdata.SaveAll();
+            AppData.Instance.SaveAll();
         }
 
         private void KaloriPortion_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -175,7 +176,7 @@ namespace ReceptApp
             if (e.PropertyName == "Mängd" || e.PropertyName == "Mått")
             {
                 BeräknaVärden();
-                app.appdata.SaveAll();
+                AppData.Instance.SaveAll();
             }
 
         }
