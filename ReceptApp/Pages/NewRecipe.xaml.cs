@@ -49,7 +49,7 @@ namespace ReceptApp.Pages
             }
         }
 
-        public ObservableCollection<Ingrediens> IngrediensLista => AppData.Instance.IngrediensLista;
+        public ObservableCollection<Ingrediens> IngrediensLista => AppData.Instance.IngrediensLista; //Lista med ingredienser
 
         private string _knapptext;
         public string KnappText
