@@ -26,6 +26,7 @@ namespace ReceptApp.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
+
         public NewRecipe(bool nyttrecept, Recept recept)
         {
             InitializeComponent();
@@ -100,7 +101,7 @@ namespace ReceptApp.Pages
                 ValdVara = i;
                 //if (comb is ComboBox ComboBoxMått)
                 //{
-                    ComboBoxMått.SelectedIndex = 0;
+                ComboBoxMått.SelectedIndex = 0;
                 //}
             }
         }

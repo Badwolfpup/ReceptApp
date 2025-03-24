@@ -66,6 +66,7 @@ namespace ReceptApp.ViewModel
 
         public ICommand AddVara { get; set; }
         public ICommand CancelAddVara { get; set; }
+        public ICommand KollaSiffor { get; set; }
 
         private bool? _dialogResult;
         public bool? DialogResult
@@ -92,6 +93,7 @@ namespace ReceptApp.ViewModel
             r.Vara.ÄrÖvrigVara = !ÄrIngrediens;
             AddVara = new RelayCommand(AddVara_Click);
             CancelAddVara = new RelayCommand(CancelAddVara_Click);
+            KollaSiffor = new RelayCommand(KollaSiffor_PreviewTextInput);
         }
 
         private void AddVara_Click(object sender)

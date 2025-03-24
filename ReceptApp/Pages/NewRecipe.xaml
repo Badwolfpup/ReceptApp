@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:ReceptApp.Pages"
         mc:Ignorable="d"
         Title="NewRecipe" Height="600" Width="800" >
@@ -25,6 +26,7 @@
                         <StackPanel>
                             <Expander Header="{Binding Namn}" IsExpanded="False">
                                 <ListView ItemsSource="{Binding Varor}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ScrollIngrediensNyttRecept_SelectionChanged" GotFocus="ListView_GotFocus">
+
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>

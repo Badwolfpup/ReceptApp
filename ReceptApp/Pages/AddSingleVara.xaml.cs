@@ -47,10 +47,5 @@ namespace ReceptApp.Pages
             else this.Loaded += (s, e) => TextBoxAntal.Focus();
         }
 
-
-        private void KollaSiffor_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !Regex.IsMatch(e.Text, @"^$|^\d+$"); //Kollar så att det bara går att skriva siffror.
-        }
     }
 }

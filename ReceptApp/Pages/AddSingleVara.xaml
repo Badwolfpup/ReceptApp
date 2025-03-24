@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReceptApp.Pages"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="AddSingleVara" Height="450" Width="800"
         WindowStartupLocation="CenterOwner"
@@ -24,7 +25,13 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBox x:Name="TextBoxMängd" Width="70" Text="{Binding ReceptIng.Mängd}" Margin="0,0,10,0" PreviewTextInput="KollaSiffor_PreviewTextInput"/>
+                <TextBox x:Name="TextBoxMängd" Width="70" Text="{Binding ReceptIng.Mängd}" Margin="0,0,10,0" >
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="PreviewTextInput">
+                            <behaviors:InvokeCommandAction Command="{Binding KollaSiffor}" PassEventArgsToCommand="True"/>
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </TextBox>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="OK" Width="75" Margin="0,0,10,0" Command="{Binding AddVara}" CommandParameter="{Binding ElementName=ComboBoxMåttNamn}"/>
                     <Button Content="Cancel" Width="75" Command="{Binding CancelAddVara}"/>
@@ -36,7 +43,13 @@
                 <Run Text="{Binding ReceptIng.Vara.Typ}"/>
                 <Run Text="{Binding ReceptIng.Vara.Info}"/>
                 </TextBlock>
-                <TextBox x:Name="TextBoxAntal" Width="70" Text="{Binding ReceptIng.AntalProdukter}" Margin="0,0,10,0" PreviewTextInput="KollaSiffor_PreviewTextInput"/>
+                <TextBox x:Name="TextBoxAntal" Width="70" Text="{Binding ReceptIng.AntalProdukter}" Margin="0,0,10,0">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="PreviewTextInput">
+                            <behaviors:InvokeCommandAction Command="{Binding KollaSiffor}" PassEventArgsToCommand="True"/>
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </TextBox>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="OK" Width="75" Margin="0,0,10,0" Command="{Binding AddVara}" CommandParameter="{Binding ElementName=ComboBoxMåttNamn}"/>
                     <Button Content="Cancel" Width="75" Command="{Binding CancelAddVara}"/>
