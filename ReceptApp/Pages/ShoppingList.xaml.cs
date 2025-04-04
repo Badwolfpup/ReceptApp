@@ -299,5 +299,11 @@ namespace ReceptApp.Pages
         {
             AppData.Instance.SaveAll();
         }
+
+        private void DeleteAll_Click(object sender, RoutedEventArgs e)
+        {
+            AppData.Instance.ShoppingListaRecept.Clear();
+            AppData.Instance.ShoppingListaIngredienser.Clear();
+        }
     }
 }

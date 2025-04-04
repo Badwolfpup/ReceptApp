@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ReceptApp.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -29,27 +30,27 @@ namespace ReceptApp
             {
                 if (_receptingredienser != value)
                 {
-                    if (_receptingredienser != null)
-                    {
-                        // Detach the event from the old collection
-                        _receptingredienser.CollectionChanged -= KaloriPortion_CollectionChanged;
-                        foreach (var item in _receptingredienser)
-                        {
-                            item.PropertyChanged -= KaloriPortion_PropertyChanged;
-                        }
-                    }
+                    //if (_receptingredienser != null)
+                    //{
+                    //    // Detach the event from the old collection
+                    //    _receptingredienser.CollectionChanged -= KaloriPortion_CollectionChanged;
+                    //    foreach (var item in _receptingredienser)
+                    //    {
+                    //        item.PropertyChanged -= KaloriPortion_PropertyChanged;
+                    //    }
+                    //}
 
                     _receptingredienser = value;
 
-                    if (_receptingredienser != null)
-                    {
-                        // Attach the event to the new collection
-                        _receptingredienser.CollectionChanged += KaloriPortion_CollectionChanged;
-                        foreach (var item in _receptingredienser)
-                        {
-                            item.PropertyChanged += KaloriPortion_PropertyChanged;
-                        }
-                    }
+                    //if (_receptingredienser != null)
+                    //{
+                    //    // Attach the event to the new collection
+                    //    _receptingredienser.CollectionChanged += KaloriPortion_CollectionChanged;
+                    //    foreach (var item in _receptingredienser)
+                    //    {
+                    //        item.PropertyChanged += KaloriPortion_PropertyChanged;
+                    //    }
+                    //}
 
                     OnPropertyChanged(nameof(ReceptIngredienser));
                 }
@@ -166,7 +167,27 @@ namespace ReceptApp
 
         private void KaloriPortion_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            if (_receptingredienser != null)
+            {
+                // Detach the event from the old collection
+                _receptingredienser.CollectionChanged -= KaloriPortion_CollectionChanged;
+                foreach (var item in _receptingredienser)
+                {
+                    item.PropertyChanged -= KaloriPortion_PropertyChanged;
+                }
+            }
 
+            
+
+            if (_receptingredienser != null)
+            {
+                // Attach the event to the new collection
+                _receptingredienser.CollectionChanged += KaloriPortion_CollectionChanged;
+                foreach (var item in _receptingredienser)
+                {
+                    item.PropertyChanged += KaloriPortion_PropertyChanged;
+                }
+            }
             BeräknaVärden();
             AppData.Instance.SaveAll();
         }

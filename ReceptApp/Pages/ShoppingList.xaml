@@ -209,6 +209,14 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button 
                     Height="40" Width="40"                    
+                    Click="DeleteAll_Click" >
+                    <TextBlock FontSize="26" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"></TextBlock>
+                    <Button.ToolTip>
+                        <TextBlock>Spara shopppinglistan</TextBlock>
+                    </Button.ToolTip>
+                </Button>
+                <Button 
+                    Height="40" Width="40"                    
                     Click="SaveList_Click" >
                     <TextBlock FontSize="26" FontFamily="Segoe MDL2 Assets" Text="&#xE74E;"></TextBlock>
                     <Button.ToolTip>

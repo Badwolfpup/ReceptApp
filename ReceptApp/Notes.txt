@@ -1,11 +1,7 @@
 ﻿Att göra:
-Fixa NewRecipe commands
-Buggtesta
-Fixa klart MVVM
- - shoppinglist
- - newingredient
- - newovrigt
- - newrecipe
+Editera recept
+	kan inte deleta
+
 
 
 
