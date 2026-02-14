@@ -19,29 +19,29 @@ A desktop recipe management application built with C# and WPF using the MVVM pat
 
 ```
 ReceptApp/
-├── Model/                # Domain models
-│   ├── Recept.cs         # Recipe
-│   ├── Ingrediens.cs     # Ingredient
-│   ├── Vara.cs           # Goods/product
-│   ├── Naringsvarde.cs   # Nutritional value
-│   └── ReceptIngrediens.cs
-├── ViewModel/            # MVVM ViewModels
-│   ├── VMRecipePage.cs
-│   ├── VMIngredientPage.cs
-│   ├── VMNewRecipe.cs
-│   ├── VMOvrigtPage.cs
-│   └── VMAddSingleVara.cs
-├── Pages/                # WPF pages
-│   ├── RecipePage.xaml
-│   ├── IngredientPage.xaml
-│   ├── NewRecipe.xaml
-│   ├── ShoppingList.xaml
-│   └── ...
-├── Other/                # Utilities
-│   ├── SaveLoad.cs
-│   ├── RelayCommand.cs
-│   └── DependencyHelper.cs
-└── MainWindow.xaml
++-- Model/                # Domain models
+|   +-- Recept.cs         # Recipe
+|   +-- Ingrediens.cs     # Ingredient
+|   +-- Vara.cs           # Goods/product
+|   +-- Naringsvarde.cs   # Nutritional value
+|   +-- ReceptIngrediens.cs
++-- ViewModel/            # MVVM ViewModels
+|   +-- VMRecipePage.cs
+|   +-- VMIngredientPage.cs
+|   +-- VMNewRecipe.cs
+|   +-- VMOvrigtPage.cs
+|   +-- VMAddSingleVara.cs
++-- Pages/                # WPF pages
+|   +-- RecipePage.xaml
+|   +-- IngredientPage.xaml
+|   +-- NewRecipe.xaml
+|   +-- ShoppingList.xaml
+|   +-- ...
++-- Other/                # Utilities
+|   +-- SaveLoad.cs
+|   +-- RelayCommand.cs
+|   +-- DependencyHelper.cs
++-- MainWindow.xaml
 ```
 
 ## How to Run
