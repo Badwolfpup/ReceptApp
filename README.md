@@ -19,29 +19,29 @@ A desktop recipe management application built with C# and WPF using the MVVM pat
 
 ```
 ReceptApp/
-â”œâ”€â”€ Model/                # Domain models
-â”‚   â”œâ”€â”€ Recept.cs         # Recipe
-â”‚   â”œâ”€â”€ Ingrediens.cs     # Ingredient
-â”‚   â”œâ”€â”€ Vara.cs           # Goods/product
-â”‚   â”œâ”€â”€ Naringsvarde.cs   # Nutritional value
-â”‚   â””â”€â”€ ReceptIngrediens.cs
-â”œâ”€â”€ ViewModel/            # MVVM ViewModels
-â”‚   â”œâ”€â”€ VMRecipePage.cs
-â”‚   â”œâ”€â”€ VMIngredientPage.cs
-â”‚   â”œâ”€â”€ VMNewRecipe.cs
-â”‚   â”œâ”€â”€ VMOvrigtPage.cs
-â”‚   â””â”€â”€ VMAddSingleVara.cs
-â”œâ”€â”€ Pages/                # WPF pages
-â”‚   â”œâ”€â”€ RecipePage.xaml
-â”‚   â”œâ”€â”€ IngredientPage.xaml
-â”‚   â”œâ”€â”€ NewRecipe.xaml
-â”‚   â”œâ”€â”€ ShoppingList.xaml
-â”‚   â””â”€â”€ ...
-â”œâ”€â”€ Other/                # Utilities
-â”‚   â”œâ”€â”€ SaveLoad.cs
-â”‚   â”œâ”€â”€ RelayCommand.cs
-â”‚   â””â”€â”€ DependencyHelper.cs
-â””â”€â”€ MainWindow.xaml
+├── Model/                # Domain models
+│   ├── Recept.cs         # Recipe
+│   ├── Ingrediens.cs     # Ingredient
+│   ├── Vara.cs           # Goods/product
+│   ├── Naringsvarde.cs   # Nutritional value
+│   └── ReceptIngrediens.cs
+├── ViewModel/            # MVVM ViewModels
+│   ├── VMRecipePage.cs
+│   ├── VMIngredientPage.cs
+│   ├── VMNewRecipe.cs
+│   ├── VMOvrigtPage.cs
+│   └── VMAddSingleVara.cs
+├── Pages/                # WPF pages
+│   ├── RecipePage.xaml
+│   ├── IngredientPage.xaml
+│   ├── NewRecipe.xaml
+│   ├── ShoppingList.xaml
+│   └── ...
+├── Other/                # Utilities
+│   ├── SaveLoad.cs
+│   ├── RelayCommand.cs
+│   └── DependencyHelper.cs
+└── MainWindow.xaml
 ```
 
 ## How to Run
